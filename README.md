@@ -26,3 +26,7 @@ samples, guidance on mobile development, and a full API reference.
    - ![img.png](ressources/images/03_Resume.png)
 6) Lancer l'émulateur
 7) Lancer le projet depuis Android Studio sur l'émulateur Android 
+
+
+
+colo xolo
