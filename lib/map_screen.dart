@@ -55,14 +55,25 @@ class _MapScreenState extends State<MapScreen> {
   List<Marker> _createMarkers() {
     return [
       Marker(
-        width: 40.0,
-        height: 40.0,
         point: const LatLng(46.2228401, 7.2939617),
         builder: (ctx) => GestureDetector(
           onTap: () {
             showDialog(
                 context: context,
-                builder: (context) => const MarkerPopup(),
+                barrierColor: Colors.transparent,
+                builder: (context) => const Align(
+                  alignment: Alignment.centerRight,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.5,
+                    child: MarkerPopup(
+                      data: [
+                        MapEntry('Name', 'John Doe'),
+                        MapEntry('Age', '25'),
+                        // Add more data items as needed
+                      ],
+                    ),
+                  ),
+                )
             );
           },
           child: const Icon(
