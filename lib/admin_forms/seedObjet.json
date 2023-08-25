@@ -1,0 +1,133 @@
+{
+  "Museums": {
+    "Museum": [
+      {
+        "Id_museum": 1,
+        "Museum_name": "Musée d'Art Moderne",
+        "Address": "123 Rue de l'Art, Ville d'Art",
+        "Coordinates": {
+          "latitude": 46.102595,
+          "longitude": 7.077055
+        },
+        "Museum_icon": "https://maps.example.com/museum",
+        "Website": "https://www.museumexample.com",
+        "Objets": [
+          {
+            "Object_name": "Tableau Abstrait",
+            "Title": "Composition en Rouge et Bleu",
+            "Tags": [
+              "abstrait"
+            ],
+            "Arrival": [
+              {
+                "Date": "2023-05-10",
+                "Coordinates": {
+                  "latitude": 123.456789,
+                  "longitude": -98.765432
+                }
+              }
+            ],
+            "Object_origin": [
+              {
+                "Date": "2022-02-15",
+                "Coordinaetes": {
+                  "latitude": 234.567890,
+                  "longitude": -87.654321
+                }
+              }
+            ],
+            "Description": "Une œuvre abstraite captivante de couleurs vives.",
+            "Image": [
+              "https://www.museumexample.com/images/artwork1.jpg"
+            ]
+          }
+        ]
+      }
+    ],
+    "Museum": [
+      {
+        "Id_museum": 2,
+        "Museum_name": "Musée du travail",
+        "Address": "456 Rue du boulot, Sion",
+        "Coordinates": {
+          "latitude": 46.229352,
+          "longitude": 7.362049
+        },
+        "Museum_icon": "https://maps.example.com/museum",
+        "Website": "https://www.museumexample.com",
+        "Objets": [
+          {
+            "Object_name": "Truelle",
+            "Title": "Truelle du début du 20ème siècle",
+            "Tags": [
+              "Travail"
+            ],
+            "Arrival": [
+              {
+                "Date": "1912-01-25",
+                "Coordinates": {
+                  "latitude": 46.229352,
+                  "longitude": 7.362049
+                }
+              }
+            ],
+            "Object_origin": [
+              {
+                "Date": "1875-02-15",
+                "Coordinaetes": {
+                  "latitude": -9.139337,
+                  "longitude": 38.722252
+                }
+              }
+            ],
+            "Description": "Une œuvre abstraite captivante de couleurs vives.",
+            "Image": [
+              "https://www.museumexample.com/images/artwork1.jpg"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "Filters": {
+    "Chronology": {
+      "Time_axis": [
+        "Préhistoire",
+        "Âge du Bronze",
+        "Époque moderne"
+      ],
+      "Etiquettes_Tags": [
+        "archéologie",
+        "histoire ancienne"
+      ]
+    },
+    "Raison_migration": [
+      "Recherche de meilleures terres",
+      "Fuite",
+      "Travail",
+      "Établissement",
+      "Influence",
+      "Conquête",
+      "Domination",
+      "Refuge",
+      "Art"
+    ],
+    "Population": [
+      "Francs",
+      "Allemands",
+      "Italiens",
+      "Belges",
+      "Ottomans"
+    ],
+    "Type_objet": [
+      "Fruits",
+      "Outils",
+      "Document",
+      "Peinture",
+      "Sculpture"
+    ],
+    "Museum": [
+      "liste des musées"
+    ]
+  }
+}
