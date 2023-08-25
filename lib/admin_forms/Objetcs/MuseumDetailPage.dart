@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../dataModels/Museum.dart';
+import '../../dataModels/MuseumObject .dart';
+import 'MuseumEditPage.dart';
 import 'ObjectDetailPage.dart';
 
 // TODO : Ajouter le BTN + pour ajouter un objet
@@ -21,7 +23,20 @@ class MuseumDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(museum.name)),
+      appBar: AppBar(
+        title: Text(museum.name),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum)),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -41,6 +56,12 @@ class MuseumDetailPage extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => ObjectDetailPage(object: object)),
                   );
                 },
+                onLongPress: () {
+                  // TODO : Afficher une boîte de dialogue de confirmation de suppression
+                  // TODO : Si l'utilisateur confirme, supprimer l'objet
+                  _showDeleteConfirmationDialog(context, object);
+
+                },
               );
             },
           ),
@@ -48,4 +69,34 @@ class MuseumDetailPage extends StatelessWidget {
       ),
     );
   }
+
+
+// M E T H O D E S
+  void _showDeleteConfirmationDialog(BuildContext context, MuseumObject object) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirmation'),
+            content: Text('Êtes-vous sûr de vouloir supprimer cet objet ?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // TODO: Supprimer l'objet et mettre à jour la liste d'objets
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: Text('Supprimer'),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
 }
