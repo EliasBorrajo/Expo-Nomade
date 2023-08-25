@@ -5,7 +5,7 @@ class Museum {
   final String name;
   final String address;
   final String website;
-  final List<MuseumObject> objects;
+  final List<MuseumObject> objects;   // TODO: Rendre optionnel ? Car créer un musée, puis ENSUITE ajouter des objets
 
   Museum({
     required this.id,
