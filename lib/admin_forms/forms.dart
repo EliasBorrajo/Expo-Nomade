@@ -37,6 +37,8 @@ class MyApp extends StatelessWidget
           body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
             children: [
               MuseumListPage(museums: dummyMuseums),
+              Icon(Icons.directions_transit),   // Todo : supprimer, ici que exemple
+              Icon(Icons.directions_bike),      // Todo : supprimer, ici que exemple
               // FormObject(),
               // FormFiltres(),
               // FormQuizz(),
