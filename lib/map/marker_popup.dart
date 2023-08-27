@@ -1,4 +1,4 @@
-import 'package:expo_nomade/image_slider.dart';
+import 'package:expo_nomade/map/image_slider.dart';
 import 'package:flutter/material.dart';
 
 class MarkerPopup extends StatelessWidget {
