@@ -1,4 +1,4 @@
-import 'MuseumObject .dart';
+import 'MuseumObject.dart';
 
 class Museum {
   final String id;

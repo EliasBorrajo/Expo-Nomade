@@ -5,7 +5,7 @@ import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
 import 'package:flutter/material.dart';
 
 import '../dataModels/Museum.dart';
-import '../dataModels/MuseumObject .dart';
+import '../dataModels/MuseumObject.dart';
 
 void main() => runApp(const MyApp());
 
