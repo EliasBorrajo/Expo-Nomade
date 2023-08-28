@@ -1,8 +1,7 @@
 {
   "Museums": {
-    "Museum": [
+    "1": [
       {
-        "Id_museum": 1,
         "Museum_name": "Musée d'Art Moderne",
         "Address": "123 Rue de l'Art, Ville d'Art",
         "Coordinates": {
@@ -44,9 +43,8 @@
         ]
       }
     ],
-    "Museum": [
+    "2": [
       {
-        "Id_museum": 2,
         "Museum_name": "Musée du travail",
         "Address": "456 Rue du boulot, Sion",
         "Coordinates": {
@@ -131,9 +129,8 @@
     ]
   },
   "Admins": {
-    "Admin": [
+    "1": [
       {
-        "Id_admin": 1,
         "Email": "jolartiste@gmail.com",
         "Name": "Lartiste",
         "Surname": "Jo",
@@ -141,9 +138,8 @@
         "Role": "Administrateur"
       }
     ],
-    "Admin": [
+    "2": [
       {
-        "Id_admin": 2,
         "Email": "jeanguy@outlook.com",
         "Name": "Guy",
         "Surname": "Jean",
