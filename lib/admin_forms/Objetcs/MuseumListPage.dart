@@ -1,5 +1,6 @@
+import 'package:expo_nomade/firebase_options.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/Museum.dart';
 import 'MuseumDetailPage.dart';
 
@@ -14,6 +15,25 @@ class MuseumListPage extends StatelessWidget {
 
   const MuseumListPage({required this.museums}); // Constructeur
 
+  void _seedDatabase() async {
+    // TODO: Replace this with the actual code to seed the database
+    // Get a reference to your Firebase database
+    DatabaseReference databaseReference = FirebaseDatabase.instance.reference().child('museums');
+
+    // Loop through the dummyMuseums and add them to the database
+    for (var museum in museums) {
+      await databaseReference.child('museums').push().set({
+        'name': museum.name,
+        'address': {
+          'latitude': museum.address.latitude,
+          'longitude': museum.address.longitude,
+        },
+        'website': museum.website,
+        // Add other fields as needed
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +46,7 @@ class MuseumListPage extends StatelessWidget {
             final museum = museums[index];
             return ListTile(
               title: Text(museum.name),
-              subtitle: Text(museum.address),
+              subtitle: Text('Objects : ${museum.objects?.length.toString() ?? '0'}'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -36,11 +56,26 @@ class MuseumListPage extends StatelessWidget {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Naviguer vers la page d'ajout de musée
-          },
-          child: Icon(Icons.add),
+
+        // Add a FAB to the bottom right
+        // FAB : Floating Action Button
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton.extended(
+              onPressed: () {
+                // ToDo : Naviguer vers la page d'ajout de musée
+              },
+              label: Text('Add museum'),
+              icon: Icon(Icons.add),
+            ),
+            SizedBox(height: 10), // Add some spacing between the FABs
+            FloatingActionButton.extended(
+              onPressed: _seedDatabase,
+              label: Text('Seed Database'),
+              icon: Icon(Icons.cloud_upload),
+            ),
+          ],
         ),
       ),
     );

@@ -1,17 +1,18 @@
+import 'Coordinate.dart';
 import 'MuseumObject .dart';
 
 class Museum {
-  final String id;
-  final String name;
-  final String address;
-  final String website;
-  final List<MuseumObject> objects;   // TODO: Rendre optionnel ? Car créer un musée, puis ENSUITE ajouter des objets
+  String id;
+  String name;
+  Coordinate address;
+  String website;
+  late List<MuseumObject>? objects;   // late : permet de déclarer une variable sans l'initialiser (elle sera initialisée plus tard)
 
   Museum({
     required this.id,
     required this.name,
     required this.address,
     required this.website,
-    required this.objects,
+    this.objects,
   });
 }

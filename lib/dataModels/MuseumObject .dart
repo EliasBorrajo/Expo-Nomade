@@ -4,12 +4,12 @@ import 'Tag.dart';
 
 // OBJETS
 class MuseumObject {
-  final String name;
-  final String description;
-  final List<TagOption>? tags;            // optional
-  final List<String>? images;             // optional
-  final List<Localisation> discoveries;
-  final List<Localisation> sources;
+  String name;
+  String description;
+  late List<TagOption>? tags;            // optional & initialized later
+  List<String>? images;                  // optional
+  List<Localisation> discoveries;
+  List<Localisation> sources;
 
   MuseumObject({
     required this.name,
@@ -21,10 +21,10 @@ class MuseumObject {
   });
 }
 
-// DECOUVERTES
+// DECOUVERTES & SOURCES
 class Localisation {
-  final String date;
-  final Coordinate location;
+  String date;
+  Coordinate location;
 
 
   Localisation({

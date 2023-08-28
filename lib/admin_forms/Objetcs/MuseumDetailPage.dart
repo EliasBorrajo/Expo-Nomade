@@ -43,30 +43,37 @@ class MuseumDetailPage extends StatelessWidget {
           Text('Adresse: ${museum.address}'),
           Text('Site web: ${museum.website}'),
           Text('Objets:'),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: museum.objects.length,
-            itemBuilder: (context, index) {
-              final object = museum.objects[index];
-              return ListTile(
-                title: Text(object.name),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ObjectDetailPage(object: object)),
-                  );
-                },
-                onLongPress: () {
-                  // TODO : Afficher une boîte de dialogue de confirmation de suppression
-                  // TODO : Si l'utilisateur confirme, supprimer l'objet
-                  _showDeleteConfirmationDialog(context, object);
 
-                },
-              );
-            },
-          ),
+          // Display the list of objects
+          museum.objects != null
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: museum.objects?.length ?? 0,   // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
+                  itemBuilder: (context, index) {
+                    final object = museum.objects?[index];
+                    return ListTile(
+                      title: Text(object?.name ?? ''),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ObjectDetailPage(object: object!)), // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                        );
+                      },
+                      onLongPress: () {
+                        _showDeleteConfirmationDialog(context, object!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                      },
+                    );
+                  },
+                )
+              : const Text('Aucun objet disponible'),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        // Naviguer vers la page d'ajout d'objet
+      },
+      child: Icon(Icons.add),
+    ),
     );
   }
 
