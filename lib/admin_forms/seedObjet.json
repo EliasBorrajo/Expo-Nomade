@@ -96,12 +96,12 @@
         "Âge du Bronze",
         "Époque moderne"
       ],
-      "Etiquettes_Tags": [
+      "Tags_labels": [
         "archéologie",
         "histoire ancienne"
       ]
     },
-    "Raison_migration": [
+    "Migration_reason": [
       "Recherche de meilleures terres",
       "Fuite",
       "Travail",
@@ -119,7 +119,7 @@
       "Belges",
       "Ottomans"
     ],
-    "Type_objet": [
+    "Object_type": [
       "Fruits",
       "Outils",
       "Document",
@@ -128,6 +128,28 @@
     ],
     "Museum": [
       "liste des musées"
+    ]
+  },
+  "Admins": {
+    "Admin": [
+      {
+        "Id_admin": 1,
+        "Email": "jolartiste@gmail.com",
+        "Name": "Lartiste",
+        "Surname": "Jo",
+        "Date_of_birth": "1995-12-5",
+        "Role": "Administrateur"
+      }
+    ],
+    "Admin": [
+      {
+        "Id_admin": 2,
+        "Email": "jeanguy@outlook.com",
+        "Name": "Guy",
+        "Surname": "Jean",
+        "Date_of_birth": "1990-04-26",
+        "Role": "Administrateur"
+      }
     ]
   }
 }
