@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 
+// TODO : REMOVE -- GARDER LES LIGNES 16 à 21 POUR SEPARER LES API KEY ETC...
+
 class DefaultFirebaseOptions {
   static Future<FirebaseOptions> get currentPlatform async
   {
