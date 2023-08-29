@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import '../firebase_options.dart';
 import 'dummyData.dart';
 
-// TODO : REMOVE MAIN
+// TODO : REMOVE ONLY BY ELIAS
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
