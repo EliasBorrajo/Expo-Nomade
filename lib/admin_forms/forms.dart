@@ -1,24 +1,35 @@
 // Form qui permet de faire du CRUD (Create, Read, Update, Delete) sur un objet stocké dans la firebase.
 // Utiliser le fichier firebase_crud.dart pour faire le lien avec la firebase.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import '../firebase/firebase_settings.dart';
+import '../firebase_options.dart';
 import 'dummyData.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   // Initialize Firebase
-  WidgetsFlutterBinding.ensureInitialized();  // Permet d'initialiser les plugins avant d'initialiser Firebase
-  final FirebaseOptions options = await DefaultFirebaseOptions.currentPlatform; // Récupère les options de la firebase
-  await Firebase.initializeApp(options: options); // Initialise la firebase avec les options récupérées
+  //WidgetsFlutterBinding.ensureInitialized();  // Permet d'initialiser les plugins avant d'initialiser Firebase
+  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(MyApp());
+  // final FirebaseOptions options = await DefaultFirebaseOptions.currentPlatform; // Récupère les options de la firebase
+  // await Firebase.initializeApp(options: options); // Initialise la firebase avec les options récupérées
+
+  runApp( const MyApp());
 }
 
 class MyApp extends StatelessWidget
 {
   const MyApp({super.key}); // Constructeur
+
+  static FirebaseFirestore db = FirebaseFirestore.instance; // Récupère l'instance de la firebase firestore
+  static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
 
   // R E N D E R I N G
   @override
@@ -43,7 +54,10 @@ class MyApp extends StatelessWidget
           ),
           body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
             children: [
-              MuseumListPage(museums: dummyMuseums),
+              MuseumListPage(
+                  museums: dummyMuseums,
+                  firestore: db ,
+                  database: database),
               Icon(Icons.account_balance),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
               // FormObject(),
