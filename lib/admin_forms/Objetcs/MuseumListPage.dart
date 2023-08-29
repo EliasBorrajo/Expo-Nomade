@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -18,7 +20,7 @@ class MuseumListPage extends StatelessWidget {
 
   const MuseumListPage({required this.museums, required this.firestore, required this.database}); // Constructeur
 
-  void _seedDatabase_OLD() async {
+  void _seedDatabase() async {
     // Get a reference to your Firebase database
     DatabaseReference databaseReference = database.ref();
 
@@ -36,26 +38,28 @@ class MuseumListPage extends StatelessWidget {
     }
   }
 
-  void _seedDatabase() async {
-    // Get a reference to your Firestore instance
-    FirebaseFirestore firestore = this.firestore;
+  void _readDatabase() async {
+    DatabaseReference databaseReference = database.ref().child('museums');
 
-    // Reference to the 'museums' collection in Firestore
-    CollectionReference museumsCollection = firestore.collection('museums');
+    DataSnapshot snapshot = await databaseReference.get();
 
-    // Loop through the dummyMuseums and add them to the Firestore collection
-    for (var museum in museums) {
-      await museumsCollection.add({
-        'name': museum.name,
-        'address': {
-          'latitude': museum.address.latitude,
-          'longitude': museum.address.longitude,
-        },
-        'website': museum.website,
-        // Add other fields as needed
+    if (snapshot.value != null) {
+      print('Museum data:');
+      Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic, dynamic> ;
+      museumsData.forEach((key, value) {
+        print('Museum ID: $key');
+        print('Name: ${value['name']}');
+        print('Address:');
+        print('  Latitude: ${value['address']['latitude']}');
+        print('  Longitude: ${value['address']['longitude']}');
+        print('Website: ${value['website']}');
+        print('---');
       });
+    } else {
+      print('No museums found in the database.');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +99,17 @@ class MuseumListPage extends StatelessWidget {
             ),
             SizedBox(height: 10), // Add some spacing between the FABs
             FloatingActionButton.extended(
-              onPressed: _seedDatabase_OLD,
+              onPressed: _seedDatabase,
               label: Text('Seed Database'),
               icon: Icon(Icons.cloud_upload),
               heroTag: 'seed_database',
+            ),
+            SizedBox(height: 10),
+            FloatingActionButton.extended(
+              onPressed: _readDatabase,  // Utilise la méthode de lecture
+              label: Text('Read Database'),  // Libellé du bouton
+              icon: Icon(Icons.cloud_download),  // Icône du bouton
+              heroTag: 'read_database',  // Tag héros unique
             ),
           ],
         ),

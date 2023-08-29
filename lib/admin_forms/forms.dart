@@ -9,24 +9,20 @@ import 'package:flutter/material.dart';
 import '../firebase_options.dart';
 import 'dummyData.dart';
 
+// TODO : REMOVE MAIN
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  // Initialize Firebase
-  //WidgetsFlutterBinding.ensureInitialized();  // Permet d'initialiser les plugins avant d'initialiser Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // final FirebaseOptions options = await DefaultFirebaseOptions.currentPlatform; // Récupère les options de la firebase
-  // await Firebase.initializeApp(options: options); // Initialise la firebase avec les options récupérées
-
-  runApp( const MyApp());
+  runApp( const adminForms());
 }
 
-class MyApp extends StatelessWidget
+
+class adminForms extends StatelessWidget
 {
-  const MyApp({super.key}); // Constructeur
+  const adminForms({super.key}); // Constructeur
 
   static FirebaseFirestore db = FirebaseFirestore.instance; // Récupère l'instance de la firebase firestore
   static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
