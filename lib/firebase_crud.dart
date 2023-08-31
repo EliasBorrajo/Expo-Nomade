@@ -1,1 +1,0 @@
-// Methodes pour la gestion des données dans la base de données firebase.

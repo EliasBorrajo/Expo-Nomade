@@ -459,3 +459,7 @@ obj/
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio,android,swift,java,dart,darteditor,intellij
+
+# FIREBASE
+# Firebase config file
+/lib/firebase/firebase_config.json
