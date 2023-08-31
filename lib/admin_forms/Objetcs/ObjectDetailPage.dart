@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../dataModels/MuseumObject.dart';
+import 'ObjectEditPage.dart';
 
 // TODO : Edit les informations de l'objet
 // TODO : Ajouter des Tags à l'objet
@@ -14,7 +15,20 @@ class ObjectDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(object.name)),
+      appBar: AppBar
+        (title: Text(object.name),
+          actions: [
+          IconButton(
+          icon: Icon(Icons.edit),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ObjectEditPage(object: object)),
+        );
+      },
+    ),
+    ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
