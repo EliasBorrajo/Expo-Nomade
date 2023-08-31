@@ -41,53 +41,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
   }
 
-  // void _loadMuseumsFromFirebase() async {
-  //   // Charge les musées depuis la Firebase
-  //   // Utilise la référence appropriée à ta structure de base de données
-  //   // Par exemple : DatabaseReference museumRef = database.reference().child('museums');
-  //   // Ensuite, utilise .once() pour obtenir une seule lecture initiale
-  //   // Et .onValue pour configurer l'écouteur en temps réel
-  //   // Mets à jour la liste 'museums' avec les données reçues
-  //
-  //   DatabaseReference museumsRef = database.ref().child('museums');
-  //
-  //   museumsRef.once().then((DatabaseEvent event) // Utilise .once() pour obtenir une seule lecture initiale
-  //   {
-  //     if (event.snapshot.value != null)
-  //     {
-  //       DataSnapshot snapshot = event.snapshot;   // snapshot : instantané de la base de données à un moment donné
-  //       Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic, dynamic> ;
-  //           // value : valeur de l'instantané, ici les musées
-  //           // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
-  //           // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
-  //       List<Museum> loadedMuseums = [];
-  //
-  //       museumsData.forEach((key, value) {
-  //         Museum museum = Museum(
-  //           id: key,
-  //           name: value['name'],
-  //           address: Coordinate(
-  //             latitude: value['address']['latitude'],
-  //             longitude: value['address']['longitude'],
-  //           ),
-  //           website: value['website'],
-  //         );
-  //         loadedMuseums.add(museum);
-  //       });
-  //
-  //       // Mets à jour la liste 'museums' local avec les données reçues
-  //       setState(() {
-  //         museums = loadedMuseums;
-  //       });
-  //
-  //     }
-  //   });
-  //
-  //   // Display the museums data in the console TODO : Remove
-  //   _printMuseumsData(museums);
-  //
-  // }
-
   /// Loads the museums from Firebase and listens for updates.
   /// Updates the local list of museums when the data changes.
   /// All museums are loaded at once.
