@@ -4,6 +4,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
+import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +41,12 @@ class adminForms extends StatelessWidget
         length: 4,
         child: Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
             bottom: const TabBar(
-              tabs: [                                         // 2. Create the tabs
+              tabs: [
                 Tab(icon: Icon(Icons.home)),
                 Tab(icon: Icon(Icons.account_balance)),
                 Tab(icon: Icon(Icons.accessible_forward)),
@@ -50,13 +55,13 @@ class adminForms extends StatelessWidget
             ),
             title: const Text('Admin data management'),
           ),
-          body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
+          body: TabBarView(
             children: [
               MuseumListPage(
                   museums: dummyMuseums,
                   firestore: db ,
                   database: database),
-              Icon(Icons.account_balance),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
+            QuizListPage(questions: dummyQuiz, firestore: db, database: database),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
               MigrationListPage(
                   migrations: dummyMigrations,

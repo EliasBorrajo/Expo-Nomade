@@ -1,3 +1,4 @@
+import 'package:expo_nomade/PageManager.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:latlong2/latlong.dart';
@@ -16,18 +17,13 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  static const List<LatLng> test = [
-    LatLng(46.23133558251062, 7.275204265601556),
-    LatLng(46.23954129676883, 7.287402512905699),
-    LatLng(46.216446100834, 7.295343971067559),
-    LatLng(46.2152203011698, 7.279190562209763)
-  ];
+
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Flutter Map Example',
-      home: MapScreen(points: test,), // Set MapScreen as the initial screen
+      home: PageManager(), // Set MapScreen as the initial screen
     );
   }
 }
