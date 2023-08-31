@@ -6,7 +6,6 @@ import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
-import '../dataModels/quiz_models.dart';
 
 final dummyMuseums = [
   Museum(
@@ -56,7 +55,7 @@ final dummyMuseums = [
   ),
 ];
 
-final dummyQuiz = [
+/*final dummyQuiz = [
   Question(
     id: '1',
     questionText: 'Quelle planète est connue comme la "planète rouge" ?',
@@ -207,7 +206,7 @@ final dummyQuiz = [
     ],
     correctAnswer: 2,
   ),
-];
+];*/
 
 final dummyMigrations = [
   Migration(
