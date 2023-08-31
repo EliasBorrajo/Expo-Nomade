@@ -1,7 +1,7 @@
 // Dummy data
 import '../dataModels/Coordinate.dart';
 import '../dataModels/Museum.dart';
-import '../dataModels/MuseumObject .dart';
+import '../dataModels/MuseumObject.dart';
 import '../dataModels/quiz_models.dart';
 
 final dummyMuseums = [

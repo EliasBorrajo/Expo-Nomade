@@ -1,5 +1,5 @@
 import 'Coordinate.dart';
-import 'MuseumObject .dart';
+import 'MuseumObject.dart';
 
 class Museum {
   String id;
