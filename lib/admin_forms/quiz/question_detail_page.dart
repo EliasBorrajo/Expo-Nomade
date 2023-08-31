@@ -19,7 +19,16 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmer la suppression'),
-          content: Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
+          //content: Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
+              SizedBox(height: 8),
+              Text('ID de la question : ${widget.question.id}'), // Display the question's ID
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () {

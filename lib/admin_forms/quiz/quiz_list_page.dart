@@ -28,10 +28,28 @@ class _QuizListPageState extends State<QuizListPage> {
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
+        List<Question> fetchedQuestions = data.entries
+            .map((entry) {
+          String questionId = entry.key;
+          Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
+          return Question(
+            id: questionId,
+            questionText: questionData['text'] ?? '',
+            answers: List<String>.from(questionData['answers'] ?? []),
+            correctAnswer: questionData['correctAnswer'] ?? 0,
+          );
+        })
+            .toList();
+
+        fetchedQuestions.forEach((question) {
+          print('Question ID: ${question.id}');
+          print('Question Text: ${question.questionText}');
+          print('Answers: ${question.answers}');
+          print('Correct Answer: ${question.correctAnswer}');
+        });
+
         setState(() {
-          questions = data.entries
-              .map((entry) => Question.fromMap(Map<String, dynamic>.from(entry.value)))
-              .toList();
+          questions = fetchedQuestions;
         });
       }
     } catch (error) {

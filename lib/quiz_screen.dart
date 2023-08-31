@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'quiz_question.dart';
+import '../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
 class QuizScreen extends StatefulWidget {
