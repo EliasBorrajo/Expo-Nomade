@@ -24,6 +24,7 @@ class AdminForms extends StatelessWidget
 {
   const AdminForms({super.key}); // Constructeur
 
+  // F I R E B A S E
   static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
 
   // R E N D E R I N G
