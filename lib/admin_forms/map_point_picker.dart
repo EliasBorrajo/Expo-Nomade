@@ -112,6 +112,18 @@ class _MapPointPickerState extends State<MapPointPicker> {
               backgroundColor: Colors.blue,
               child: const Icon(Icons.save),
             ),
+            const SizedBox(height: 10),
+            FloatingActionButton(
+              heroTag: 'fab3',
+              onPressed: () {
+                // Return the points or point
+                //widget.pickerType == 1 ? Navigator.pop(context, validatedPolygon) : Navigator.pop(context, currentPoint);
+
+                widget.pickerType == 1 ? validatedPolygon.clear() : validatedPoint = const LatLng(0.0, 0.0);
+              },
+              backgroundColor: Colors.blue,
+              child: const Icon(Icons.delete),
+            ),
           ],
       )
 

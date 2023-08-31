@@ -44,7 +44,7 @@ class MigrationDetailsPage extends StatelessWidget {
                 onTap: () async {
                   final polygonPoints = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)), // Here redirect to the map
+                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)), // Here redirect to the map
                   );
                   print(polygonPoints);
                 },
