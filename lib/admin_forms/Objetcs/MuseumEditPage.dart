@@ -53,8 +53,8 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
       widget.museum.name = _nameController.text;
       widget.museum.website = _websiteController.text;
       widget.museum.address = Coordinate(
-        latitude:  double.parse(_latitudeController.text),
-        longitude: double.parse(_longitudeController.text),
+        latitude:  _latitudeController.text,
+        longitude: _longitudeController.text,
       );
 
       // TODO: Sauvegarder les modifications (peut-être via une fonction dans votre modèle de données)

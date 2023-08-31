@@ -52,8 +52,6 @@ class adminForms extends StatelessWidget
           body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
             children: [
               MuseumListPage(
-                  museums: dummyMuseums,
-                  firestore: db ,
                   database: database),
               QuizListPage(
                   database: database

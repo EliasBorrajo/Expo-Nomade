@@ -4,7 +4,7 @@ import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
 import '../dataModels/question_models.dart';
 
-final dummyMuseums = [
+/*final dummyMuseums = [
   Museum(
     id: '1',
     name: 'Museum 1',
@@ -53,7 +53,7 @@ final dummyMuseums = [
     website: 'Website 4',
     objects:  const <MuseumObject>[], // Empty list of objects for this museum // TODO : supprimer ? Ne peut pas arriver je crois
   ),
-];
+];*/
 
 /*
 final dummyQuiz = [

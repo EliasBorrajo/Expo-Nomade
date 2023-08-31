@@ -24,7 +24,7 @@ class _QuizListPageState extends State<QuizListPage> {
 
   void fetchQuestions() async {
     try {
-      DatabaseEvent event = await widget.database.reference().child('quiz').once();
+      DatabaseEvent event = await widget.database.ref().child('quiz').once();
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
