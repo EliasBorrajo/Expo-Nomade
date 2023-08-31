@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import '../../dataModels/Coordinate.dart';
 import '../../dataModels/Museum.dart';
 import 'MuseumDetailPage.dart';
 
@@ -12,17 +13,147 @@ import 'MuseumDetailPage.dart';
 
 /// Displays a list of museums.
 /// When a museum is tapped, the [MuseumDetailPage] is displayed.
-///
-class MuseumListPage extends StatelessWidget {
-  final List<Museum> museums;
-  final FirebaseFirestore firestore;
+
+class MuseumListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
-  const MuseumListPage({required this.museums, required this.firestore, required this.database}); // Constructeur
+  // Constructeur
+  const MuseumListPage({super.key,  required this.database});
+
+  // Gestion de l'état de la page
+  @override
+  _MuseumListPageState createState() => _MuseumListPageState(  );
+}
+
+
+class _MuseumListPageState extends State<MuseumListPage> {
+
+  late List<Museum> museums = [];
+
+
+  @override
+  void initState() {
+    super.initState();
+    // Pas besoin de faire un async ou future,
+    // car ne bloque pas le thread principal (pas de await)
+    // et ne retourne rien (void) donc pas besoin de future
+    //_loadMuseumsFromFirebase();
+    _loadMuseumsFromFirebaseAndListen();
+
+    // TODO : FAIRE UNE TERAIRE DU GRAPHIQUE ET VOIR QUAND LES DATA SONT CHARGEES
+
+  }
+
+  // void _loadMuseumsFromFirebase() async {
+  //   // Charge les musées depuis la Firebase
+  //   // Utilise la référence appropriée à ta structure de base de données
+  //   // Par exemple : DatabaseReference museumRef = database.reference().child('museums');
+  //   // Ensuite, utilise .once() pour obtenir une seule lecture initiale
+  //   // Et .onValue pour configurer l'écouteur en temps réel
+  //   // Mets à jour la liste 'museums' avec les données reçues
+  //
+  //   DatabaseReference museumsRef = database.ref().child('museums');
+  //
+  //   museumsRef.once().then((DatabaseEvent event) // Utilise .once() pour obtenir une seule lecture initiale
+  //   {
+  //     if (event.snapshot.value != null)
+  //     {
+  //       DataSnapshot snapshot = event.snapshot;   // snapshot : instantané de la base de données à un moment donné
+  //       Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic, dynamic> ;
+  //           // value : valeur de l'instantané, ici les musées
+  //           // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
+  //           // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
+  //       List<Museum> loadedMuseums = [];
+  //
+  //       museumsData.forEach((key, value) {
+  //         Museum museum = Museum(
+  //           id: key,
+  //           name: value['name'],
+  //           address: Coordinate(
+  //             latitude: value['address']['latitude'],
+  //             longitude: value['address']['longitude'],
+  //           ),
+  //           website: value['website'],
+  //         );
+  //         loadedMuseums.add(museum);
+  //       });
+  //
+  //       // Mets à jour la liste 'museums' local avec les données reçues
+  //       setState(() {
+  //         museums = loadedMuseums;
+  //       });
+  //
+  //     }
+  //   });
+  //
+  //   // Display the museums data in the console TODO : Remove
+  //   _printMuseumsData(museums);
+  //
+  // }
+
+  void _loadMuseumsFromFirebaseAndListen() {
+    // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
+    // Utilise .onValue pour écouter les changements et mettre à jour la liste 'museums'
+
+    DatabaseReference museumsRef = widget.database.ref().child('museums');
+
+    museumsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null)
+      {
+        List<Museum> updatedMuseums = [];
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic, dynamic>;
+        // value : valeur de l'instantané, ici les musées
+        // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
+        // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
+
+        museumsData.forEach((key, value) {
+          Museum museum = Museum(
+            id: key,
+            name: value['name'],
+            address: Coordinate(
+              latitude: value['address']['latitude'],
+              longitude: value['address']['longitude'],
+            ),
+            website: value['website'],
+          );
+          updatedMuseums.add(museum);
+        });
+
+        setState(() {
+          museums = updatedMuseums;
+
+        });
+      }
+    });
+
+    // Display the museums data in the console TODO : Remove
+    _printMuseumsData(museums);
+  }
+
+
+  void _printMuseumsData(List<Museum> museums) {
+
+    // vérifier si la liste est vide
+    if (museums.isEmpty) {
+      print('No museums found in the list / database.');
+      return;
+    }
+
+    print('Museums data:');
+    for (Museum museum in museums) {
+      print('Museum ID: ${museum.id}');
+      print('Name: ${museum.name}');
+      print('Address:');
+      print('  Latitude: ${museum.address.latitude}');
+      print('  Longitude: ${museum.address.longitude}');
+      print('Website: ${museum.website}');
+      print('---');
+    }
+  }
 
   void _seedDatabase() async {
     // Get a reference to your Firebase database
-    DatabaseReference databaseReference = database.ref();
+    DatabaseReference databaseReference = widget.database.ref();
 
     // Loop through the dummyMuseums and add them to the database
     for (var museum in museums) {
@@ -39,7 +170,7 @@ class MuseumListPage extends StatelessWidget {
   }
 
   void _readDatabase() async {
-    DatabaseReference databaseReference = database.ref().child('museums');
+    DatabaseReference databaseReference = widget.database.ref().child('museums');
 
     DataSnapshot snapshot = await databaseReference.get();
 
@@ -59,6 +190,9 @@ class MuseumListPage extends StatelessWidget {
       print('No museums found in the database.');
     }
   }
+
+
+
 
 
   @override

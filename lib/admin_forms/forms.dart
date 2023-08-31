@@ -1,7 +1,6 @@
 // Form qui permet de faire du CRUD (Create, Read, Update, Delete) sur un objet stocké dans la firebase.
 // Utiliser le fichier firebase_crud.dart pour faire le lien avec la firebase.
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -16,15 +15,15 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp( const adminForms());
+  runApp( const AdminForms());
 }
 
 
-class adminForms extends StatelessWidget
+class AdminForms extends StatelessWidget
 {
-  const adminForms({super.key}); // Constructeur
+  const AdminForms({super.key}); // Constructeur
 
-  static FirebaseFirestore db = FirebaseFirestore.instance; // Récupère l'instance de la firebase firestore
+  // F I R E B A S E
   static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
 
   // R E N D E R I N G
@@ -51,8 +50,6 @@ class adminForms extends StatelessWidget
           body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
             children: [
               MuseumListPage(
-                  museums: dummyMuseums,
-                  firestore: db ,
                   database: database),
               Icon(Icons.account_balance),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
