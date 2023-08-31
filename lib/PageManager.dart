@@ -5,12 +5,6 @@ import 'dart:async';
 import 'admin_forms/forms.dart';
 import 'map/map_screen.dart';
 
-import 'package:expo_nomade/quiz_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
-import 'dart:async';
-import 'admin_forms/forms.dart';
-import 'map/map_screen.dart';
 
 class PageManager extends StatefulWidget {
   @override

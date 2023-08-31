@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../../dataModels/Coordinate.dart';
+import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
+import '../../dataModels/MuseumObject.dart';
 import 'MuseumDetailPage.dart';
 
 
@@ -38,8 +38,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // et ne retourne rien (void) donc pas besoin de future
     //_loadMuseumsFromFirebase();
     _loadMuseumsFromFirebaseAndListen();
-
-    // TODO : FAIRE UNE TERAIRE DU GRAPHIQUE ET VOIR QUAND LES DATA SONT CHARGEES
 
   }
 
@@ -90,7 +88,11 @@ class _MuseumListPageState extends State<MuseumListPage> {
   //
   // }
 
-  void _loadMuseumsFromFirebaseAndListen() {
+  /// Loads the museums from Firebase and listens for updates.
+  /// Updates the local list of museums when the data changes.
+  /// All museums are loaded at once.
+  /// All objects for each museum are loaded at once.
+  void _loadMuseumsFromFirebaseAndListen() async{
     // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
     // Utilise .onValue pour écouter les changements et mettre à jour la liste 'museums'
 
@@ -105,30 +107,67 @@ class _MuseumListPageState extends State<MuseumListPage> {
         // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
         // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
 
-        museumsData.forEach((key, value) {
+        // museumsData.forEach((key, value)
+        // {
+        //   Museum museum = Museum(
+        //     id: key,
+        //     name: value['name'],
+        //     address: LatLng(
+        //       value['address']['latitude'],
+        //       value['address']['longitude'],
+        //
+        //
+        //     ),
+        //     website: value['website'],
+        //   );
+
+        museumsData.forEach((key, value)
+        {
+          // M U S E U M S  O B J E C T S
+          List<MuseumObject>? objects = [];
+          if (value['objects'] != null)     // Si le musée a des objets associés dans la firebase
+          {
+            List<dynamic> objectsData = value['objects'] as List<dynamic>;
+
+            objectsData.forEach((objValue) {
+              MuseumObject object = MuseumObject(
+                name: objValue['name'] as String,
+                description: objValue['description'] as String,
+                point: LatLng(
+                  objValue['point']['latitude'] as double,
+                  objValue['point']['longitude'] as double,
+                ),
+              );
+              objects.add(object);
+            });
+          }
+
+          // M U S E U M S
           Museum museum = Museum(
             id: key,
-            name: value['name'],
-            address: Coordinate(
-              latitude: value['address']['latitude'],
-              longitude: value['address']['longitude'],
+            name: value['name'] as String,
+            address: LatLng(
+              value['address']['latitude'] as double,
+              value['address']['longitude'] as double,
             ),
-            website: value['website'],
+            website: value['website'] as String,
+            objects: objects.isEmpty ? null : objects,    // Ajouter les objets du dessus au musée
           );
+
           updatedMuseums.add(museum);
+
+          setState(() {
+            museums = updatedMuseums;
+          });
+
         });
 
-        setState(() {
-          museums = updatedMuseums;
-
-        });
       }
     });
 
     // Display the museums data in the console TODO : Remove
     _printMuseumsData(museums);
   }
-
 
   void _printMuseumsData(List<Museum> museums) {
 
@@ -151,20 +190,74 @@ class _MuseumListPageState extends State<MuseumListPage> {
   }
 
   void _seedDatabase() async {
+    print("Seed database");
+
     // Get a reference to your Firebase database
     DatabaseReference databaseReference = widget.database.ref();
 
+    // DatabaseReference museumsRef = databaseReference.child('museums');
+    //
+    // // Vérifier si la référence 'museums' existe
+    // DatabaseEvent event = await museumsRef.once();  // Utilise .once() pour obtenir une seule lecture initiale
+    // DataSnapshot snapshot = event.snapshot;         // snapshot : instantané de la base de données à un moment donné
+    //
+    // if (!snapshot.exists) {
+    //   // Si la référence 'museums' n'existe pas, la créer avec une liste vide
+    //   museumsRef.set([]);
+    // }
+
     // Loop through the dummyMuseums and add them to the database
-    for (var museum in museums) {
-      await databaseReference.child('museums').push().set({
-        'name': museum.name,
-        'address': {
-          'latitude': museum.address.latitude,
-          'longitude': museum.address.longitude,
-        },
-        'website': museum.website,
-        // Add other fields as needed
-      });
+    // for (var museum in museums) {
+    //   await databaseReference.child('museums').push().set({
+    //     'name': museum.name,
+    //     'address': {
+    //       'latitude': museum.address.latitude.toDouble(),
+    //       'longitude': museum.address.longitude.toDouble(),
+    //     },
+    //     'website': museum.website,
+    //   });
+    // }
+
+    try
+    {
+      for (var museum in dummyMuseums)
+      {
+        // Convert the museum object to a Map<String, dynamic> object that can be stored in the database
+        Map<String, dynamic> museumData =
+        {
+          'name': museum.name,
+          'address': {
+            'latitude': museum.address.latitude.toDouble(),
+            'longitude': museum.address.longitude.toDouble(),
+          },
+          'website': museum.website,
+        };
+
+        if (museum.objects != null)
+        {
+          museumData['objects'] = [];   // Crée une liste vide d'objets pour le musée dans la firebase (sinon erreur)
+          for (var object in museum.objects!)
+          {
+            // Ajoute chaque objet du musée dans la firebase (dans la liste d'objets du musée)
+            museumData['objects'].add(
+            {
+              'name': object.name,
+              'description': object.description,
+              'point': {
+                'latitude': object.point.latitude.toDouble(),
+                'longitude': object.point.longitude.toDouble(),
+              },
+            });
+          }
+        }
+
+        await databaseReference.child('museums').push().set(museumData);
+        print('Museum seeded successfully: ${museum.name}');
+      }
+      print('Database seeding completed.');
+    }
+    catch (error) {
+      print('Error seeding database: $error');
     }
   }
 

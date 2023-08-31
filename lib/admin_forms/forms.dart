@@ -55,18 +55,13 @@ class AdminForms extends StatelessWidget
           ),
           body: TabBarView(
             children: [
-              MuseumListPage(
-                  museums: dummyMuseums,
-                  database: database),
-            QuizListPage(questions: dummyQuiz, database: database),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
-              Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
+              MuseumListPage(database: database),
+              QuizListPage(questions: dummyQuiz, database: database),
+              Icon(Icons.accessible_forward), // TODO : TAGS PAGE
               MigrationListPage(
                   migrations: dummyMigrations,
                   database: database)
-              // TODO : FormObject et MUSEE(),
-              // TODO : FormFiltres&Tag(),
-              // TODO : FormQuizz(),
-              // TODO : GEOGRAPHIE()
+
 
             ],
           ),
