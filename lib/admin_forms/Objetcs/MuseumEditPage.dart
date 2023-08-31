@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../dataModels/Coordinate.dart';
+import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
 
 // Immutable state of the MuseumEditPage widget.
@@ -48,13 +48,14 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
   }
 
   void _saveChanges() {
+    // Validation
     if (_formKey.currentState!.validate()) {
-      // Mettre à jour les propriétés du musée avec les nouvelles valeurs
+      // Mettre à jour les propriétés du musée avec les nouvelles valeurs en local
       widget.museum.name = _nameController.text;
       widget.museum.website = _websiteController.text;
-      widget.museum.address = Coordinate(
-        latitude:  double.parse(_latitudeController.text),
-        longitude: double.parse(_longitudeController.text),
+      widget.museum.address = LatLng(
+        double.parse(_latitudeController.text),
+        double.parse(_longitudeController.text),
       );
 
       // TODO: Sauvegarder les modifications (peut-être via une fonction dans votre modèle de données)

@@ -1,4 +1,4 @@
-import 'package:expo_nomade/dataModels/Coordinate.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'Tag.dart';
 
@@ -6,29 +6,17 @@ import 'Tag.dart';
 class MuseumObject {
   String name;
   String description;
-  late List<TagOption>? tags;            // optional & initialized later
+  LatLng point;
+  late List<Tag>? tags;                  // optional & initialized later
   List<String>? images;                  // optional
-  List<Localisation> discoveries;
-  List<Localisation> sources;
+
 
   MuseumObject({
     required this.name,
     required this.description,
+    required this.point,
     this.tags,
     this.images,
-    required this.discoveries,
-    required this.sources,
   });
 }
 
-// DECOUVERTES & SOURCES
-class Localisation {
-  String date;
-  Coordinate location;
-
-
-  Localisation({
-    required this.date,
-    required this.location,
-  });
-}

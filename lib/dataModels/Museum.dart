@@ -1,10 +1,11 @@
-import 'Coordinate.dart';
+import 'package:latlong2/latlong.dart';
+
 import 'MuseumObject.dart';
 
 class Museum {
   String id;
   String name;
-  Coordinate address;
+  LatLng address;
   String website;
   late List<MuseumObject>? objects;   // late : permet de déclarer une variable sans l'initialiser (elle sera initialisée plus tard)
 

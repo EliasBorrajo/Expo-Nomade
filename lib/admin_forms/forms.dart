@@ -13,7 +13,7 @@ import 'dummyData.dart';
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await Firebase.initializeApp( name: "exponomade-6452" ,options: DefaultFirebaseOptions.currentPlatform,);
   //Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // TODO : REMOVE
 
   runApp( const adminForms());
@@ -36,7 +36,7 @@ class adminForms extends StatelessWidget
     return MaterialApp(
       title: appTitle,
       home: DefaultTabController(                             // 1. Create a TabController
-        length: 3,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
             bottom: const TabBar(
@@ -44,9 +44,10 @@ class adminForms extends StatelessWidget
                 Tab(icon: Icon(Icons.home)),
                 Tab(icon: Icon(Icons.account_balance)),
                 Tab(icon: Icon(Icons.accessible_forward)),
+                Tab(icon: Icon(Icons.ac_unit)),
               ],
             ),
-            title: const Text('Tabs'),
+            title: const Text('Admin data management'),
           ),
           body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
             children: [
@@ -56,9 +57,12 @@ class adminForms extends StatelessWidget
                   database: database),
               Icon(Icons.account_balance),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
-              // FormObject(),
-              // FormFiltres(),
-              // FormQuizz(),
+              Icon(Icons.ac_unit)
+              // TODO : FormObject et MUSEE(),
+              // TODO : FormFiltres&Tag(),
+              // TODO : FormQuizz(),
+              // TODO : GEOGRAPHIE()
+
             ],
           ),
         ),

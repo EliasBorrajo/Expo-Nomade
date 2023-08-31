@@ -66,7 +66,6 @@ class MuseumListPage extends StatelessWidget {
     return MaterialApp(
       title: 'Liste des musées',
       home: Scaffold(
-        appBar: AppBar(title: Text('Liste des musées')),
         body: ListView.builder(
           itemCount: museums.length,
           itemBuilder: (context, index) {
