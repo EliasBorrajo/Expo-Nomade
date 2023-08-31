@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/question_models.dart';
 
-class EditQuestionPage extends StatefulWidget {
+class AddQuestionPage extends StatefulWidget {
   final FirebaseDatabase database;
-  final Question question;
 
-  const EditQuestionPage({Key? key, required this.database, required this.question}) : super(key: key);
+  // TODO changer
+  const AddQuestionPage({Key? key, required this.database}) : super(key: key);
 
   @override
-  _EditQuestionPageState createState() => _EditQuestionPageState();
+  _AddQuestionPageState createState() => _AddQuestionPageState();
 }
 
-class _EditQuestionPageState extends State<EditQuestionPage> {
+class _AddQuestionPageState extends State<AddQuestionPage> {
   final TextEditingController questionTextController = TextEditingController();
   final TextEditingController answer1Controller = TextEditingController();
   final TextEditingController answer2Controller = TextEditingController();
@@ -20,19 +20,9 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
   int correctAnswer = 0;
 
   @override
-  void initState() {
-    super.initState();
-    questionTextController.text = widget.question.questionText;
-    answer1Controller.text = widget.question.answers[0];
-    answer2Controller.text = widget.question.answers[1];
-    answer3Controller.text = widget.question.answers[2];
-    correctAnswer = widget.question.correctAnswer;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Éditer la Question')),
+      appBar: AppBar(title: Text('Ajouter une Question')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -69,9 +59,9 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                _updateQuestionInDatabase();
+                _addQuestionToDatabase();
               },
-              child: Text('Mettre à jour la Question'),
+              child: Text('Ajouter la Question'),
             ),
           ],
         ),
@@ -79,36 +69,27 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
     );
   }
 
-  void _updateQuestionInDatabase() async {
+  void _addQuestionToDatabase() async {
     try {
-      DatabaseReference questionsRef = widget.database.reference().child('quiz').child(widget.question.id);
+      DatabaseReference questionsRef = widget.database.ref().child('quiz');
+      DatabaseReference newQuestionRef = questionsRef.push();
 
-      Question updatedQuestion = Question(
-        id: widget.question.id,
-        questionText: questionTextController.text,
-        answers: [
-          answer1Controller.text,
-          answer2Controller.text,
-          answer3Controller.text,
-        ],
-        correctAnswer: correctAnswer,
-      );
-
-      Map<String, dynamic> questionToUpdate = {
-        'questionText': updatedQuestion.questionText,
+      Map<String, dynamic> questionToUpload =
+      {
+        'questionText': questionTextController.text,
         'answers': {
-          'answer1': updatedQuestion.answers[0],
-          'answer2': updatedQuestion.answers[1],
-          'answer3': updatedQuestion.answers[2],
+          '0': answer1Controller.text,
+          '1': answer2Controller.text,
+          '2': answer3Controller.text,
         },
-        'correctAnswer': updatedQuestion.correctAnswer,
+        'correctAnswer': correctAnswer,
       };
 
-      await questionsRef.update(questionToUpdate);
+      await newQuestionRef.set(questionToUpload);
 
-      Navigator.pop(context); // Revenir à la liste après la mise à jour
+      Navigator.pop(context); // Revenir à la liste après l'ajout
     } catch (error) {
-      print('Error updating question: $error');
+      print('Error adding question: $error');
     }
   }
 }

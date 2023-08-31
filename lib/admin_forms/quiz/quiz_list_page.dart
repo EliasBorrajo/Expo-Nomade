@@ -1,13 +1,15 @@
+import 'package:expo_nomade/admin_forms/quiz/question_add_page.dart';
+import 'package:expo_nomade/admin_forms/quiz/question_edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/question_models.dart';
-import 'question_detail_page.dart';
+import 'question_list_item.dart';
 
 class QuizListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
-  //const QuizListPage({required this.database, Key? key}) : super(key: key);
-  const QuizListPage({super.key, required this.database});
+  // TODO changer
+  const QuizListPage({Key? key, required this.database}) : super(key: key);
 
   @override
   _QuizListPageState createState() => _QuizListPageState();
@@ -23,8 +25,10 @@ class _QuizListPageState extends State<QuizListPage> {
   }
 
   void fetchQuestions() async {
-    try {
-      DatabaseEvent event = await widget.database.ref().child('quiz').once();
+    //try {
+    DatabaseReference quizRef = widget.database.ref().child('quiz');
+    quizRef.onValue.listen((DatabaseEvent event)
+    {
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
@@ -45,19 +49,61 @@ class _QuizListPageState extends State<QuizListPage> {
           questions = fetchedQuestions;
         });
       }
+    });
+  }
+
+  void _deleteQuestion(String questionId) async {
+    try {
+      await widget.database.ref().child('quiz').child(questionId).remove();
+      fetchQuestions(); // Rafraîchir la liste des questions après la suppression
+
+      // Afficher un message de succès
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La question a été supprimée avec succès.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (error) {
-      print('Error fetching questions: $error');
-      // Handle the error appropriately, e.g., show an error message to the user.
+      print('Error deleting question: $error');
+
+      // Afficher un message d'échec
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Échec de la suppression de la question.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
+
+  void _navigateToAddQuestionPage() async {
+    // Naviguer vers la page d'ajout de question et attendre un éventuel retour
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddQuestionPage(database: widget.database),
+      ),
+    );
+  }
+
+  void _navigateToEditQuestionPage(Question question) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditQuestionPage(database: widget.database, question: question),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Liste des Questions')),
       body: questions.isEmpty
-          ? Center(
-        child: const Text(
+          ? const Center(
+        child: Text(
           'Aucune question trouvée dans la base de données.',
           style: TextStyle(fontSize: 16),
         ),
@@ -65,49 +111,17 @@ class _QuizListPageState extends State<QuizListPage> {
           : ListView.builder(
         itemCount: questions.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(questions[index].questionText),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    // TODO editer la question
-                  },
-                  icon: const Icon(Icons.edit),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // TODO supprimer la question
-                  },
-                  icon: const Icon(Icons.delete),
-                )
-              ],
-            ),
-            onTap: () async {
-              // Navigate to the question detail page and wait for a result
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => QuestionDetailPage(
-                    database: widget.database,
-                    question: questions[index],
-                  ),
-                ),
-              );
-
-              // Check if the result is true (question was deleted)
-              if (result == true) {
-                fetchQuestions(); // Refresh the questions
-              }
-            },
+          return Column(
+            children: [
+              QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion),
+              Divider(height: 1), // Ajoute une ligne de séparation
+            ],
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Navigate to the question creation page
-          // Implement the logic to navigate to the page where you can add a new question
+          _navigateToAddQuestionPage();
         },
         child: const Icon(Icons.add),
       ),
