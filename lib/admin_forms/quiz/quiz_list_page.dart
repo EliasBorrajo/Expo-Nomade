@@ -69,8 +69,7 @@ class _QuizListPageState extends State<QuizListPage> {
             onTap: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QuestionDetailPage(question: questions[index])),
-              );
+                MaterialPageRoute(builder: (context) => QuestionDetailPage(database: widget.database, question: questions[index])),              );
             },
           );
         },
