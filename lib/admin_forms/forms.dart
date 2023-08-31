@@ -30,18 +30,21 @@ class adminForms extends StatelessWidget
 
   // R E N D E R I N G
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     const appTitle = 'Form Validation';
 
     return MaterialApp(
       title: appTitle,
-      home: DefaultTabController(                             // 1. Create a TabController
+      home: DefaultTabController(
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
             bottom: const TabBar(
-              tabs: [                                         // 2. Create the tabs
+              tabs: [
                 Tab(icon: Icon(Icons.home)),
                 Tab(icon: Icon(Icons.account_balance)),
                 Tab(icon: Icon(Icons.accessible_forward)),
@@ -49,17 +52,12 @@ class adminForms extends StatelessWidget
             ),
             title: const Text('Tabs'),
           ),
-          body: /*ToDo const*/ TabBarView(                             // 3. Create content for each tab
+          body: TabBarView(
             children: [
               MuseumListPage(
-                  database: database),
-              QuizListPage(
-                  database: database
-              ),
-              Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
-              // FormObject(),
-              // FormFiltres(),
-              // FormQuizz(),
+                  museums: dummyMuseums, firestore: db, database: database),
+              QuizListPage(questions: dummyQuiz, firestore: db, database: database),
+              Icon(Icons.accessible_forward), // Todo: remove, just an example
             ],
           ),
         ),
