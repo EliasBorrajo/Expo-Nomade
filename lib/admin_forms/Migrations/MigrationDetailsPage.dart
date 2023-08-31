@@ -41,11 +41,12 @@ class MigrationDetailsPage extends StatelessWidget {
               final flowMigration = migration.polygons?[index];
               return ListTile(
                 title: Text(flowMigration?.name ?? ''),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final polygonPoints = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1,)), // Here redirect to the map
+                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)), // Here redirect to the map
                   );
+                  print(polygonPoints);
                 },
                 onLongPress: () {
                   _showDeleteConfirmationDialog(context, flowMigration!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici

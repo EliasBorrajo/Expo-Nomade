@@ -6,7 +6,6 @@ import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
-import '../dataModels/Tag.dart';
 
 final dummyMuseums = [
   Museum(

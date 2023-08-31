@@ -1,8 +1,6 @@
-
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../../dataModels/Museum.dart';
 import 'MigrationDetailsPage.dart';
 
 
