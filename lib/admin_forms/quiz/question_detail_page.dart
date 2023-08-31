@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../dataModels/question_models.dart';
+import '../../firebase/firebase_crud.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   final FirebaseDatabase database;
@@ -13,6 +14,14 @@ class QuestionDetailPage extends StatefulWidget {
 }
 
 class _QuestionDetailPageState extends State<QuestionDetailPage> {
+  late QuestionCRUDHandler crudHandler;
+
+  @override
+  void initState() {
+    super.initState();
+    crudHandler = QuestionCRUDHandler(database: widget.database);
+  }
+
   void _showDeleteConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -35,10 +44,9 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
               child: Text('Annuler'),
             ),
             TextButton(
-              onPressed: () {
-                // Suppression réelle dans la base de données
-                _deleteQuestion();
-                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+              onPressed: () async {
+                await crudHandler.deleteQuestion(widget.question.id);
+                Navigator.of(context).pop(true); // Retourne true en tant que résultat
               },
               child: Text('Supprimer'),
             ),
@@ -47,16 +55,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       },
     );
   }
-
-  void _deleteQuestion() async {
-    try {
-      await widget.database.ref().child('quiz').child(widget.question.id).remove();
-      Navigator.pop(context, true);
-    } catch (error) {
-      print('Error deleting question: $error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

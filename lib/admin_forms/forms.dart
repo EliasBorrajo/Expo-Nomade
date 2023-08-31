@@ -25,7 +25,6 @@ class adminForms extends StatelessWidget
 {
   const adminForms({super.key}); // Constructeur
 
-  static FirebaseFirestore db = FirebaseFirestore.instance; // Récupère l'instance de la firebase firestore
   static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
 
   // R E N D E R I N G
@@ -57,7 +56,7 @@ class adminForms extends StatelessWidget
               MuseumListPage(
                   database: database),
               QuizListPage(
-                  database: database),
+                  ),
               Icon(Icons.accessible_forward), // Todo: remove, just an example
             ],
           ),

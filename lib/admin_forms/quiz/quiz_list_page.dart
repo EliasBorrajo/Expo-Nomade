@@ -1,50 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/question_models.dart';
+import '../../firebase/firebase_crud.dart';
 import 'question_detail_page.dart';
 
 class QuizListPage extends StatefulWidget {
-  final FirebaseDatabase database;
 
   //const QuizListPage({required this.database, Key? key}) : super(key: key);
-  const QuizListPage({super.key, required this.database});
+  const QuizListPage({super.key});
 
   @override
   _QuizListPageState createState() => _QuizListPageState();
 }
 
 class _QuizListPageState extends State<QuizListPage> {
+  late QuestionCRUDHandler crudHandler;
   List<Question> questions = [];
 
   @override
   void initState() {
     super.initState();
+    crudHandler = QuestionCRUDHandler(database: FirebaseDatabase.instance);
     fetchQuestions();
   }
 
   void fetchQuestions() async {
     try {
-      DatabaseEvent event = await widget.database.ref().child('quiz').once();
-      DataSnapshot snapshot = event.snapshot;
-      Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
-      if (data != null) {
-        List<Question> fetchedQuestions = data.entries
-            .map((entry) {
-          String questionId = entry.key;
-          Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
-          return Question(
-            id: questionId,
-            questionText: questionData['questionText'] ?? '',
-            answers: List<String>.from(questionData['answers'] ?? []),
-            correctAnswer: questionData['correctAnswer'] ?? 0,
-          );
-        })
-            .toList();
-
-        setState(() {
-          questions = fetchedQuestions;
-        });
-      }
+      final fetchedQuestions = await crudHandler.fetchQuestions();
+      setState(() {
+        questions = fetchedQuestions;
+      });
     } catch (error) {
       print('Error fetching questions: $error');
       // Handle the error appropriately, e.g., show an error message to the user.
@@ -56,8 +41,8 @@ class _QuizListPageState extends State<QuizListPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Liste des Questions')),
       body: questions.isEmpty
-          ? Center(
-        child: const Text(
+          ? const Center(
+        child: Text(
           'Aucune question trouvée dans la base de données.',
           style: TextStyle(fontSize: 16),
         ),
@@ -90,12 +75,11 @@ class _QuizListPageState extends State<QuizListPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => QuestionDetailPage(
-                    database: widget.database,
+                    database: FirebaseDatabase.instance,
                     question: questions[index],
                   ),
                 ),
               );
-
               // Check if the result is true (question was deleted)
               if (result == true) {
                 fetchQuestions(); // Refresh the questions
