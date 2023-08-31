@@ -93,12 +93,13 @@ class _MuseumListPageState extends State<MuseumListPage> {
   /// All museums are loaded at once.
   /// All objects for each museum are loaded at once.
   void _loadMuseumsFromFirebaseAndListen() async{
-    // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
-    // Utilise .onValue pour écouter les changements et mettre à jour la liste 'museums'
 
     DatabaseReference museumsRef = widget.database.ref().child('museums');
 
-    museumsRef.onValue.listen((DatabaseEvent event) {
+    // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
+    museumsRef.onValue.listen((DatabaseEvent event)
+    {
+
       if (event.snapshot.value != null)
       {
         List<Museum> updatedMuseums = [];
@@ -106,20 +107,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
         // value : valeur de l'instantané, ici les musées
         // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
         // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
-
-        // museumsData.forEach((key, value)
-        // {
-        //   Museum museum = Museum(
-        //     id: key,
-        //     name: value['name'],
-        //     address: LatLng(
-        //       value['address']['latitude'],
-        //       value['address']['longitude'],
-        //
-        //
-        //     ),
-        //     website: value['website'],
-        //   );
 
         museumsData.forEach((key, value)
         {
@@ -195,28 +182,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // Get a reference to your Firebase database
     DatabaseReference databaseReference = widget.database.ref();
 
-    // DatabaseReference museumsRef = databaseReference.child('museums');
-    //
-    // // Vérifier si la référence 'museums' existe
-    // DatabaseEvent event = await museumsRef.once();  // Utilise .once() pour obtenir une seule lecture initiale
-    // DataSnapshot snapshot = event.snapshot;         // snapshot : instantané de la base de données à un moment donné
-    //
-    // if (!snapshot.exists) {
-    //   // Si la référence 'museums' n'existe pas, la créer avec une liste vide
-    //   museumsRef.set([]);
-    // }
-
-    // Loop through the dummyMuseums and add them to the database
-    // for (var museum in museums) {
-    //   await databaseReference.child('museums').push().set({
-    //     'name': museum.name,
-    //     'address': {
-    //       'latitude': museum.address.latitude.toDouble(),
-    //       'longitude': museum.address.longitude.toDouble(),
-    //     },
-    //     'website': museum.website,
-    //   });
-    // }
 
     try
     {
