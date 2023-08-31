@@ -43,8 +43,15 @@ class _QuizListPageState extends State<QuizListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Liste des Questions')),
-      body: ListView.builder(
+      appBar: AppBar(title: const Text('Liste des Questions')),
+      body: questions.isEmpty
+          ? Center(
+        child: const Text(
+          'Aucune question trouvée dans la base de données.',
+          style: TextStyle(fontSize: 16),
+        ),
+      )
+          : ListView.builder(
         itemCount: questions.length,
         itemBuilder: (context, index) {
           return ListTile(
@@ -56,20 +63,26 @@ class _QuizListPageState extends State<QuizListPage> {
                   onPressed: () {
                     // TODO editer la question
                   },
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                 ),
                 IconButton(
                   onPressed: () {
                     // TODO supprimer la question
                   },
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                 )
               ],
             ),
             onTap: () {
               Navigator.push(
-                  context,
-                MaterialPageRoute(builder: (context) => QuestionDetailPage(database: widget.database, question: questions[index])),              );
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuestionDetailPage(
+                    database: widget.database,
+                    question: questions[index],
+                  ),
+                ),
+              );
             },
           );
         },
@@ -79,7 +92,7 @@ class _QuizListPageState extends State<QuizListPage> {
           // TODO: Navigate to the question creation page
           // Implement the logic to navigate to the page where you can add a new question
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
