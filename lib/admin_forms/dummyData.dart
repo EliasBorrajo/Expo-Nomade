@@ -30,7 +30,7 @@ final dummyMuseums = [
   Museum(
     id: '2',
     name: 'Museum 2',
-    address:  const LatLng( 89.3,  100.89),
+    address:  const LatLng( 89,  100.89),
     website: 'Website 2',
     objects: [
       MuseumObject(
@@ -43,7 +43,7 @@ final dummyMuseums = [
   Museum(
     id: '3',
     name: 'Museum 3',
-    address: const LatLng( -89.2,  170.89),
+    address: const LatLng( -89,  170.89),
     website: 'Website 3',
     objects: null, // No objects for this museum
   ),

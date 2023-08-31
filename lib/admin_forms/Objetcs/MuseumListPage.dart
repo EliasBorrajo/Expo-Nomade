@@ -121,8 +121,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
                 name: objValue['name'] as String,
                 description: objValue['description'] as String,
                 point: LatLng(
-                  objValue['point']['latitude'] as double,
-                  objValue['point']['longitude'] as double,
+                  // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+                  (objValue['point']['latitude'] as num).toDouble(),
+                  (objValue['point']['longitude'] as num).toDouble(),
                 ),
               );
               objects.add(object);
@@ -134,8 +135,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
             id: key,
             name: value['name'] as String,
             address: LatLng(
-              value['address']['latitude'] as double,
-              value['address']['longitude'] as double,
+              // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+              (value['address']['latitude'] as num).toDouble(),
+              (value['address']['longitude'] as num).toDouble(),
             ),
             website: value['website'] as String,
             objects: objects.isEmpty ? null : objects,    // Ajouter les objets du dessus au musée
@@ -254,6 +256,10 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Sort the museums list alphabetically by name
+    museums.sort((a, b) => a.name.compareTo(b.name));
+
     return MaterialApp(
       title: 'Liste des musées',
       home: Scaffold(
