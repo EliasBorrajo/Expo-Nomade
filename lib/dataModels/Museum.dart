@@ -3,7 +3,7 @@ import 'package:latlong2/latlong.dart';
 import 'MuseumObject.dart';
 
 class Museum {
-  String id;
+  final String id;
   String name;
   LatLng address;
   String website;

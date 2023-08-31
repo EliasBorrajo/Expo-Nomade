@@ -1,8 +1,12 @@
 // Dummy data
+import 'dart:ui';
+
 import 'package:latlong2/latlong.dart';
 
+import '../dataModels/Migration.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
+import '../dataModels/Tag.dart';
 
 final dummyMuseums = [
   Museum(
@@ -49,5 +53,36 @@ final dummyMuseums = [
     address: const LatLng( 77,  160.89),
     website: 'Website 4',
     objects:  const <MuseumObject>[], // Empty list of objects for this museum // TODO : supprimer ? Ne peut pas arriver je crois
+  ),
+];
+
+
+final dummyMigrations = [
+  Migration(
+    name: 'Migration 1',
+    description: 'Description of Migration 1',
+    arrival: 'Arrival 1',
+    polygons: [
+      MigrationSource(
+        [LatLng(0, 0), LatLng(0, 10), LatLng(10, 10)],
+        Color(0xFF00FF00),
+      ),
+    ],
+    images: ['image1.jpg', 'image2.jpg'],
+  ),
+  Migration(
+    name: 'Migration 2',
+    description: 'Description of Migration 2',
+    arrival: 'Arrival 2',
+    polygons: [
+      MigrationSource(
+        [LatLng(20, 20), LatLng(30, 20), LatLng(30, 30)],
+        Color(0xFFFF0000),
+      ),
+      MigrationSource(
+        [LatLng(40, 40), LatLng(40, 50), LatLng(50, 50)],
+        Color(0xFF0000FF),
+      ),
+    ],
   ),
 ];
