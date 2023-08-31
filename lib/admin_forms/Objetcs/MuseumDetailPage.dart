@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../dataModels/Museum.dart';
-import '../../dataModels/MuseumObject .dart';
+import '../../dataModels/MuseumObject.dart';
 import 'MuseumEditPage.dart';
 import 'ObjectDetailPage.dart';
 
