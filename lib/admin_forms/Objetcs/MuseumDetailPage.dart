@@ -40,7 +40,7 @@ class MuseumDetailPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Adresse: ${museum.address}'),
+          Text('Adresse: latitude ${museum.address.latitude} & longitude ${museum.address.longitude} ' ),
           Text('Site web: ${museum.website}'),
           Text('Objets:'),
 

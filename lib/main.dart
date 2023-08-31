@@ -4,11 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:latlong2/latlong.dart';
 import 'firebase/firebase_options.dart';
 import 'map/map_screen.dart';
-import 'map/map_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    name: "exponomade-6452",
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());

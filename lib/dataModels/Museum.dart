@@ -1,12 +1,11 @@
-import 'dart:ffi';
+import 'package:latlong2/latlong.dart';
 
-import 'Coordinate.dart';
 import 'MuseumObject.dart';
 
 class Museum {
-  String id;
+  final String id;
   String name;
-  Coordinate address;
+  LatLng address;
   String website;
   late List<MuseumObject>? objects;   // late : permet de déclarer une variable sans l'initialiser (elle sera initialisée plus tard)
 
@@ -17,16 +16,4 @@ class Museum {
     required this.website,
     this.objects,
   });
-
-  factory Museum.fromMap(Map<String, dynamic> map) {
-    return Museum(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      address: Coordinate.fromMap(Map<String, dynamic>.from(map['address'] ?? {})),
-      website: map['website'] ?? '',
-      objects: (map['objects'] as List<dynamic>?)
-         ?.map((objectMap) => MuseumObject.fromMap(Map<String, dynamic>.from(objectMap)))
-          .toList(),
-    );
-  }
 }
