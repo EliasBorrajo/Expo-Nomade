@@ -55,8 +55,9 @@ class adminForms extends StatelessWidget
           body: TabBarView(
             children: [
               MuseumListPage(
-                  museums: dummyMuseums, firestore: db, database: database),
-              QuizListPage(questions: dummyQuiz, firestore: db, database: database),
+                  database: database),
+              QuizListPage(
+                  database: database),
               Icon(Icons.accessible_forward), // Todo: remove, just an example
             ],
           ),

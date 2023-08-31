@@ -1,3 +1,4 @@
+import 'package:expo_nomade/quiz_screen.dart';
 import 'package:flutter/material.dart';
 
 class QuizResultScreen extends StatelessWidget {
@@ -18,8 +19,10 @@ class QuizResultScreen extends StatelessWidget {
         Text('Score: $score/$totalQuestions'),
         ElevatedButton(
           onPressed: () {
-            // TODO A changer lorsque les routes auront été définies
-            Navigator.pop(context); // Retour à l'écran du quiz
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => QuizScreen()),
+            );// Retour à l'écran du quiz
           },
           child: const Text('Refaire le test'),
         ),

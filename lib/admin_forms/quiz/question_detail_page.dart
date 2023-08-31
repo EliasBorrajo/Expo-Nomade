@@ -53,6 +53,7 @@ class QuestionDetailPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+            heroTag: 'editQuestion',
             onPressed: () {
               // TODO: Ajoutez ici la logique d'édition de la question
             },
@@ -61,6 +62,7 @@ class QuestionDetailPage extends StatelessWidget {
           ),
           SizedBox(width: 16),
           FloatingActionButton(
+            heroTag: 'deleteQuestion',
             onPressed: () {
               // TODO: Ajoutez ici la logique de suppression de la question
             },
