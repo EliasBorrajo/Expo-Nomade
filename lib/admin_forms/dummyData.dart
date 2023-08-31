@@ -2,7 +2,7 @@
 import '../dataModels/Coordinate.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
-import '../dataModels/quiz_models.dart';
+import '../dataModels/question_models.dart';
 
 final dummyMuseums = [
   Museum(
@@ -55,6 +55,7 @@ final dummyMuseums = [
   ),
 ];
 
+/*
 final dummyQuiz = [
   Question(
     id: '1',
@@ -206,4 +207,4 @@ final dummyQuiz = [
     ],
     correctAnswer: 2,
   ),
-];
+];*/

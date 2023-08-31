@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../dataModels/quiz_models.dart';
+import '../../dataModels/question_models.dart';
 
 class QuestionDetailPage extends StatelessWidget {
   final Question question;
@@ -12,20 +12,6 @@ class QuestionDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Question Detail'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              // TODO: Ajoutez ici la logique d'édition de la question
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              // TODO: Ajoutez ici la logique de suppression de la question
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -54,7 +40,7 @@ class QuestionDetailPage extends StatelessWidget {
                           color: i == question.correctAnswer ? Colors.green : Colors.grey,
                         ),
                         SizedBox(width: 8),
-                        Text(question.answers[i].answerText),
+                        Text(question.answers[i]),
                       ],
                     ),
                   ),
@@ -62,6 +48,26 @@ class QuestionDetailPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              // TODO: Ajoutez ici la logique d'édition de la question
+            },
+            tooltip: 'Éditer',
+            child: Icon(Icons.edit),
+          ),
+          SizedBox(width: 16),
+          FloatingActionButton(
+            onPressed: () {
+              // TODO: Ajoutez ici la logique de suppression de la question
+            },
+            tooltip: 'Supprimer',
+            child: Icon(Icons.delete),
+          ),
+        ],
       ),
     );
   }

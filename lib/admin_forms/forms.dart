@@ -56,9 +56,8 @@ class adminForms extends StatelessWidget
                   firestore: db ,
                   database: database),
               QuizListPage(
-                questions: dummyQuiz,
-                  firestore: db ,
-                  database: database),
+                  database: database
+              ),
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
               // FormObject(),
               // FormFiltres(),
