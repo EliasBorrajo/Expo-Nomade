@@ -26,10 +26,12 @@ class Migration {
 class MigrationSource {
   late List<LatLng> points;
   late Color color;
+  late String name;
 
   MigrationSource(
       this.points,
-      this.color
+      this.color,
+      this.name,
       );
 }
 

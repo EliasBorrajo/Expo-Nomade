@@ -65,7 +65,7 @@ final dummyMigrations = [
     polygons: [
       MigrationSource(
         [LatLng(0, 0), LatLng(0, 10), LatLng(10, 10)],
-        Color(0xFF00FF00),
+        Color(0xFF00FF00), 'source 1',
       ),
     ],
     images: ['image1.jpg', 'image2.jpg'],
@@ -77,11 +77,11 @@ final dummyMigrations = [
     polygons: [
       MigrationSource(
         [LatLng(20, 20), LatLng(30, 20), LatLng(30, 30)],
-        Color(0xFFFF0000),
+        Color(0xFFFF0000), 'source 2',
       ),
       MigrationSource(
         [LatLng(40, 40), LatLng(40, 50), LatLng(50, 50)],
-        Color(0xFF0000FF),
+        Color(0xFF0000FF), 'source 2.1',
       ),
     ],
   ),
