@@ -1,0 +1,34 @@
+import 'dart:ui';
+import 'package:latlong2/latlong.dart';
+import 'Tag.dart';
+
+// OBJETS
+class Migrations {
+  String name;
+  String description;
+  String arrival;
+  late List<MigrationSource> polygons;
+  late List<Tag>? tags;                  // optional & initialized later
+  List<String>? images;                  // optional
+
+
+  Migrations({
+    required this.name,
+    required this.description,
+    required this.arrival,
+    this.tags,
+    this.images,
+  });
+}
+
+// Represents a migration source with a color and a zone on the map
+class MigrationSource {
+  late List<LatLng> points;
+  late Color color;
+
+  MigrationSource(
+      this.points,
+      this.color
+      );
+}
+
