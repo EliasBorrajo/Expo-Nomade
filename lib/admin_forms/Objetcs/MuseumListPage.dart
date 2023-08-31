@@ -13,10 +13,9 @@ import 'MuseumDetailPage.dart';
 ///
 class MuseumListPage extends StatelessWidget {
   final List<Museum> museums;
-  final FirebaseFirestore firestore;
   final FirebaseDatabase database;
 
-  const MuseumListPage({required this.museums, required this.firestore, required this.database}); // Constructeur
+  const MuseumListPage({required this.museums, required this.database}); // Constructeur
 
   void _seedDatabase() async {
     // Get a reference to your Firebase database

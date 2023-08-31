@@ -7,10 +7,9 @@ import 'question_detail_page.dart';
 
 class QuizListPage extends StatelessWidget {
   final List<Question> questions;
-  final FirebaseFirestore firestore;
   final FirebaseDatabase database;
 
-  const QuizListPage({required this.questions, required this.firestore, required this.database});
+  const QuizListPage({required this.questions, required this.database});
 
   void _seedDatabase() async {
     // Get a reference to your Firebase database

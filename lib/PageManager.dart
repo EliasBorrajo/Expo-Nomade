@@ -69,9 +69,9 @@ class _PageManagerState extends State<PageManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_showMap ? 'Map Page' : 'Questionnaire Page'),
-      ),
+      /*appBar: AppBar( // TODO : REMOVE ?
+        // title: Text(_showMap ? 'Map Page' : 'Questionnaire Page'),
+      ),*/
       body: _showMap ? MapScreen(points: test,) : QuizScreen(),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -89,7 +89,7 @@ class _PageManagerState extends State<PageManager> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => adminForms()),
+                MaterialPageRoute(builder: (context) => AdminForms()),
               );
             },
             style: ElevatedButton.styleFrom(

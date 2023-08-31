@@ -1,7 +1,6 @@
 // Form qui permet de faire du CRUD (Create, Read, Update, Delete) sur un objet stocké dans la firebase.
 // Utiliser le fichier firebase_crud.dart pour faire le lien avec la firebase.
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
@@ -16,17 +15,15 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp( name: "exponomade-6452" ,options: DefaultFirebaseOptions.currentPlatform,);
-  //Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // TODO : REMOVE
 
-  runApp( const adminForms());
+  runApp( const AdminForms());
 }
 
 
-class adminForms extends StatelessWidget
+class AdminForms extends StatelessWidget
 {
-  const adminForms({super.key}); // Constructeur
+  const AdminForms({super.key}); // Constructeur
 
-  static FirebaseFirestore db = FirebaseFirestore.instance; // Récupère l'instance de la firebase firestore
   static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
 
   // R E N D E R I N G
@@ -59,9 +56,8 @@ class adminForms extends StatelessWidget
             children: [
               MuseumListPage(
                   museums: dummyMuseums,
-                  firestore: db ,
                   database: database),
-            QuizListPage(questions: dummyQuiz, firestore: db, database: database),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
+            QuizListPage(questions: dummyQuiz, database: database),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
               MigrationListPage(
                   migrations: dummyMigrations,

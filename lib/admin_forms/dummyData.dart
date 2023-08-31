@@ -209,7 +209,6 @@ final dummyQuiz = [
   ),
 ];
 
-
 final dummyMigrations = [
   Migration(
     name: 'Migration 1',
