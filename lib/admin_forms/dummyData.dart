@@ -2,6 +2,7 @@
 import '../dataModels/Coordinate.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject .dart';
+import '../dataModels/quiz_models.dart';
 
 final dummyMuseums = [
   Museum(
@@ -51,5 +52,158 @@ final dummyMuseums = [
     address: Coordinate(latitude: 77, longitude: 160.89),
     website: 'Website 4',
     objects:  const <MuseumObject>[], // Empty list of objects for this museum // TODO : supprimer ? Ne peut pas arriver je crois
+  ),
+];
+
+final dummyQuiz = [
+  Question(
+    id: '1',
+    questionText: 'Quelle planète est connue comme la "planète rouge" ?',
+    answers: [
+      Answer(answerText: 'Vénus'),
+      Answer(answerText: 'Mars'),
+      Answer(answerText: 'Saturne'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '2',
+    questionText: 'Quel est l\'élément chimique symbolisé par "H" ?',
+    answers: [
+      Answer(answerText: 'Hélium'),
+      Answer(answerText: 'Hydrogène'),
+      Answer(answerText: 'Carbone'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '3',
+    questionText: 'Combien de continents y a-t-il sur Terre ?',
+    answers: [
+      Answer(answerText: '4'),
+      Answer(answerText: '6'),
+      Answer(answerText: '7'),
+    ],
+    correctAnswer: 2,
+  ),
+  Question(
+    id: '4',
+    questionText: 'Quelle est la capitale de la France ?',
+    answers: [
+      Answer(answerText: 'Berlin'),
+      Answer(answerText: 'Madrid'),
+      Answer(answerText: 'Paris'),
+    ],
+    correctAnswer: 2,
+  ),
+  Question(
+    id: '5',
+    questionText: 'Quel est le plus grand animal terrestre ?',
+    answers: [
+      Answer(answerText: 'Éléphant'),
+      Answer(answerText: 'Girafe'),
+      Answer(answerText: 'Lion'),
+    ],
+    correctAnswer: 0,
+  ),
+  Question(
+    id: '6',
+    questionText: 'Quel est le plus petit État du monde ?',
+    answers: [
+      Answer(answerText: 'Vatican'),
+      Answer(answerText: 'Andorre'),
+      Answer(answerText: 'Malte'),
+    ],
+    correctAnswer: 0,
+  ),
+  Question(
+    id: '7',
+    questionText: 'Quelle est la distance approximative de la Terre à la Lune ?',
+    answers: [
+      Answer(answerText: '100 000 km'),
+      Answer(answerText: '384 400 km'),
+      Answer(answerText: '500 000 km'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '8',
+    questionText: 'Qui a peint la Joconde ?',
+    answers: [
+      Answer(answerText: 'Vincent van Gogh'),
+      Answer(answerText: 'Leonardo da Vinci'),
+      Answer(answerText: 'Michel-Ange'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '9',
+    questionText: 'Quel est le symbole chimique de l\'or ?',
+    answers: [
+      Answer(answerText: 'Ag'),
+      Answer(answerText: 'Au'),
+      Answer(answerText: 'Cu'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '10',
+    questionText: 'Quel est le plus grand océan sur Terre ?',
+    answers: [
+      Answer(answerText: 'Océan Atlantique'),
+      Answer(answerText: 'Océan Indien'),
+      Answer(answerText: 'Océan Pacifique'),
+    ],
+    correctAnswer: 2,
+  ),
+  Question(
+    id: '11',
+    questionText: 'Quel est le plus grand désert du monde ?',
+    answers: [
+      Answer(answerText: 'Désert du Sahara'),
+      Answer(answerText: 'Désert de Mojave'),
+      Answer(answerText: 'Désert du Kalahari'),
+    ],
+    correctAnswer: 0,
+  ),
+  Question(
+    id: '12',
+    questionText: 'Quel est le plus haut sommet du monde ?',
+    answers: [
+      Answer(answerText: 'Mont Kilimandjaro'),
+      Answer(answerText: 'Mont Everest'),
+      Answer(answerText: 'Mont McKinley'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '13',
+    questionText: 'Quel est le plus grand fleuve du monde ?',
+    answers: [
+      Answer(answerText: 'Fleuve Amazone'),
+      Answer(answerText: 'Fleuve Nil'),
+      Answer(answerText: 'Fleuve Yangtsé'),
+    ],
+    correctAnswer: 0,
+  ),
+  Question(
+    id: '14',
+    questionText: 'Quel est l\'instrument de musique à cordes le plus grand ?',
+    answers: [
+      Answer(answerText: 'Violon'),
+      Answer(answerText: 'Contrebasse'),
+      Answer(answerText: 'Guitare'),
+    ],
+    correctAnswer: 1,
+  ),
+  Question(
+    id: '15',
+    questionText: 'Quelle est la plus grande mer du monde ?',
+    answers: [
+      Answer(answerText: 'Mer Méditerranée'),
+      Answer(answerText: 'Mer Rouge'),
+      Answer(answerText: 'Mer Caspienne'),
+    ],
+    correctAnswer: 2,
   ),
 ];

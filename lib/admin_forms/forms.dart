@@ -3,6 +3,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
+import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,10 @@ class adminForms extends StatelessWidget
                   museums: dummyMuseums,
                   firestore: db ,
                   database: database),
-              Icon(Icons.account_balance),          // Todo : supprimer, ici que exemple - MILENA AJOUTER QUIZZ ICI
+              QuizListPage(
+                questions: dummyQuiz,
+                  firestore: db ,
+                  database: database),
               Icon(Icons.accessible_forward),       // Todo : supprimer, ici que exemple
               // FormObject(),
               // FormFiltres(),
