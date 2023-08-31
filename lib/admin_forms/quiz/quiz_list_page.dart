@@ -34,19 +34,12 @@ class _QuizListPageState extends State<QuizListPage> {
           Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
           return Question(
             id: questionId,
-            questionText: questionData['text'] ?? '',
+            questionText: questionData['questionText'] ?? '',
             answers: List<String>.from(questionData['answers'] ?? []),
             correctAnswer: questionData['correctAnswer'] ?? 0,
           );
         })
             .toList();
-
-        fetchedQuestions.forEach((question) {
-          print('Question ID: ${question.id}');
-          print('Question Text: ${question.questionText}');
-          print('Answers: ${question.answers}');
-          print('Correct Answer: ${question.correctAnswer}');
-        });
 
         setState(() {
           questions = fetchedQuestions;
@@ -91,8 +84,9 @@ class _QuizListPageState extends State<QuizListPage> {
                 )
               ],
             ),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              // Navigate to the question detail page and wait for a result
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => QuestionDetailPage(
@@ -101,6 +95,11 @@ class _QuizListPageState extends State<QuizListPage> {
                   ),
                 ),
               );
+
+              // Check if the result is true (question was deleted)
+              if (result == true) {
+                fetchQuestions(); // Refresh the questions
+              }
             },
           );
         },

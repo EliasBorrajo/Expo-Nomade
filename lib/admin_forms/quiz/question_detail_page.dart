@@ -18,15 +18,13 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmer la suppression'),
-          //content: Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
+          title: Text('Confirmation de suppression'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
               SizedBox(height: 8),
-              Text('ID de la question : ${widget.question.id}'), // Display the question's ID
             ],
           ),
           actions: [
@@ -53,11 +51,9 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   void _deleteQuestion() async {
     try {
       await widget.database.ref().child('quiz').child(widget.question.id).remove();
-      // Afficher un message de succès ou de confirmation ici si nécessaire
-      Navigator.of(context).pop(); // Ferme la page de détails de la question
+      Navigator.pop(context, true);
     } catch (error) {
       print('Error deleting question: $error');
-      // Gérer l'erreur en conséquence, par exemple, afficher un message d'erreur à l'utilisateur.
     }
   }
 
