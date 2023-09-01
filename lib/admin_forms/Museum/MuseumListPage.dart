@@ -2,6 +2,7 @@ import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:uuid/uuid.dart';
 import '../../dataModels/Museum.dart';
 import '../../dataModels/MuseumObject.dart';
 import 'MuseumAddPage.dart';
@@ -46,34 +47,82 @@ class _MuseumListPageState extends State<MuseumListPage> {
     museumsRef.onValue.listen((DatabaseEvent event) {
       if (event.snapshot.value != null) {
         List<Museum> updatedMuseums = [];
-        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<
-            dynamic,
-            dynamic>;
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
         // value : valeur de l'instantané, ici les musées
         // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
         // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
 
         museumsData.forEach((key, value) {
-          // M U S E U M S  O B J E C T S
-          List<MuseumObject>? objects = [];
-          if (value['objects'] !=
-              null) // Si le musée a des objets associés dans la firebase
-              {
-            List<dynamic> objectsData = value['objects'] as List<dynamic>;
 
-            objectsData.forEach((objValue) {
+          // M U S E U M S  O B J E C T S
+
+          /**/
+          List<MuseumObject>? objects = [];
+          if (value['objects'] != null) // Si le musée a des objets associés dans la firebase
+          {
+                List<dynamic> objectsData = value['objects'] as List<dynamic>;
+
+                // Création d'un ID unique pour chaque objet
+                const uuid = Uuid();
+
+                objectsData.forEach((objValue) {
+                  MuseumObject object = MuseumObject(
+                    //id: objValue['id'] as String,
+                    id: uuid.v4(), // Generate a v4 (random) id
+                    name: objValue['name'] as String,
+                    description: objValue['description'] as String,
+                    point: LatLng(
+                      // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+                      (objValue['point']['latitude'] as num).toDouble(),
+                      (objValue['point']['longitude'] as num).toDouble(),
+                    ),
+                  );
+                  objects.add(object);
+                });
+          }
+
+          /*List<MuseumObject>? objects = [];
+          if (value['objects'] != null) {
+            Map<dynamic, dynamic> objectsData = value['objects'] as Map<dynamic, dynamic>;
+
+            objectsData.forEach((objectId, objValue) {
+
               MuseumObject object = MuseumObject(
+                id: objectId, // Utilisez l'ID généré par Firebase comme ID unique
                 name: objValue['name'] as String,
                 description: objValue['description'] as String,
                 point: LatLng(
-                  // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+                  // Vérifiez que les valeurs sont bien des doubles, Firebase peut les convertir en int parfois
                   (objValue['point']['latitude'] as num).toDouble(),
                   (objValue['point']['longitude'] as num).toDouble(),
                 ),
               );
+
               objects.add(object);
             });
-          }
+          }*/
+
+          /*
+          List<MuseumObject>? objects = [];
+          if (value['objects'] != null && value['objects'] is List) {
+            List<dynamic> objectsData = value['objects'] as List<dynamic>;
+
+            objectsData.forEach((objValue) {
+              if (objValue is Map<dynamic, dynamic>) {
+                MuseumObject object = MuseumObject(
+                  id: objValue['id'] as String,
+                  name: objValue['name'] as String,
+                  description: objValue['description'] as String,
+                  point: LatLng(
+                    (objValue['point']['latitude'] as num).toDouble(),
+                    (objValue['point']['longitude'] as num).toDouble(),
+                  ),
+                );
+                objects.add(object);
+              }
+            });
+          }*/
+
 
           // M U S E U M S
           Museum museum = Museum(
@@ -144,8 +193,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
         };
 
         if (museum.objects != null) {
-          museumData['objects'] = [
-          ]; // Crée une liste vide d'objets pour le musée dans la firebase (sinon erreur)
+          museumData['objects'] = []; // Crée une liste vide d'objets pour le musée dans la firebase (sinon erreur)
           for (var object in museum.objects!) {
             // Ajoute chaque objet du musée dans la firebase (dans la liste d'objets du musée)
             museumData['objects'].add(

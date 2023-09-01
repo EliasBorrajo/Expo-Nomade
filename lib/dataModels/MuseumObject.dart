@@ -4,8 +4,7 @@ import 'Tag.dart';
 
 // OBJETS
 class MuseumObject {
-  // TODO : AJOUTER ID
-
+  final String id;
   String name;
   String description;
   LatLng point;
@@ -14,6 +13,7 @@ class MuseumObject {
 
 
   MuseumObject({
+    required this.id,
     required this.name,
     required this.description,
     required this.point,

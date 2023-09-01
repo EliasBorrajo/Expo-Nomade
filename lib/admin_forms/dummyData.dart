@@ -15,11 +15,13 @@ final dummyMuseums = [
     website: 'Website 1',
     objects: [
       MuseumObject(
+        id: '1',
         name: 'Object 1',
         description: 'Description of Object 1',
         point: const LatLng( 0.2, 0.2),
       ),
       MuseumObject(
+        id: '2',
         name: 'Object 2',
         description: 'Description of Object 2',
         point: const LatLng( 0.2, 0.2),
@@ -33,6 +35,7 @@ final dummyMuseums = [
     website: 'Website 2',
     objects: [
       MuseumObject(
+        id: '1',
         name: 'Object 2',
         description: 'Description of Object 2',
         point: const LatLng( 0.2, 0.2),

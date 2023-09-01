@@ -17,14 +17,15 @@ class MuseumDetailPage extends StatefulWidget {
   final Museum museum;
   final FirebaseDatabase database;
 
-  const MuseumDetailPage(
-      {super.key, required this.museum, required this.database});
+  const MuseumDetailPage({super.key, required this.museum, required this.database});
 
   @override
   State<StatefulWidget> createState() => _MuseumDetailPageState();
 }
 
 class _MuseumDetailPageState extends State<MuseumDetailPage> {
+
+  // M E T H O D S
   void _showDeleteConfirmationDialog(
       BuildContext context, Museum museum, MuseumObject object) {
     showDialog(
@@ -44,12 +45,9 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
               TextButton(
                 onPressed: () {
                   // TODO: Supprimer l'objet et mettre à jour la liste d'objets
-                  widget.database
-                      .ref()
-                      .child('museums')
-                      .child(museum.id)
-                      .child("objects")
-                      .child(object.name)
+                  widget.database.ref().child('museums').child(museum.id)
+                      //.child("objects")
+                      .child(object.id)
                       .remove();
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
