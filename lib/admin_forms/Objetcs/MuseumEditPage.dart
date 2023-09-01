@@ -28,7 +28,7 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
   @override
   void initState() {
 
-    // Todo : Fetch data from firebase ?
+    // Todo : Fetch data from firebase ? Nope, celle local suffit, déja fetch
 
     super.initState();
     _nameController       = TextEditingController(text: widget.museum.name);

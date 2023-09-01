@@ -27,23 +27,21 @@ class _QuizListPageState extends State<QuizListPage> {
   void fetchQuestions() async {
     //try {
     DatabaseReference quizRef = widget.database.ref().child('quiz');
-    quizRef.onValue.listen((DatabaseEvent event)
-    {
+    quizRef.onValue.listen((DatabaseEvent event) {
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
-        List<Question> fetchedQuestions = data.entries
-            .map((entry) {
+        List<Question> fetchedQuestions = data.entries.map((entry) {
           String questionId = entry.key;
-          Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
+          Map<String, dynamic> questionData =
+              Map<String, dynamic>.from(entry.value);
           return Question(
             id: questionId,
             questionText: questionData['questionText'] ?? '',
             answers: List<String>.from(questionData['answers'] ?? []),
             correctAnswer: questionData['correctAnswer'] ?? 0,
           );
-        })
-            .toList();
+        }).toList();
 
         setState(() {
           questions = fetchedQuestions;
@@ -91,11 +89,11 @@ class _QuizListPageState extends State<QuizListPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditQuestionPage(database: widget.database, question: question),
+        builder: (context) =>
+            EditQuestionPage(database: widget.database, question: question),
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -103,22 +101,24 @@ class _QuizListPageState extends State<QuizListPage> {
       appBar: AppBar(title: const Text('Liste des Questions')),
       body: questions.isEmpty
           ? const Center(
-        child: Text(
-          'Aucune question trouvée dans la base de données.',
-          style: TextStyle(fontSize: 16),
-        ),
-      )
+              child: Text(
+                'Aucune question trouvée dans la base de données.',
+                style: TextStyle(fontSize: 16),
+              ),
+            )
           : ListView.builder(
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion),
-              Divider(height: 1), // Ajoute une ligne de séparation
-            ],
-          );
-        },
-      ),
+              itemCount: questions.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    QuestionListItem(
+                        question: questions[index],
+                        onDeletePressed: _deleteQuestion),
+                    Divider(height: 1), // Ajoute une ligne de séparation
+                  ],
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _navigateToAddQuestionPage();

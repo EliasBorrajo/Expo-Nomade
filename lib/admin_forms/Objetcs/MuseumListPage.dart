@@ -4,7 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
 import '../../dataModels/MuseumObject.dart';
+import 'MuseumAddPage.dart';
 import 'MuseumDetailPage.dart';
+import 'MuseumEditPage.dart';
 
 
 // TODO : Ajouter le BTN + pour ajouter un musée
@@ -17,11 +19,11 @@ class MuseumListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
   // Constructeur
-  const MuseumListPage({super.key,  required this.database});
+  const MuseumListPage({super.key, required this.database});
 
   // Gestion de l'état de la page
   @override
-  _MuseumListPageState createState() => _MuseumListPageState(  );
+  _MuseumListPageState createState() => _MuseumListPageState();
 }
 
 
@@ -36,37 +38,33 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // Pas besoin de faire un async ou future,
     // car ne bloque pas le thread principal (pas de await)
     // et ne retourne rien (void) donc pas besoin de future
-    //_loadMuseumsFromFirebase();
     _loadMuseumsFromFirebaseAndListen();
-
   }
 
   /// Loads the museums from Firebase and listens for updates.
   /// Updates the local list of museums when the data changes.
   /// All museums are loaded at once.
   /// All objects for each museum are loaded at once.
-  void _loadMuseumsFromFirebaseAndListen() async{
-
+  void _loadMuseumsFromFirebaseAndListen() async {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
 
     // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
-    museumsRef.onValue.listen((DatabaseEvent event)
-    {
-
-      if (event.snapshot.value != null)
-      {
+    museumsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
         List<Museum> updatedMuseums = [];
-        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic, dynamic>;
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<
+            dynamic,
+            dynamic>;
         // value : valeur de l'instantané, ici les musées
         // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
         // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
 
-        museumsData.forEach((key, value)
-        {
+        museumsData.forEach((key, value) {
           // M U S E U M S  O B J E C T S
           List<MuseumObject>? objects = [];
-          if (value['objects'] != null)     // Si le musée a des objets associés dans la firebase
-          {
+          if (value['objects'] !=
+              null) // Si le musée a des objets associés dans la firebase
+              {
             List<dynamic> objectsData = value['objects'] as List<dynamic>;
 
             objectsData.forEach((objValue) {
@@ -93,7 +91,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
               (value['address']['longitude'] as num).toDouble(),
             ),
             website: value['website'] as String,
-            objects: objects.isEmpty ? null : objects,    // Ajouter les objets du dessus au musée
+            objects: objects.isEmpty
+                ? null
+                : objects, // Ajouter les objets du dessus au musée
           );
 
           updatedMuseums.add(museum);
@@ -101,9 +101,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
           setState(() {
             museums = updatedMuseums;
           });
-
         });
-
       }
     });
 
@@ -112,7 +110,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
   }
 
   void _printMuseumsData(List<Museum> museums) {
-
     // vérifier si la liste est vide
     if (museums.isEmpty) {
       print('No museums found in the list / database.');
@@ -138,10 +135,8 @@ class _MuseumListPageState extends State<MuseumListPage> {
     DatabaseReference databaseReference = widget.database.ref();
 
 
-    try
-    {
-      for (var museum in dummyMuseums)
-      {
+    try {
+      for (var museum in dummyMuseums) {
         // Convert the museum object to a Map<String, dynamic> object that can be stored in the database
         Map<String, dynamic> museumData =
         {
@@ -153,21 +148,20 @@ class _MuseumListPageState extends State<MuseumListPage> {
           'website': museum.website,
         };
 
-        if (museum.objects != null)
-        {
-          museumData['objects'] = [];   // Crée une liste vide d'objets pour le musée dans la firebase (sinon erreur)
-          for (var object in museum.objects!)
-          {
+        if (museum.objects != null) {
+          museumData['objects'] = [
+          ]; // Crée une liste vide d'objets pour le musée dans la firebase (sinon erreur)
+          for (var object in museum.objects!) {
             // Ajoute chaque objet du musée dans la firebase (dans la liste d'objets du musée)
             museumData['objects'].add(
-            {
-              'name': object.name,
-              'description': object.description,
-              'point': {
-                'latitude': object.point.latitude.toDouble(),
-                'longitude': object.point.longitude.toDouble(),
-              },
-            });
+                {
+                  'name': object.name,
+                  'description': object.description,
+                  'point': {
+                    'latitude': object.point.latitude.toDouble(),
+                    'longitude': object.point.longitude.toDouble(),
+                  },
+                });
           }
         }
 
@@ -182,13 +176,15 @@ class _MuseumListPageState extends State<MuseumListPage> {
   }
 
   void _readDatabase() async {
-    DatabaseReference databaseReference = widget.database.ref().child('museums');
+    DatabaseReference databaseReference = widget.database.ref().child(
+        'museums');
 
     DataSnapshot snapshot = await databaseReference.get();
 
     if (snapshot.value != null) {
       print('Museum data:');
-      Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic, dynamic> ;
+      Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic,
+          dynamic>;
       museumsData.forEach((key, value) {
         print('Museum ID: $key');
         print('Name: ${value['name']}');
@@ -203,13 +199,37 @@ class _MuseumListPageState extends State<MuseumListPage> {
     }
   }
 
-
-
+  void _showDeleteConfirmationDialog(BuildContext context, Museum museum) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirmation'),
+            content: Text('Êtes-vous sûr de vouloir supprimer cet objet ? Cette action est irreversible'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // TODO: Supprimer l'objet et mettre à jour la liste d'objets
+                  widget.database.ref().child('museums').child(museum.id).remove();
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: Text('Supprimer'),
+              ),
+            ],
+          );
+        }
+    );
+  }
 
 
   @override
   Widget build(BuildContext context) {
-
     // Sort the museums list alphabetically by name
     museums.sort((a, b) => a.name.compareTo(b.name));
 
@@ -221,15 +241,42 @@ class _MuseumListPageState extends State<MuseumListPage> {
           itemCount: museums.length,
           itemBuilder: (context, index) {
             final museum = museums[index];
-            return ListTile(
-              title: Text(museum.name),
-              subtitle: Text('Objects : ${museum.objects?.length.toString() ?? '0'}'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MuseumDetailPage(museum: museum)),
-                );
-              },
+            return Column(
+                children: [
+                  ListTile(
+                    title: Text(museum.name),
+                    subtitle: Text('Objects : ${museum.objects?.length.toString() ?? '0'}'),
+                    onTap: ()
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MuseumDetailPage(museum: museum)),
+                        );},
+
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum));
+                          },
+                          icon: const Icon(Icons.edit),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            //_showDeleteConfirmationDialog(context);
+                            _showDeleteConfirmationDialog(context, museum!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+
+                          },
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
+                    ),
+
+
+                  ),
+                  const Divider(height: 2), // Add a divider between each ListTile
+                ],
             );
           },
         ),
@@ -241,7 +288,11 @@ class _MuseumListPageState extends State<MuseumListPage> {
           children: [
             FloatingActionButton.extended(
               onPressed: () {
-                // ToDo : Naviguer vers la page d'ajout de musée
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      MuseumAddPage(database: widget.database)),
+                );
               },
               label: Text('Add museum'),
               icon: Icon(Icons.add),
@@ -256,10 +307,10 @@ class _MuseumListPageState extends State<MuseumListPage> {
             ),
             SizedBox(height: 10),
             FloatingActionButton.extended(
-              onPressed: _readDatabase,  // Utilise la méthode de lecture
-              label: Text('Read Database'),  // Libellé du bouton
-              icon: Icon(Icons.cloud_download),  // Icône du bouton
-              heroTag: 'read_database',  // Tag héros unique
+              onPressed: _readDatabase, // Utilise la méthode de lecture
+              label: Text('Read Database'), // Libellé du bouton
+              icon: Icon(Icons.cloud_download), // Icône du bouton
+              heroTag: 'read_database', // Tag héros unique
             ),
           ],
         ),
@@ -267,3 +318,5 @@ class _MuseumListPageState extends State<MuseumListPage> {
     );
   }
 }
+
+
