@@ -7,6 +7,8 @@ import 'map/map_screen.dart';
 
 
 class PageManager extends StatefulWidget {
+  const PageManager({super.key});
+
   @override
   _PageManagerState createState() => _PageManagerState();
 }
@@ -94,7 +96,7 @@ class _PageManagerState extends State<PageManager> {
               ),
               elevation: 8, // Add a slight elevation
             ),
-            child: Text(
+            child: const Text(
               'Admin Login',
               style: TextStyle(fontSize: 16),
             ),

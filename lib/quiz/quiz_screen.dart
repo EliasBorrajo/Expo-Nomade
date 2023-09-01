@@ -6,7 +6,7 @@ import '../../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({Key? key}) : super(key: key);
+  const QuizScreen({super.key});
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -30,11 +30,20 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       DatabaseEvent event = await _database.once();
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
+
       if (data != null) {
-        List<Question> allQuestions = [];
-        data.forEach((key, value) {
-          allQuestions.add(Question.fromMap(Map<String, dynamic>.from(value)));
-        });
+        List<Question> allQuestions = data.entries
+            .map((entry) {
+          String questionId = entry.key;
+          Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
+          return Question(
+            id: questionId,
+            questionText: questionData['questionText'] ?? '',
+            answers: List<String>.from(questionData['answers'] ?? []),
+            correctAnswer: questionData['correctAnswer'] ?? 0,
+          );
+        })
+            .toList();
 
         // Shuffle the questions and take the first 10 (or less if there are fewer than 10 questions)
         allQuestions.shuffle();

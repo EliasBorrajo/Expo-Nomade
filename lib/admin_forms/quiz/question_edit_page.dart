@@ -7,7 +7,7 @@ class EditQuestionPage extends StatefulWidget {
   final Question question;
 
   // TODO changer
-  const EditQuestionPage({Key? key, required this.database, required this.question}) : super(key: key);
+  const EditQuestionPage({super.key, required this.database, required this.question});
 
   @override
   _EditQuestionPageState createState() => _EditQuestionPageState();

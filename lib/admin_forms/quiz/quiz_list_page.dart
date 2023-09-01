@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:expo_nomade/admin_forms/quiz/question_add_page.dart';
 import 'package:expo_nomade/admin_forms/quiz/question_edit_page.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ class QuizListPage extends StatefulWidget {
 
 class _QuizListPageState extends State<QuizListPage> {
   List<Question> questions = [];
+  StreamSubscription<DatabaseEvent>? _subscription; // Declare _subscription here
 
   @override
   void initState() {
@@ -27,26 +30,28 @@ class _QuizListPageState extends State<QuizListPage> {
     try {
       DatabaseReference quizRef = widget.database.ref().child('quiz');
 
-      quizRef.onValue.listen((DatabaseEvent event) {
-        Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic, dynamic>?;
+      _subscription = quizRef.onValue.listen((DatabaseEvent event) {
+        if (mounted) {
+          Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic, dynamic>?;
 
-        if (data != null) {
-          List<Question> fetchedQuestions = data.entries
-              .map((entry) {
-            String questionId = entry.key;
-            Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
-            return Question(
-              id: questionId,
-              questionText: questionData['questionText'] ?? '',
-              answers: List<String>.from(questionData['answers'] ?? []),
-              correctAnswer: questionData['correctAnswer'] ?? 0,
-            );
-          })
-              .toList();
+          if (data != null) {
+            List<Question> fetchedQuestions = data.entries
+                .map((entry) {
+              String questionId = entry.key;
+              Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
+              return Question(
+                id: questionId,
+                questionText: questionData['questionText'] ?? '',
+                answers: List<String>.from(questionData['answers'] ?? []),
+                correctAnswer: questionData['correctAnswer'] ?? 0,
+              );
+            })
+                .toList();
 
-          setState(() {
-            questions = fetchedQuestions;
-          });
+            setState(() {
+              questions = fetchedQuestions;
+            });
+          }
         }
       });
     } catch (error) {
@@ -54,9 +59,15 @@ class _QuizListPageState extends State<QuizListPage> {
     }
   }
 
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
   void _deleteQuestion(String questionId) async {
     try {
-      widget.database.ref().child('quiz').child(questionId).remove();
+      await widget.database.ref().child('quiz').child(questionId).remove();
 
       // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,8 +89,8 @@ class _QuizListPageState extends State<QuizListPage> {
     }
   }
 
-  void _navigateToEditQuestionPage(Question question) async {
-    await Navigator.push(
+  void _navigateToEditQuestionPage(Question question) {
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditQuestionPage(database: widget.database, question: question),
@@ -87,9 +98,9 @@ class _QuizListPageState extends State<QuizListPage> {
     );
   }
 
-  void _navigateToAddQuestionPage() async {
+  void _navigateToAddQuestionPage() {
     // Naviguer vers la page d'ajout de question et attendre un éventuel retour
-    await Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddQuestionPage(database: widget.database),

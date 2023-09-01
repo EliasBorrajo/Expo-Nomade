@@ -5,11 +5,7 @@ class QuizResultScreen extends StatelessWidget {
   final int score;
   final int totalQuestions;
 
-  const QuizResultScreen({
-    Key? key,
-    required this.score,
-    required this.totalQuestions,
-  }) : super(key: key);
+  const QuizResultScreen({ super.key, required this.score, required this.totalQuestions});
 
   @override
   Widget build(BuildContext context) {

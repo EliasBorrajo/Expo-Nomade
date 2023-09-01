@@ -28,7 +28,7 @@ class AdminForms extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
             bottom: const TabBar(

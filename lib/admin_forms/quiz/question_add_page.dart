@@ -4,14 +4,18 @@ import 'package:firebase_database/firebase_database.dart';
 class AddQuestionPage extends StatefulWidget {
   final FirebaseDatabase database;
 
-  // TODO changer
-  const AddQuestionPage({Key? key, required this.database}) : super(key: key);
+  const AddQuestionPage({super.key, required this.database});
 
   @override
   _AddQuestionPageState createState() => _AddQuestionPageState();
 }
 
 class _AddQuestionPageState extends State<AddQuestionPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   final TextEditingController questionTextController = TextEditingController();
   final TextEditingController answer1Controller = TextEditingController();
   final TextEditingController answer2Controller = TextEditingController();
