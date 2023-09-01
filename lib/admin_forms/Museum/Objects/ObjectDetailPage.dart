@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../dataModels/MuseumObject.dart';
+import '../../../dataModels/MuseumObject.dart';
 
 // TODO : Edit les informations de l'objet
 // TODO : Ajouter des Tags à l'objet

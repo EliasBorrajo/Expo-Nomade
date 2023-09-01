@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../dataModels/Museum.dart';
 import '../../dataModels/MuseumObject.dart';
 import 'MuseumEditPage.dart';
-import 'ObjectDetailPage.dart';
+import 'Objects/ObjectDetailPage.dart';
 
 // TODO : Ajouter le BTN + pour ajouter un objet
 // TODO : Editer les informations du musée
