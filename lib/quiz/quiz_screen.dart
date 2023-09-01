@@ -59,8 +59,8 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
     }
   }
 
-  void checkAnswer(String selectedAnswer) {
-    if (selectedAnswer == questions[currentQuestionIndex].answers[questions[currentQuestionIndex].correctAnswer]) {
+  void checkAnswer(int selectedAnswer) {
+    if (selectedAnswer == questions[currentQuestionIndex].correctAnswer) {
       setState(() {
         score++;
       });
@@ -114,10 +114,10 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
             Text(questions[currentQuestionIndex].questionText),
             Column(
               children: [
-                for (String answer in questions[currentQuestionIndex].answers)
+                for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
                   ElevatedButton(
-                    onPressed: () => checkAnswer(answer),
-                    child: Text(answer),
+                    onPressed: () => checkAnswer(i),
+                    child: Text(questions[currentQuestionIndex].answers[i]),
                   ),
               ],
             ),
