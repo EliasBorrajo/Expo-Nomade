@@ -1,47 +1,57 @@
 import 'package:flutter/material.dart';
 import '../../dataModels/question_models.dart';
 
-class QuestionListItem extends StatelessWidget {
+class QuestionListItem extends StatefulWidget {
   final Question question;
   final Function(String) onDeletePressed;
   final Function(Question) onEditPressed;
 
-  const QuestionListItem({required this.question, required this.onDeletePressed, required this.onEditPressed});
+  const QuestionListItem({
+    super.key,
+    required this.question,
+    required this.onDeletePressed,
+    required this.onEditPressed,
+  });
 
+  @override
+  _QuestionListItemState createState() => _QuestionListItemState();
+}
+
+class _QuestionListItemState extends State<QuestionListItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('Question ${question.id}'),
+      title: Text('Question ${widget.question.id}'),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            question.questionText,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            widget.question.questionText,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             'Answers:',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (var i = 0; i < question.answers.length; i++)
+              for (var i = 0; i < widget.question.answers.length; i++)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
                       Icon(
-                        i == question.correctAnswer
+                        i == widget.question.correctAnswer
                             ? Icons.check_circle
                             : Icons.circle,
-                        color: i == question.correctAnswer
+                        color: i == widget.question.correctAnswer
                             ? Colors.green
                             : Colors.grey,
                       ),
-                      SizedBox(width: 8),
-                      Text(question.answers[i]),
+                      const SizedBox(width: 8),
+                      Text(widget.question.answers[i]),
                     ],
                   ),
                 ),
@@ -54,7 +64,7 @@ class QuestionListItem extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              onEditPressed(question);
+              widget.onEditPressed(widget.question);
             },
             icon: const Icon(Icons.edit),
           ),
@@ -74,7 +84,7 @@ class QuestionListItem extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation de suppression'),
+          title: const Text('Confirmation de suppression'),
           content: const Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,14 +98,14 @@ class QuestionListItem extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop(); // Ferme la boîte de dialogue
               },
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
-                onDeletePressed(question.id);
+                widget.onDeletePressed(widget.question.id);
                 Navigator.of(context).pop(); // Ferme la boîte de dialogue
               },
-              child: Text('Supprimer'),
+              child: const Text('Supprimer'),
             ),
           ],
         );

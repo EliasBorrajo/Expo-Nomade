@@ -8,8 +8,7 @@ import 'question_list_item.dart';
 class QuizListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
-  // TODO changer
-  const QuizListPage({Key? key, required this.database}) : super(key: key);
+  const QuizListPage({super.key, required this.database});
 
   @override
   _QuizListPageState createState() => _QuizListPageState();
@@ -24,37 +23,28 @@ class _QuizListPageState extends State<QuizListPage> {
     fetchQuestions();
   }
 
-  //TODO remettre comme c'était avant, pb avec les lives data ou trouver une solution
   void fetchQuestions() async {
-    //try {
-    DatabaseReference quizRef = widget.database.ref().child('quiz');
-    quizRef.onValue.listen((DatabaseEvent event) {
-      DataSnapshot snapshot = event.snapshot;
-      Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
-      if (data != null) {
-        List<Question> fetchedQuestions = data.entries
-            .map((entry) {
-          String questionId = entry.key;
-          Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
-          return Question(
-            id: questionId,
-            questionText: questionData['questionText'] ?? '',
-            answers: List<String>.from(questionData['answers'] ?? []),
-            correctAnswer: questionData['correctAnswer'] ?? 0,
-          );
-        })
-            .toList();
+    try {
+      DatabaseReference quizRef = widget.database.ref('/quiz');
 
-        setState(() {
-          questions = fetchedQuestions;
-        });
-      }
-    });
+      quizRef.onValue.listen((DatabaseEvent event) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>?;
+
+        if (data != null) {
+          questions.clear();
+          data.forEach((key, value) {
+            questions.add(Question.fromMap(Map<String, dynamic>.from(value)));
+          });
+        }
+      });
+    } catch (error) {
+      print('Error fetching questions: $error');
+    }
   }
 
   void _deleteQuestion(String questionId) async {
     try {
-      await widget.database.ref().child('quiz').child(questionId).remove();
+      widget.database.ref().child('quiz').child(questionId).remove();
       fetchQuestions(); // Rafraîchir la liste des questions après la suppression
 
       // Afficher un message de succès
@@ -77,10 +67,11 @@ class _QuizListPageState extends State<QuizListPage> {
     }
   }
 
-  void _editQuestion(Question question) async {
+  void _navigateToEditQuestionPage(Question question) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
+        //builder: (context) => EditQuestionPage(database: widget.database, question: question),
         builder: (context) => EditQuestionPage(database: widget.database, question: question),
       ),
     );
@@ -98,6 +89,9 @@ class _QuizListPageState extends State<QuizListPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("Nombre de question :");
+    print(questions.length);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Liste des Questions')),
       body: questions.isEmpty
@@ -112,8 +106,8 @@ class _QuizListPageState extends State<QuizListPage> {
         itemBuilder: (context, index) {
           return Column(
             children: [
-              QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion, onEditPressed: _editQuestion),
-              Divider(height: 1), // Ajoute une ligne de séparation
+              QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion, onEditPressed: _navigateToEditQuestionPage),
+              const Divider(height: 1), // Ajoute une ligne de séparation
             ],
           );
         },

@@ -39,21 +39,21 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Question Text:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(controller: questionTextController),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Réponses:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(controller: answer1Controller),
             TextField(controller: answer2Controller),
             TextField(controller: answer3Controller),
-            SizedBox(height: 8),
-            Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 8),
+            const Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
             DropdownButton<int>(
               value: correctAnswer,
               onChanged: (value) {
@@ -61,18 +61,18 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
                   correctAnswer = value!;
                 });
               },
-              items: [
+              items: const [
                 DropdownMenuItem(value: 0, child: Text('Réponse 1')),
                 DropdownMenuItem(value: 1, child: Text('Réponse 2')),
                 DropdownMenuItem(value: 2, child: Text('Réponse 3')),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 _updateQuestionInDatabase();
               },
-              child: Text('Mettre à jour la Question'),
+              child: const Text('Mettre à jour la Question'),
             ),
           ],
         ),

@@ -75,14 +75,14 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     if (questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text('Quiz')),
-        body: Center(child: CircularProgressIndicator()), // Display a loading indicator
+        appBar: AppBar(title: const Text('Quiz')),
+        body: const Center(child: CircularProgressIndicator()), // Display a loading indicator
       );
     }
 
     if(quizEnded) {
       return Scaffold(
-        appBar: AppBar(title: Text('Quiz')),
+        appBar: AppBar(title: const Text('Quiz')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -96,7 +96,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
 
 
     return Scaffold(
-      appBar: AppBar(title: Text('Quiz')),
+      appBar: AppBar(title: const Text('Quiz')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
