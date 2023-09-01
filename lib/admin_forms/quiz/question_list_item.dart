@@ -4,8 +4,9 @@ import '../../dataModels/question_models.dart';
 class QuestionListItem extends StatelessWidget {
   final Question question;
   final Function(String) onDeletePressed;
+  final Function(Question) onEditPressed;
 
-  const QuestionListItem({required this.question, required this.onDeletePressed});
+  const QuestionListItem({required this.question, required this.onDeletePressed, required this.onEditPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class QuestionListItem extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              //_EditQuestionPageState(question);
+              onEditPressed(question);
             },
             icon: const Icon(Icons.edit),
           ),

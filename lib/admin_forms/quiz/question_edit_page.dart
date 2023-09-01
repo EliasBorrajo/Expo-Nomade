@@ -6,6 +6,7 @@ class EditQuestionPage extends StatefulWidget {
   final FirebaseDatabase database;
   final Question question;
 
+  // TODO changer
   const EditQuestionPage({Key? key, required this.database, required this.question}) : super(key: key);
 
   @override
@@ -81,30 +82,20 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
 
   void _updateQuestionInDatabase() async {
     try {
-      DatabaseReference questionsRef = widget.database.reference().child('quiz').child(widget.question.id);
+      DatabaseReference questionsRef = widget.database.ref().child('quiz').child(widget.question.id);
 
-      Question updatedQuestion = Question(
-        id: widget.question.id,
-        questionText: questionTextController.text,
-        answers: [
-          answer1Controller.text,
-          answer2Controller.text,
-          answer3Controller.text,
-        ],
-        correctAnswer: correctAnswer,
-      );
-
-      Map<String, dynamic> questionToUpdate = {
-        'questionText': updatedQuestion.questionText,
+      Map<String, dynamic> updatedQuestion =
+      {
+        'questionText': questionTextController.text,
         'answers': {
-          'answer1': updatedQuestion.answers[0],
-          'answer2': updatedQuestion.answers[1],
-          'answer3': updatedQuestion.answers[2],
+          '0': answer1Controller.text,
+          '1': answer2Controller.text,
+          '2': answer3Controller.text,
         },
-        'correctAnswer': updatedQuestion.correctAnswer,
+        'correctAnswer': correctAnswer,
       };
 
-      await questionsRef.update(questionToUpdate);
+      await questionsRef.update(updatedQuestion);
 
       Navigator.pop(context); // Revenir à la liste après la mise à jour
     } catch (error) {

@@ -24,11 +24,11 @@ class _QuizListPageState extends State<QuizListPage> {
     fetchQuestions();
   }
 
+  //TODO remettre comme c'était avant, pb avec les lives data ou trouver une solution
   void fetchQuestions() async {
     //try {
     DatabaseReference quizRef = widget.database.ref().child('quiz');
-    quizRef.onValue.listen((DatabaseEvent event)
-    {
+    quizRef.onValue.listen((DatabaseEvent event) {
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
@@ -77,18 +77,8 @@ class _QuizListPageState extends State<QuizListPage> {
     }
   }
 
-  void _navigateToAddQuestionPage() async {
-    // Naviguer vers la page d'ajout de question et attendre un éventuel retour
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddQuestionPage(database: widget.database),
-      ),
-    );
-  }
-
-  void _navigateToEditQuestionPage(Question question) async {
-    final result = await Navigator.push(
+  void _editQuestion(Question question) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditQuestionPage(database: widget.database, question: question),
@@ -96,6 +86,15 @@ class _QuizListPageState extends State<QuizListPage> {
     );
   }
 
+  void _navigateToAddQuestionPage() async {
+    // Naviguer vers la page d'ajout de question et attendre un éventuel retour
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddQuestionPage(database: widget.database),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +112,7 @@ class _QuizListPageState extends State<QuizListPage> {
         itemBuilder: (context, index) {
           return Column(
             children: [
-              QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion),
+              QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion, onEditPressed: _editQuestion),
               Divider(height: 1), // Ajoute une ligne de séparation
             ],
           );
