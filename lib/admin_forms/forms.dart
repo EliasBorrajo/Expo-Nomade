@@ -4,21 +4,9 @@
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import '../firebase/firebase_options.dart';
 import 'dummyData.dart';
-
-// TODO : REMOVE ONLY BY ELIAS
-Future<void> main() async {
-
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp( name: "exponomade-6452" ,options: DefaultFirebaseOptions.currentPlatform,);
-
-  runApp( const AdminForms());
-}
-
 
 class AdminForms extends StatelessWidget
 {
