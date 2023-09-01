@@ -249,6 +249,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
                     subtitle: Text('Objects : ${museum.objects?.length.toString() ?? '0'}'),
                     onTap: ()
                     {
+                      // NAV MUSEUM DETAIL PAGE
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => MuseumDetailPage(museum: museum)),
@@ -258,16 +259,18 @@ class _MuseumListPageState extends State<MuseumListPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
+                          // NAV MUSEUM EDIT PAGE
                           onPressed: () {
-                            MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum));
-                          },
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum, database: widget.database)),
+                            );                          },
                           icon: const Icon(Icons.edit),
                         ),
                         IconButton(
+                          // DELETE MUSEUM
                           onPressed: () {
                             //_showDeleteConfirmationDialog(context);
                             _showDeleteConfirmationDialog(context, museum!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-
                           },
                           icon: const Icon(Icons.delete),
                         ),
