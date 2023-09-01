@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ObjectAddPage extends StatefulWidget{
-  const ObjectAddPage({Key? key}) : super(key: key);
+  const ObjectAddPage({Key? key, required database}) : super(key: key);
 
   @override
   _ObjectAddPageState createState() => _ObjectAddPageState();

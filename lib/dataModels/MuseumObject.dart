@@ -4,6 +4,8 @@ import 'Tag.dart';
 
 // OBJETS
 class MuseumObject {
+  // TODO : AJOUTER ID
+
   String name;
   String description;
   LatLng point;

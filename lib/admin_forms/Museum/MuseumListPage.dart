@@ -200,7 +200,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Confirmation'),
-            content: Text('Êtes-vous sûr de vouloir supprimer cet objet ? Cette action est irreversible'),
+            content: Text('Êtes-vous sûr de vouloir supprimer ce musée ? Cette action est irreversible'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -210,7 +210,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
               ),
               TextButton(
                 onPressed: () {
-                  // TODO: Supprimer l'objet et mettre à jour la liste d'objets
                   widget.database.ref().child('museums').child(museum.id).remove();
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
@@ -247,7 +246,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
                       // NAV MUSEUM DETAIL PAGE
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MuseumDetailPage(museum: museum)),
+                        MaterialPageRoute(builder: (context) => MuseumDetailPage(museum: museum, database: widget.database,)),
                         );},
 
                     trailing: Row(
