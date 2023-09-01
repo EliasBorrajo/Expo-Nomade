@@ -9,12 +9,8 @@ import 'MuseumDetailPage.dart';
 import 'MuseumEditPage.dart';
 
 
-// TODO : Ajouter le BTN + pour ajouter un musée
-// TODO : Supprimer un musée avec un long press sur le musée
-
 /// Displays a list of museums.
 /// When a museum is tapped, the [MuseumDetailPage] is displayed.
-
 class MuseumListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
@@ -28,16 +24,14 @@ class MuseumListPage extends StatefulWidget {
 
 
 class _MuseumListPageState extends State<MuseumListPage> {
+  // A T T R I B U T E S
+  late List<Museum> museums = []; // List to be filled by Firebase DB
 
-  late List<Museum> museums = [];
 
-
+  // M E T H O D S
   @override
   void initState() {
     super.initState();
-    // Pas besoin de faire un async ou future,
-    // car ne bloque pas le thread principal (pas de await)
-    // et ne retourne rien (void) donc pas besoin de future
     _loadMuseumsFromFirebaseAndListen();
   }
 
@@ -109,6 +103,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
     _printMuseumsData(museums);
   }
 
+  /// Displays the museums data in the console.
   void _printMuseumsData(List<Museum> museums) {
     // vérifier si la liste est vide
     if (museums.isEmpty) {

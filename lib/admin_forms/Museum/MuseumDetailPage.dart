@@ -3,9 +3,6 @@ import '../../dataModels/Museum.dart';
 import '../../dataModels/MuseumObject.dart';
 import 'Object/ObjectDetailPage.dart';
 
-// TODO : Ajouter le BTN + pour ajouter un objet
-// TODO : Editer les informations du musée
-// TODO : Supprimer un objet avec un long press sur l'objet
 // TODO : ajout de la fonctionnalité de recherche d'objet par nom
 
 
