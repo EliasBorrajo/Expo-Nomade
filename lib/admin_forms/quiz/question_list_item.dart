@@ -19,6 +19,11 @@ class QuestionListItem extends StatefulWidget {
 
 class _QuestionListItemState extends State<QuestionListItem> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text('Question ${widget.question.id}'),

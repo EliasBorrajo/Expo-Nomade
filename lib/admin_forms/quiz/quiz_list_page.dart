@@ -25,15 +25,27 @@ class _QuizListPageState extends State<QuizListPage> {
 
   void fetchQuestions() async {
     try {
-      DatabaseReference quizRef = widget.database.ref('/quiz');
+      DatabaseReference quizRef = widget.database.ref().child('quiz');
 
       quizRef.onValue.listen((DatabaseEvent event) {
-        final data = event.snapshot.value as Map<dynamic, dynamic>?;
+        Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic, dynamic>?;
 
         if (data != null) {
-          questions.clear();
-          data.forEach((key, value) {
-            questions.add(Question.fromMap(Map<String, dynamic>.from(value)));
+          List<Question> fetchedQuestions = data.entries
+              .map((entry) {
+            String questionId = entry.key;
+            Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
+            return Question(
+              id: questionId,
+              questionText: questionData['questionText'] ?? '',
+              answers: List<String>.from(questionData['answers'] ?? []),
+              correctAnswer: questionData['correctAnswer'] ?? 0,
+            );
+          })
+              .toList();
+
+          setState(() {
+            questions = fetchedQuestions;
           });
         }
       });
@@ -45,7 +57,6 @@ class _QuizListPageState extends State<QuizListPage> {
   void _deleteQuestion(String questionId) async {
     try {
       widget.database.ref().child('quiz').child(questionId).remove();
-      fetchQuestions(); // Rafraîchir la liste des questions après la suppression
 
       // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +82,6 @@ class _QuizListPageState extends State<QuizListPage> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        //builder: (context) => EditQuestionPage(database: widget.database, question: question),
         builder: (context) => EditQuestionPage(database: widget.database, question: question),
       ),
     );
