@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../../dataModels/question_models.dart';
+import '../../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -44,17 +44,9 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         setState(() {
           questions = questions;
         });
-
-        // Print all the questions
-        questions.forEach((question) {
-          print('Question: ${question.questionText}');
-          print('Answers: ${question.answers}');
-          print('Correct Answer: ${question.correctAnswer}');
-        });
       }
     } catch (error) {
       print('Error fetching questions: $error');
-      // Handle the error appropriately, e.g., show an error message to the user.
     }
   }
 

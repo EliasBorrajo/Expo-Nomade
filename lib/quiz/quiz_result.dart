@@ -1,4 +1,4 @@
-import 'package:expo_nomade/quiz_screen.dart';
+import 'package:expo_nomade/quiz/quiz_screen.dart';
 import 'package:flutter/material.dart';
 
 class QuizResultScreen extends StatelessWidget {
