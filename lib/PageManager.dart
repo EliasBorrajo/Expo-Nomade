@@ -80,7 +80,7 @@ class _PageManagerState extends State<PageManager> {
             elevation: 8, // Add a slight elevation
             backgroundColor: Colors.blue, // Change button color
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -90,7 +90,7 @@ class _PageManagerState extends State<PageManager> {
             },
             style: ElevatedButton.styleFrom(
               primary: Colors.blue,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),

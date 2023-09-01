@@ -1,3 +1,4 @@
+import 'package:expo_nomade/quiz/quiz_email_sender.dart';
 import 'package:flutter/material.dart';
 
 class QuizResultScreen extends StatelessWidget {
@@ -18,6 +19,9 @@ class QuizResultScreen extends StatelessWidget {
             redoQuiz();
           },
           child: const Text('Refaire le test'),
+        ),
+        ScoreEmailSender(
+          score: score
         ),
       ],
     );
