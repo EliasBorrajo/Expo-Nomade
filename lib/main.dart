@@ -1,4 +1,5 @@
 import 'package:expo_nomade/PageManager.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:latlong2/latlong.dart';
@@ -18,6 +19,9 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // F I R E B A S E
+  static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
+  // TODO : Donner cet attribut à CRUD_FICHIER et toutes les methodes la bas dedans
 
 
   @override

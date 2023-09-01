@@ -25,17 +25,17 @@ class MuseumDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(museum.name),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum)),
-              );
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.edit),
+        //     onPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum)),
+        //       );
+        //     },
+        //   ),
+        // ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
