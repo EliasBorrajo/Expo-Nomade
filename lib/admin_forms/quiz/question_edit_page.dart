@@ -6,7 +6,6 @@ class EditQuestionPage extends StatefulWidget {
   final FirebaseDatabase database;
   final Question question;
 
-  // TODO changer
   const EditQuestionPage({super.key, required this.database, required this.question});
 
   @override
@@ -40,7 +39,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Question Text:',
+              'Texte de la question:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(controller: questionTextController),
@@ -53,7 +52,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
             TextField(controller: answer2Controller),
             TextField(controller: answer3Controller),
             const SizedBox(height: 8),
-            const Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
+            const Text('Réponse correcte:', style: TextStyle(fontSize: 16)),
             DropdownButton<int>(
               value: correctAnswer,
               onChanged: (value) {
@@ -71,8 +70,9 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
             ElevatedButton(
               onPressed: () {
                 _updateQuestionInDatabase();
+                Navigator.pop(context); // Revenir à la liste après la mise à jour
               },
-              child: const Text('Mettre à jour la Question'),
+              child: const Text('Mettre à jour la question'),
             ),
           ],
         ),
@@ -97,9 +97,23 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
 
       await questionsRef.update(updatedQuestion);
 
-      Navigator.pop(context); // Revenir à la liste après la mise à jour
+      // Afficher un message de succès
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La question a été éditée avec succès.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (error) {
       print('Error updating question: $error');
+
+      // Afficher un message d'échec
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Échec de l\'édition de la question.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }

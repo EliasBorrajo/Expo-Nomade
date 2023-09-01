@@ -1,11 +1,11 @@
-import 'package:expo_nomade/quiz/quiz_screen.dart';
 import 'package:flutter/material.dart';
 
 class QuizResultScreen extends StatelessWidget {
   final int score;
   final int totalQuestions;
+  final Function() redoQuiz;
 
-  const QuizResultScreen({ super.key, required this.score, required this.totalQuestions});
+  const QuizResultScreen({ super.key, required this.score, required this.totalQuestions, required this.redoQuiz});
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +15,7 @@ class QuizResultScreen extends StatelessWidget {
         Text('Score: $score/$totalQuestions'),
         ElevatedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => QuizScreen()),
-            );// Retour à l'écran du quiz
+            redoQuiz();
           },
           child: const Text('Refaire le test'),
         ),

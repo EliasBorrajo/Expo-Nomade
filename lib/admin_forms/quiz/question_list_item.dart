@@ -76,7 +76,6 @@ class _QuestionListItemState extends State<QuestionListItem> {
           IconButton(
             onPressed: () async {
               _showDeleteConfirmationDialog(context);
-              //await widget.onDeletePressed(widget.question.id);
             },
             icon: const Icon(Icons.delete),
           ),

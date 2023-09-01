@@ -99,7 +99,6 @@ class _QuizListPageState extends State<QuizListPage> {
   }
 
   void _navigateToAddQuestionPage() {
-    // Naviguer vers la page d'ajout de question et attendre un éventuel retour
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -114,7 +113,7 @@ class _QuizListPageState extends State<QuizListPage> {
     print(questions.length);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Liste des Questions')),
+      appBar: AppBar(title: const Text('Liste des questions')),
       body: questions.isEmpty
           ? const Center(
         child: Text(

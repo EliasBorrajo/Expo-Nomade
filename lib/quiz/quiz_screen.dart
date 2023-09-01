@@ -69,7 +69,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
   }
 
   void moveToNextQuestion() {
-    if (currentQuestionIndex < 9) {
+    if (currentQuestionIndex < questions.length-1) {
       setState(() {
         currentQuestionIndex++;
       });
@@ -96,13 +96,12 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              QuizResultScreen(score: score, totalQuestions: questions.length),
+              QuizResultScreen(score: score, totalQuestions: questions.length, redoQuiz: _redoQuiz),
             ],
           ),
         ),
       );
     }
-
 
     return Scaffold(
       appBar: AppBar(title: const Text('Quiz')),
@@ -125,5 +124,13 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         ),
       ),
     );
+  }
+
+  void _redoQuiz() {
+      questions = [];
+      currentQuestionIndex = 0;
+      score = 0;
+      quizEnded = false;
+      fetchQuestions();
   }
 }

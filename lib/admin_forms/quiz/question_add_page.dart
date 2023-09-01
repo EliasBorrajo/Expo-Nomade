@@ -32,7 +32,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Question Text:',
+              'Texte de la question:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(controller: questionTextController),
@@ -63,8 +63,9 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
             ElevatedButton(
               onPressed: () {
                 _addQuestionToDatabase();
+                Navigator.pop(context); // Revenir à la liste après l'ajout
               },
-              child: const Text('Ajouter la Question'),
+              child: const Text('Ajouter la question'),
             ),
           ],
         ),
@@ -76,9 +77,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
     try {
       DatabaseReference questionsRef = widget.database.ref().child('quiz');
       DatabaseReference newQuestionRef = questionsRef.push();
-
-      Map<String, dynamic> questionToUpload =
-      {
+      Map<String, dynamic> questionToUpload = {
         'questionText': questionTextController.text,
         'answers': {
           '0': answer1Controller.text,
@@ -87,12 +86,24 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         },
         'correctAnswer': correctAnswer,
       };
-
       await newQuestionRef.set(questionToUpload);
-
-      Navigator.pop(context); // Revenir à la liste après l'ajout
+      // Afficher un message de succès
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La question a été ajoutée avec succès.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (error) {
       print('Error adding question: $error');
+
+      // Afficher un message d'échec
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Échec de l\'ajout de la question.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }
