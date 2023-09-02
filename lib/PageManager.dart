@@ -1,4 +1,5 @@
 import 'package:expo_nomade/quiz_screen.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
@@ -7,6 +8,10 @@ import 'map/map_screen.dart';
 
 
 class PageManager extends StatefulWidget {
+
+  final FirebaseDatabase database;
+
+  const PageManager({super.key, required this.database});
   @override
   _PageManagerState createState() => _PageManagerState();
 }
@@ -63,10 +68,7 @@ class _PageManagerState extends State<PageManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar( // TODO : REMOVE ?
-        // title: Text(_showMap ? 'Map Page' : 'Questionnaire Page'),
-      ),*/
-      body: _showMap ? MapScreen(points: test,) : QuizScreen(),
+      body: _showMap ? MapScreen(points: test, database: widget.database,) : QuizScreen(),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,

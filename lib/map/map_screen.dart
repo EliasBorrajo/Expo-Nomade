@@ -1,10 +1,16 @@
+import 'package:expo_nomade/map/custom-polygon-layer.dart';
 import 'package:expo_nomade/map/map_marker.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import '../dataModels/Migration.dart';
+import '../firebase/firebase_crud.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, required this.points});
+
+  final FirebaseDatabase database;
+  const MapScreen({super.key, required this.points, required this.database});
 
   final List<LatLng> points;
 
@@ -15,6 +21,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   bool isPopupOpen = false;
   String popupTitle = '';
+  late List<Migration> migrations = [];
 
   void openPopup(String title) {
     setState(() {
@@ -28,6 +35,18 @@ class _MapScreenState extends State<MapScreen> {
       isPopupOpen = false;
       popupTitle = '';
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final firebaseUtils = FirebaseUtils(widget.database);
+    firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
+      setState(() {
+        migrations = updatedMigrations;
+      });
+    });
+
   }
 
   @override
@@ -56,6 +75,7 @@ class _MapScreenState extends State<MapScreen> {
                     ).createMarker(context),
                 ]
               ),
+              CustomPolygonLayer(migrations: migrations),
             ],
           ),
         ],

@@ -3,17 +3,10 @@ import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:latlong2/latlong.dart';
+import '../../firebase/firebase_crud.dart';
 import 'MigrationAddPage.dart';
 import 'MigrationDetailsPage.dart';
 
-
-// TODO : Ajouter le BTN + pour ajouter un musée
-// TODO : Supprimer un musée avec un long press sur le musée
-
-/// Displays a list of museums.
-/// When a museum is tapped, the [MuseumDetailPage] is displayed.
-///
 class MigrationListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
@@ -30,68 +23,16 @@ class _MigrationListPageState extends State<MigrationListPage>{
   @override
   void initState() {
     super.initState();
-    _loadMigrationsFromFirebaseAndListen();
-  }
-
-  void _loadMigrationsFromFirebaseAndListen() async {
-    DatabaseReference migrationsRef = widget.database.ref().child('migrations');
-
-    migrationsRef.onValue.listen((DatabaseEvent event) {
-      if (event.snapshot.value != null) {
-        List<Migration> updatedMigrations = [];
-        Map<dynamic, dynamic> migrationsData =
-        event.snapshot.value as Map<dynamic, dynamic>;
-
-        migrationsData.forEach((key, value) {
-          List<MigrationSource>? polygons = [];
-
-          if (value['polygons'] != null) {
-            List<dynamic> polygonsData = value['polygons'] as List<dynamic>;
-            List<LatLng> points = []; // Combine points from all zones
-
-            for (var polyValue in polygonsData) {
-              List<dynamic> pointsData = polyValue['points'] as List<dynamic>;
-
-              for (var point in pointsData) {
-                points.add(
-                  LatLng(
-                    point['latitude'] as double,
-                    point['longitude'] as double,
-                  ),
-                );
-              }
-
-              MigrationSource source = MigrationSource(
-                id: key.toString(),
-                points: points,
-                //color: polyValue['color']! as Color,
-                name: polyValue['name']! as String,
-              );
-
-              polygons.add(source);
-            }
-          }
-
-          Migration migration = Migration(
-            id : key,
-            name: value['name'] as String,
-            description: value['description'] as String,
-            arrival: value['arrival'] as String,
-            polygons: polygons,
-          );
-
-          updatedMigrations.add(migration);
-        });
-
-        setState(() {
-          migrations = updatedMigrations;
-        });
-      }
+    final firebaseUtils = FirebaseUtils(widget.database);
+    firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
+      setState(() {
+        migrations = updatedMigrations;
+      });
     });
   }
 
 
-
+  //TODO: Delete this method.
   void _seedDatabase() async {
     // Get a reference to your Firebase database
     DatabaseReference databaseReference = widget.database.ref();

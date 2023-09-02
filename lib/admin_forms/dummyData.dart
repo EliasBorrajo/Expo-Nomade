@@ -236,7 +236,8 @@ final dummyMigrations = [
         name: 'source 2',
         color: Color(0xFFFF0000),
         points:
-        [const LatLng(46.23, 7.30), const LatLng(46.25, 7.30), const LatLng(46.25, 7.32), const LatLng(46.25, 7.6)],
+        [const LatLng(46.23, 7.60), const LatLng(46.25, 7.60), const LatLng(46.25, 7.62), const LatLng(46.25, 7.90)],
+
       ),
       /*MigrationSource(
         [LatLng(40, 40), LatLng(40, 50), LatLng(50, 50)],

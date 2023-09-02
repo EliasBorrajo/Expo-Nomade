@@ -2,9 +2,7 @@ import 'package:expo_nomade/PageManager.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:latlong2/latlong.dart';
 import 'firebase/firebase_options.dart';
-import 'map/map_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Map Example',
-      home: PageManager(), // Set MapScreen as the initial screen
+      home: PageManager(database: database,), // Set MapScreen as the initial screen
     );
   }
 }
