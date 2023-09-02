@@ -109,14 +109,22 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Question ${currentQuestionIndex + 1}'),
-            Text(questions[currentQuestionIndex].questionText),
+            const SizedBox(height: 16),
+            Text('Question ${currentQuestionIndex + 1}', style: const TextStyle(fontSize: 32, fontStyle: FontStyle.italic)),
+            const SizedBox(height: 16),
+            Text(questions[currentQuestionIndex].questionText, style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 16),
             Column(
               children: [
                 for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
                   ElevatedButton(
                     onPressed: () => checkAnswer(i),
-                    child: Text(questions[currentQuestionIndex].answers[i]),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    child: Text(questions[currentQuestionIndex].answers[i],  style: const TextStyle(fontSize: 20)),
                   ),
               ],
             ),

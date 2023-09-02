@@ -87,7 +87,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         'correctAnswer': correctAnswer,
       };
       await newQuestionRef.set(questionToUpload);
-      // Afficher un message de succès
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La question a été ajoutée avec succès.'),
@@ -97,7 +97,6 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
     } catch (error) {
       print('Error adding question: $error');
 
-      // Afficher un message d'échec
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Échec de l\'ajout de la question.'),

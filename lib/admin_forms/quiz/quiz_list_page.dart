@@ -18,7 +18,7 @@ class QuizListPage extends StatefulWidget {
 
 class _QuizListPageState extends State<QuizListPage> {
   List<Question> questions = [];
-  StreamSubscription<DatabaseEvent>? _subscription; // Declare _subscription here
+  StreamSubscription<DatabaseEvent>? _subscription;
 
   @override
   void initState() {
@@ -69,7 +69,6 @@ class _QuizListPageState extends State<QuizListPage> {
     try {
       await widget.database.ref().child('quiz').child(questionId).remove();
 
-      // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La question a été supprimée avec succès.'),
@@ -79,7 +78,6 @@ class _QuizListPageState extends State<QuizListPage> {
     } catch (error) {
       print('Error deleting question: $error');
 
-      // Afficher un message d'échec
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Échec de la suppression de la question.'),
@@ -127,7 +125,7 @@ class _QuizListPageState extends State<QuizListPage> {
           return Column(
             children: [
               QuestionListItem(question: questions[index], onDeletePressed: _deleteQuestion, onEditPressed: _navigateToEditQuestionPage),
-              const Divider(height: 1), // Ajoute une ligne de séparation
+              const Divider(height: 1),
             ],
           );
         },

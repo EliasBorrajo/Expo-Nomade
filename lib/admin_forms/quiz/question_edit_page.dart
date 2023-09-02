@@ -70,7 +70,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
             ElevatedButton(
               onPressed: () {
                 _updateQuestionInDatabase();
-                Navigator.pop(context); // Revenir à la liste après la mise à jour
+                Navigator.pop(context);
               },
               child: const Text('Mettre à jour la question'),
             ),
@@ -97,7 +97,6 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
 
       await questionsRef.update(updatedQuestion);
 
-      // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La question a été éditée avec succès.'),
@@ -107,7 +106,6 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
     } catch (error) {
       print('Error updating question: $error');
 
-      // Afficher un message d'échec
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Échec de l\'édition de la question.'),

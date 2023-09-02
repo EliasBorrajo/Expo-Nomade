@@ -101,14 +101,14 @@ class _QuestionListItemState extends State<QuestionListItem> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                Navigator.of(context).pop();
               },
               child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
                 widget.onDeletePressed(widget.question.id);
-                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                Navigator.of(context).pop();
               },
               child: const Text('Supprimer'),
             ),
