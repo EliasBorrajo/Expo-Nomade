@@ -11,7 +11,6 @@ class Migration {
   late List<Tag>? tags;                  // optional & initialized later
   List<String>? images;                  // optional
 
-
   Migration({
     required this.name,
     required this.description,

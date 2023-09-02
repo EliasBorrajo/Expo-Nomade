@@ -14,7 +14,6 @@ import 'MigrationDetailsPage.dart';
 /// When a museum is tapped, the [MuseumDetailPage] is displayed.
 ///
 class MigrationListPage extends StatefulWidget {
-  //final List<Migration> migrations;
   final FirebaseDatabase database;
 
   const MigrationListPage({super.key, required this.database});
@@ -153,9 +152,6 @@ class _MigrationListPageState extends State<MigrationListPage>{
             );
           },
         ),
-
-        // Add a FAB to the bottom right
-        // FAB : Floating Action Button
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -167,10 +163,6 @@ class _MigrationListPageState extends State<MigrationListPage>{
                     builder: (context) => MigrationAddPage(database: widget.database),
                   ),
                 );
-
-                /*MaterialPageRoute(
-                  builder: (context) =>  MigrationAddPage(database: widget.database),
-                );*/
               },
               label: Text('Add migration'),
               icon: Icon(Icons.add),

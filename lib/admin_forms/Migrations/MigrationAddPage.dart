@@ -2,10 +2,7 @@ import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneAddPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
-
 import '../../dataModels/Migration.dart';
-import '../map_point_picker.dart';
 
 class MigrationAddPage extends StatefulWidget {
   final FirebaseDatabase database;
@@ -21,9 +18,6 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
   final TextEditingController descriptionTextController = TextEditingController();
   final TextEditingController arrivalTextController = TextEditingController();
   final TextEditingController tagTextController = TextEditingController();
-  final TextEditingController migrationSourceColorTextController = TextEditingController();
-  final TextEditingController migrationSourceNameTextController = TextEditingController();
-  late List<List<LatLng>> validatedPolygons = [];
   late MigrationSource migrationSource;
   late List<MigrationSource> migrationSources;
 
@@ -110,7 +104,6 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
           migrationToUpload['polygons'].add(polygonData);
         }
       }
-
       await newMigrationRef.set(migrationToUpload);
       Navigator.pop(context);
     } catch (error) {

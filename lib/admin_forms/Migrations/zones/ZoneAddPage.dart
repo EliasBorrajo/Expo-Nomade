@@ -2,7 +2,6 @@ import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../../map_point_picker.dart';
 
 class ZoneAddPage extends StatefulWidget {
@@ -52,13 +51,6 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
           const SizedBox(height: 16),
           Center(
             child: ElevatedButton(
-              /*onPressed: () async {
-                polygon = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)),
-                );
-                print(polygon);
-              },*/
               onPressed: () {
                 MigrationSource source = MigrationSource(
                   points: polygon,
@@ -71,7 +63,6 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
             ),
           ),
           const SizedBox(height: 16),
-
         ],
       ),
     );
