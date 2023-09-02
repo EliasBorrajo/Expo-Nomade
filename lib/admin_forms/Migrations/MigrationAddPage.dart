@@ -19,7 +19,7 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
   final TextEditingController arrivalTextController = TextEditingController();
   final TextEditingController tagTextController = TextEditingController();
   late MigrationSource migrationSource;
-  late List<MigrationSource> migrationSources;
+  late List<MigrationSource> migrationSources = [];
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +90,7 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
           Map<String, dynamic> polygonData = {
             'color': source.color,
             'name': source.name,
+            'id': source.id
           };
           if (source.points != null) {
             polygonData['points'] = [];

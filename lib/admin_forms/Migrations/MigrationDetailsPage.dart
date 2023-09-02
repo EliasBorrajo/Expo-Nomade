@@ -43,7 +43,7 @@ class MigrationDetailsPage extends StatelessWidget {
               );
             },
           )
-              : const Text('Aucun objet disponible'),
+              : const Text('Aucune zone'),
         ],
       ),
       floatingActionButton: FloatingActionButton(

@@ -62,6 +62,7 @@ class _MigrationListPageState extends State<MigrationListPage>{
               }
 
               MigrationSource source = MigrationSource(
+                id: key.toString(),
                 points: points,
                 //color: polyValue['color']! as Color,
                 name: polyValue['name']! as String,
@@ -108,6 +109,7 @@ class _MigrationListPageState extends State<MigrationListPage>{
             Map<String, dynamic> polygonData = {
               'color': polygon.color.toString(),
               'name': polygon.name,
+              //'id': polygon.id,
             };
             if (polygon.points != null) {
               polygonData['points'] = [];

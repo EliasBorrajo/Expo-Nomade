@@ -216,6 +216,7 @@ final dummyMigrations = [
     arrival: 'Arrival 1',
     polygons: [
       MigrationSource(
+        id: '1',
         name: 'source 1',
         color: Color(0xFF00FF00),
         points:
@@ -231,6 +232,7 @@ final dummyMigrations = [
     arrival: 'Arrival 2',
     polygons: [
       MigrationSource(
+        id: '2',
         name: 'source 2',
         color: Color(0xFFFF0000),
         points:
