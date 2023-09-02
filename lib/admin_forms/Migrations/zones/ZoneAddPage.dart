@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +55,7 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
             child: ElevatedButton(
               onPressed: () {
                 MigrationSource source = MigrationSource(
+                  id: Random().nextInt(100).toString(),
                   points: polygon,
                   //color: zoneColorTextController.,
                   name:  zoneNameTextController.text,
