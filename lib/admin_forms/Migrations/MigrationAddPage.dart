@@ -1,8 +1,10 @@
+import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneAddPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../dataModels/Migration.dart';
 import '../map_point_picker.dart';
 
 class MigrationAddPage extends StatefulWidget {
@@ -21,8 +23,9 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
   final TextEditingController tagTextController = TextEditingController();
   final TextEditingController migrationSourceColorTextController = TextEditingController();
   final TextEditingController migrationSourceNameTextController = TextEditingController();
-  late List<LatLng> polygonPoints = [];
   late List<List<LatLng>> validatedPolygons = [];
+  late MigrationSource migrationSource;
+  late List<MigrationSource> migrationSources;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
         padding: const EdgeInsets.all(16.0),
         children: [
           const Text(
-            'Name:',
+            'Nom:',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           TextField(controller: nameTextController),
@@ -52,28 +55,16 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
           Center(
             child: ElevatedButton(
               onPressed: () async {
-                validatedPolygons = await Navigator.push(
+                migrationSource = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)),
+                  MaterialPageRoute(builder: (context) => const ZoneAddPage()),
                 );
-                print(validatedPolygons);
+                print(migrationSource.toString());
+                migrationSources.add(migrationSource);
               },
-              child: Text('Choisir les points de la zone'),
+              child: const Text('Ajouter une zone') ,
             ),
           ),
-
-          const SizedBox(height: 16),
-          const Text(
-            'Color of the zone:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          TextField(controller: migrationSourceColorTextController),
-          const SizedBox(height: 16),
-          const Text(
-            'Name of the zone:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          TextField(controller: migrationSourceNameTextController),
           const SizedBox(height: 16),
           Center(
             child: ElevatedButton(
@@ -83,7 +74,6 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
               child: Text('Ajouter la migration'),
             ),
           ),
-
         ],
       ),
     );
@@ -99,16 +89,17 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
         'description': descriptionTextController.text,
         'arrival': arrivalTextController.text,
       };
-      if (validatedPolygons != null) {
+
+      if(migrationSources != null){
         migrationToUpload['polygons'] = [];
-        for (var polygon in validatedPolygons) {
+        for (var source in migrationSources){
           Map<String, dynamic> polygonData = {
-            'color': migrationSourceColorTextController.text,
-            'name': migrationSourceNameTextController.text,
+            'color': source.color,
+            'name': source.name,
           };
-          if (polygon != null) {
+          if (source.points != null) {
             polygonData['points'] = [];
-            for (var point in polygon) {
+            for (var point in source.points!) {
               Map<String, double> pointData = {
                 'latitude': point.latitude.toDouble(),
                 'longitude': point.longitude.toDouble(),
