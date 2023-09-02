@@ -215,8 +215,10 @@ final dummyMigrations = [
     arrival: 'Arrival 1',
     polygons: [
       MigrationSource(
-        [LatLng(0, 0), LatLng(0, 10), LatLng(10, 10)],
-        Color(0xFF00FF00), 'source 1',
+        name: 'source 1',
+        color: Color(0xFF00FF00),
+        points:
+        [const LatLng(46.23, 7.30), const LatLng(46.25, 7.30), const LatLng(46.25, 7.32), const LatLng(46.25, 7.6)],
       ),
     ],
     images: ['image1.jpg', 'image2.jpg'],
@@ -227,13 +229,18 @@ final dummyMigrations = [
     arrival: 'Arrival 2',
     polygons: [
       MigrationSource(
-        [LatLng(20, 20), LatLng(30, 20), LatLng(30, 30)],
-        Color(0xFFFF0000), 'source 2',
+        name: 'source 2',
+        color: Color(0xFFFF0000),
+        points:
+        [const LatLng(46.23, 7.30), const LatLng(46.25, 7.30), const LatLng(46.25, 7.32), const LatLng(46.25, 7.6)],
       ),
-      MigrationSource(
+      /*MigrationSource(
         [LatLng(40, 40), LatLng(40, 50), LatLng(50, 50)],
         Color(0xFF0000FF), 'source 2.1',
-      ),
+            () {
+
+        },
+      ),*/
     ],
   ),
 ];

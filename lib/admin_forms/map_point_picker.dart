@@ -15,7 +15,8 @@ class MapPointPicker extends StatefulWidget {
 
 class _MapPointPickerState extends State<MapPointPicker> {
   List<LatLng> currentPolygonPoints = [];
-  List<LatLng> validatedPolygon = [];
+  //List<LatLng> validatedPolygon = [];
+  List<List<LatLng>> validatedPolygons = [];
   LatLng currentPoint = const LatLng(0.0, 0.0);
   LatLng validatedPoint = const LatLng(0.0, 0.0);
   bool isEditingPolygon = false;
@@ -23,7 +24,6 @@ class _MapPointPickerState extends State<MapPointPicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Polygons on Map')),
       body: FlutterMap(
         options: MapOptions(
           center: const LatLng(46.2228401, 7.2939617),
@@ -50,9 +50,9 @@ class _MapPointPickerState extends State<MapPointPicker> {
               widget.pickerType == 1 ?
               PolygonLayer(
                 polygons: [
-                  //for (var points in validatedPolygons)
+                  for (var points in validatedPolygons)
                     Polygon(
-                      points: validatedPolygon,
+                      points: points,
                       color: Colors.green.withOpacity(0.3),
                       borderColor: Colors.green,
                       borderStrokeWidth: 2.0,
@@ -92,9 +92,10 @@ class _MapPointPickerState extends State<MapPointPicker> {
               onPressed: () {
                 setState(() {
                   if (isEditingPolygon) {
-                    //currentPolygonPoints.clear();
-                    validatedPolygon = currentPolygonPoints;
-                    validatedPoint = currentPoint;
+                    //validatedPolygon = currentPolygonPoints;
+                    validatedPolygons.add([...currentPolygonPoints]);
+                    currentPolygonPoints.clear();
+                    //validatedPoint = currentPoint;
                   }
                   isEditingPolygon = !isEditingPolygon;
                 });
@@ -107,7 +108,7 @@ class _MapPointPickerState extends State<MapPointPicker> {
               heroTag: 'fab2',
               onPressed: () {
                 // Return the points or point
-                widget.pickerType == 1 ? Navigator.pop(context, validatedPolygon) : Navigator.pop(context, currentPoint);
+                widget.pickerType == 1 ? Navigator.pop(context, validatedPolygons) : Navigator.pop(context, currentPoint);
               },
               backgroundColor: Colors.blue,
               child: const Icon(Icons.save),
@@ -119,7 +120,7 @@ class _MapPointPickerState extends State<MapPointPicker> {
                 // Return the points or point
                 //widget.pickerType == 1 ? Navigator.pop(context, validatedPolygon) : Navigator.pop(context, currentPoint);
 
-                widget.pickerType == 1 ? validatedPolygon.clear() : validatedPoint = const LatLng(0.0, 0.0);
+                widget.pickerType == 1 ? validatedPolygons.clear() : validatedPoint = const LatLng(0.0, 0.0);
               },
               backgroundColor: Colors.blue,
               child: const Icon(Icons.delete),

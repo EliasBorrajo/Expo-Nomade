@@ -24,14 +24,16 @@ class Migration {
 
 // Represents a migration source with a color and a zone on the map
 class MigrationSource {
-  late List<LatLng> points;
-  late Color color;
-  late String name;
+  late List<LatLng>? points;
+  late Color? color;
+  late String? name;
+  late VoidCallback? onTap;
 
-  MigrationSource(
-      this.points,
-      this.color,
-      this.name,
-      );
+  MigrationSource({
+    this.points,
+    this.color,
+    this.name,
+    this.onTap,
+  });
 }
 

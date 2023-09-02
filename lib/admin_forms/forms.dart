@@ -47,7 +47,7 @@ class AdminForms extends StatelessWidget
               QuizListPage(database: database),
               Icon(Icons.accessible_forward), // TODO : TAGS PAGE
               MigrationListPage(
-                  migrations: dummyMigrations,
+                  //migrations: dummyMigrations,
                   database: database)
 
 
