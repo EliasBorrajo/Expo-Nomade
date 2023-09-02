@@ -4,6 +4,7 @@ import 'Tag.dart';
 
 // OBJETS
 class Migration {
+  final String id;
   String name;
   String description;
   String arrival;
@@ -12,6 +13,7 @@ class Migration {
   List<String>? images;                  // optional
 
   Migration({
+    required this.id,
     required this.name,
     required this.description,
     required this.arrival,

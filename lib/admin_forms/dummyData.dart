@@ -210,6 +210,7 @@ final dummyMuseums = [
 
 final dummyMigrations = [
   Migration(
+    id: '1',
     name: 'Migration 1',
     description: 'Description of Migration 1',
     arrival: 'Arrival 1',
@@ -224,6 +225,7 @@ final dummyMigrations = [
     images: ['image1.jpg', 'image2.jpg'],
   ),
   Migration(
+    id: '2',
     name: 'Migration 2',
     description: 'Description of Migration 2',
     arrival: 'Arrival 2',

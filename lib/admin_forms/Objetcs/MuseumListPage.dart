@@ -198,7 +198,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
       print('No museums found in the database.');
     }
   }
-
   void _showDeleteConfirmationDialog(BuildContext context, Museum museum) {
     showDialog(
         context: context,
@@ -226,6 +225,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
         }
     );
   }
+
 
 
 

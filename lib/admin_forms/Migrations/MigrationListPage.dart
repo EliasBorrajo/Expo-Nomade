@@ -1,3 +1,4 @@
+import 'package:expo_nomade/admin_forms/Migrations/MigrationEditPage.dart';
 import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,7 @@ class _MigrationListPageState extends State<MigrationListPage>{
           }
 
           Migration migration = Migration(
+            id : key,
             name: value['name'] as String,
             description: value['description'] as String,
             arrival: value['arrival'] as String,
@@ -130,25 +132,76 @@ class _MigrationListPageState extends State<MigrationListPage>{
     }
   }
 
+  void _showDeleteConfirmationDialog(BuildContext context, Migration migration) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirmation'),
+            content: const Text('Êtes-vous sûr de vouloir supprimer cette migration ? Cette action est irreversible'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.database.ref().child('migrations').child(migration.id).remove();
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: const Text('Supprimer'),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Liste des musées',
+      title: 'Liste des flux',
       home: Scaffold(
         body: ListView.builder(
           itemCount: migrations.length,
           itemBuilder: (context, index) {
             final migration = migrations[index];
-            return ListTile(
-              title: Text(migration.name),
-              subtitle: Text('Zones : ${migration.polygons?.length.toString() ?? '0'}'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MigrationDetailsPage(migration: migration)),
-                );
-              },
+            return Column(
+              children: [
+                ListTile(
+                  title: Text(migration.name),
+                  subtitle: Text('Zones : ${migration.polygons?.length.toString() ?? '0'}'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MigrationDetailsPage(migration: migration)),
+                    );
+                  },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => MigrationEditpage(migration: migration, database: widget.database)),
+                          );                          },
+                        icon: const Icon(Icons.edit),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _showDeleteConfirmationDialog(context, migration!);
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
+
+                ),
+                const Divider(height: 2),
+              ],
             );
           },
         ),
