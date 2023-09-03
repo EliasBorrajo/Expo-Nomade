@@ -36,7 +36,7 @@ class _ObjectListPage extends State<ObjectListPage> {
           Map<String, dynamic>.from(entry.value);
           return MuseumObject(
             name: objectData['name'] ?? '',
-            description: objectData['descripton'] ?? '',
+            description: objectData['descripton'] ?? '', point: null,
             //LatLng
             /*tags: json['tags'] != null
                 ? List<Tag>.from(json['tags'].map((tagJson) => Tag.fromJson(tagJson)))
