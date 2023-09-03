@@ -20,6 +20,13 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
   final TextEditingController tagTextController = TextEditingController();
   late MigrationSource migrationSource;
   late List<MigrationSource> migrationSources = [];
+  late List<MigrationSource> displayedMigrationSources = [];
+
+  void updateZones(){
+    setState(() {
+      displayedMigrationSources = migrationSources;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +61,14 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
                   MaterialPageRoute(builder: (context) => const ZoneAddPage()),
                 );
                 print(migrationSource.toString());
+                updateZones();
                 migrationSources.add(migrationSource);
               },
               child: const Text('Ajouter une zone') ,
             ),
           ),
           const SizedBox(height: 16),
+          displayedMigrationSources.length <= 1 ?  Text('${displayedMigrationSources.length} zone ajoutée.') : Text('${displayedMigrationSources.length} zones ajoutées.'),
           Center(
             child: ElevatedButton(
               onPressed: () {
