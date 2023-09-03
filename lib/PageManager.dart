@@ -68,7 +68,7 @@ class _PageManagerState extends State<PageManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _showMap ? MapScreen(points: test, database: widget.database,) : QuizScreen(),
+      body: _showMap ? MapScreen(points: test, database: widget.database) : QuizScreen(database: widget.database),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,

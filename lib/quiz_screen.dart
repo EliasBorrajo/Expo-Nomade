@@ -6,7 +6,9 @@ import '../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({Key? key}) : super(key: key);
+  final FirebaseDatabase database;
+
+  const QuizScreen({super.key, required this.database});
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -30,11 +32,20 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       DatabaseEvent event = await _database.once();
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
+
       if (data != null) {
-        List<Question> allQuestions = [];
-        data.forEach((key, value) {
-          allQuestions.add(Question.fromMap(Map<String, dynamic>.from(value)));
-        });
+        List<Question> allQuestions = data.entries
+            .map((entry) {
+          String questionId = entry.key;
+          Map<String, dynamic> questionData = Map<String, dynamic>.from(entry.value);
+          return Question(
+            id: questionId,
+            questionText: questionData['questionText'] ?? '',
+            answers: List<String>.from(questionData['answers'] ?? []),
+            correctAnswer: questionData['correctAnswer'] ?? 0,
+          );
+        })
+            .toList();
 
         // Shuffle the questions and take the first 10 (or less if there are fewer than 10 questions)
         allQuestions.shuffle();
@@ -44,22 +55,16 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         setState(() {
           questions = questions;
         });
-
-        // Print all the questions
-        questions.forEach((question) {
-          print('Question: ${question.questionText}');
-          print('Answers: ${question.answers}');
-          print('Correct Answer: ${question.correctAnswer}');
-        });
       }
+
     } catch (error) {
       print('Error fetching questions: $error');
       // Handle the error appropriately, e.g., show an error message to the user.
     }
   }
 
-  void checkAnswer(String selectedAnswer) {
-    if (selectedAnswer == questions[currentQuestionIndex].answers[questions[currentQuestionIndex].correctAnswer]) {
+  void checkAnswer(int selectedAnswer) {
+    if (selectedAnswer == questions[currentQuestionIndex].correctAnswer) {
       setState(() {
         score++;
       });
@@ -68,7 +73,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
   }
 
   void moveToNextQuestion() {
-    if (currentQuestionIndex < 9) {
+    if (currentQuestionIndex < questions.length-1) {
       setState(() {
         currentQuestionIndex++;
       });
@@ -95,7 +100,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              QuizResultScreen(score: score, totalQuestions: questions.length),
+              QuizResultScreen(database: widget.database, score: score, totalQuestions: questions.length, redoQuiz: _redoQuiz),
             ],
           ),
         ),
@@ -110,13 +115,20 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Question ${currentQuestionIndex + 1}'),
+            const SizedBox(height: 16),
             Text(questions[currentQuestionIndex].questionText),
+            const SizedBox(height: 16),
             Column(
               children: [
-                for (String answer in questions[currentQuestionIndex].answers)
+                for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
                   ElevatedButton(
-                    onPressed: () => checkAnswer(answer),
-                    child: Text(answer),
+                    onPressed: () => checkAnswer(i),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    child: Text(questions[currentQuestionIndex].answers[i]),
                   ),
               ],
             ),
@@ -124,5 +136,13 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         ),
       ),
     );
+  }
+
+  void _redoQuiz() {
+    questions = [];
+    currentQuestionIndex = 0;
+    score = 0;
+    quizEnded = false;
+    fetchQuestions();
   }
 }
