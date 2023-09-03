@@ -16,4 +16,22 @@ class Museum {
     required this.website,
     this.objects,
   });
+
+  // Factory constructor to create Museum instances from JSON
+  factory Museum.fromJson(Map<String, dynamic> json) {
+    return Museum(
+      id: json['id'],
+      name: json['name'],
+      address: LatLng(
+        json['address']['latitude'],
+        json['address']['longitude'],
+      ),
+      website: json['website'],
+      objects: json['objects'] != null
+          ? List<MuseumObject>.from(
+        json['objects'].map((objectJson) => MuseumObject.fromJson(objectJson)),
+      )
+          : null,
+    );
+  }
 }
