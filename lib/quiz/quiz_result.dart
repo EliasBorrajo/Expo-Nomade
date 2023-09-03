@@ -11,13 +11,20 @@ class QuizResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Quiz terminé'),
-        Text('Score: $score/$totalQuestions'),
+        const Text('Quiz terminé !', style: TextStyle(fontSize: 32)),
+        const SizedBox(height: 16),
+        Text('Votre score: $score/$totalQuestions', style: const TextStyle(fontSize: 24)),
+        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () {
             redoQuiz();
           },
-          child: const Text('Refaire le test'),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+          child: const Text('Refaire le test',  style: TextStyle(fontSize: 20)),
         ),
       ],
     );

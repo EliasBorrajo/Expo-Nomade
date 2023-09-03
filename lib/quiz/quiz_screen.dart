@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
@@ -103,6 +104,37 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       );
     }
 
+/*    return Scaffold(
+      appBar: AppBar(title: const Text('Quiz')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 16),
+            Text('Question ${currentQuestionIndex + 1}', style: GoogleFonts.nunito(fontSize: 30)),
+            const SizedBox(height: 16),
+            Text(questions[currentQuestionIndex].questionText, style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 16),
+            Column(
+              children: [
+                for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
+                  ElevatedButton(
+                    onPressed: () => checkAnswer(i),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    child: Text(questions[currentQuestionIndex].answers[i],  style: const TextStyle(fontSize: 20)),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }*/
+
     return Scaffold(
       appBar: AppBar(title: const Text('Quiz')),
       body: Center(
@@ -110,9 +142,15 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 16),
-            Text('Question ${currentQuestionIndex + 1}', style: const TextStyle(fontSize: 32, fontStyle: FontStyle.italic)),
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 500), // Durée de l'animation en millisecondes
+              child: Text('Question ${currentQuestionIndex + 1}', style: GoogleFonts.nunito(fontSize: 30), key: UniqueKey()), // Assurez-vous d'ajouter une clé unique
+            ),
             const SizedBox(height: 16),
-            Text(questions[currentQuestionIndex].questionText, style: const TextStyle(fontSize: 24)),
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 500), // Durée de l'animation en millisecondes
+              child: Text(questions[currentQuestionIndex].questionText, style: const TextStyle(fontSize: 24), key: UniqueKey()), // Assurez-vous d'ajouter une clé unique
+            ),
             const SizedBox(height: 16),
             Column(
               children: [
