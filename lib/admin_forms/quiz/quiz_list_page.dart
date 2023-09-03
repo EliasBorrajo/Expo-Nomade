@@ -109,7 +109,7 @@ class _QuizListPageState extends State<QuizListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Liste des Questions')),
+      appBar: AppBar(title: const Text('Liste des questions')),
       body: questions.isEmpty
           ? const Center(
               child: Text(

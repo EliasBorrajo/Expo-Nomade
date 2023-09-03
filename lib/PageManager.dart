@@ -76,11 +76,11 @@ class _PageManagerState extends State<PageManager> {
           FloatingActionButton(
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
-            child: Icon(_showMap ? Icons.question_answer : Icons.map),
             elevation: 8, // Add a slight elevation
-            backgroundColor: Colors.blue, // Change button color
+            backgroundColor: Colors.blue,
+            child: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -89,14 +89,14 @@ class _PageManagerState extends State<PageManager> {
               );
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
+              backgroundColor: Colors.blue,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
               elevation: 8, // Add a slight elevation
             ),
-            child: Text(
+            child: const Text(
               'Admin Login',
               style: TextStyle(fontSize: 16),
             ),

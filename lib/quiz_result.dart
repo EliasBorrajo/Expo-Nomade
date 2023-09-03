@@ -98,23 +98,25 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez entrer une adresse e-mail valide.'),
-          duration: Duration(seconds: 2),
+          duration: Duration(seconds: 4),
         ),
       );
       return;
     }
 
     try {
-      DatabaseReference quizUserRef = widget.database.ref().child('quizUser');
+      DatabaseReference quizUserRef = widget.database.ref().child('quizPlayers');
       DatabaseReference newQuestionRef = quizUserRef.push();
 
-      DateTime now = DateTime.now();
+      final dateFormat = DateFormat('dd-MM-yyyy HH:mm');
+      final formattedDateTime = dateFormat.format(DateTime.now());
 
       Map<String, dynamic> questionToUpload = {
         'userEmail': userEmail,
         'score': '${widget.score}/${widget.totalQuestions}',
-        'dateTime': now.toIso8601String()
+        'dateTime': formattedDateTime
       };
+
       await newQuestionRef.set(questionToUpload);
 
       setState(() {
