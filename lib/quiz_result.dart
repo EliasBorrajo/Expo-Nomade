@@ -1,4 +1,3 @@
-import 'package:expo_nomade/quiz_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +54,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              onPressed: isEmailSent ? null : () {
                 if (isValidEmail) {
                   _addEmailToDatabase();
                 } else {
@@ -108,9 +107,13 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     try {
       DatabaseReference quizUserRef = widget.database.ref().child('quizUser');
       DatabaseReference newQuestionRef = quizUserRef.push();
+
+      DateTime now = DateTime.now();
+
       Map<String, dynamic> questionToUpload = {
         'userEmail': userEmail,
         'score': '${widget.score}/${widget.totalQuestions}',
+        'dateTime': now.toIso8601String()
       };
       await newQuestionRef.set(questionToUpload);
 
@@ -118,6 +121,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         isEmailSent = true;
       });
 
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Votre email a été envoyé avec succès.'),
