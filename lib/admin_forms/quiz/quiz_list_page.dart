@@ -70,6 +70,7 @@ class _QuizListPageState extends State<QuizListPage> {
       await widget.database.ref().child('quiz').child(questionId).remove();
 
       if (!context.mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La question a été supprimée avec succès.'),
@@ -130,11 +131,10 @@ class _QuizListPageState extends State<QuizListPage> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _navigateToAddQuestionPage();
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _navigateToAddQuestionPage,
+        label: const Text('Ajouter une question'),
+        icon: const Icon(Icons.add),
       ),
     );
   }

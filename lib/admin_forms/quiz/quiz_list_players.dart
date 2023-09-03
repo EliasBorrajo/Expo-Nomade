@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../dataModels/player.dart';
@@ -136,21 +135,42 @@ class _QuizListPlayers extends State<QuizListPlayers> {
         itemBuilder: (context, index) {
           final player = players[index];
           return ListTile(
-            leading: Icon(Icons.person), // Icône pour le joueur
-            title: Text('Joueur: ${player.userEmail}'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            title: Row(
               children: [
-                Row(
+                const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.calendar_today), // Icône pour la date et l'heure
-                    Text('Date et heure: ${player.dateTime}'),
+                    Icon(Icons.person, size: 40,),
                   ],
                 ),
-                Row(
+                const SizedBox(width: 30), // Espace entre l'icône et les informations
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.star), // Icône pour le score
-                    Text('Score: ${player.score}'),
+                    Row(
+                      children: [
+                        const Icon(Icons.info),
+                        Text(' Joueur: ${player.id}'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.email),
+                        Text(' ${player.userEmail}'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today),
+                        Text(' Date et heure: ${player.dateTime}'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.star),
+                        Text(' Score: ${player.score}'),
+                      ],
+                    ),
                   ],
                 ),
               ],
