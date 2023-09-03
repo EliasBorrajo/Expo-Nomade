@@ -63,7 +63,9 @@ class _MapScreenState extends State<MapScreen> {
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               ),
+              CustomPolygonLayer(migrations: migrations),
               MarkerLayer(
+                key: const Key('Object marker'),
                 markers: [
                   for (var point in widget.points)
                     MapMarker(
@@ -75,7 +77,7 @@ class _MapScreenState extends State<MapScreen> {
                     ).createMarker(context),
                 ]
               ),
-              CustomPolygonLayer(migrations: migrations),
+
             ],
           ),
         ],
@@ -83,4 +85,24 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  LatLng _calculateCentroid(List<LatLng> points) {
+    // Calculate the centroid of the polygon
+    // Replace this logic with your own centroid calculation
+    double sumX = 0.0;
+    double sumY = 0.0;
+
+    for (var point in points) {
+      sumX += point.latitude;
+      sumY += point.longitude;
+    }
+
+    final centroid = LatLng(
+      sumX / points.length,
+      sumY / points.length,
+    );
+
+    return centroid;
+  }
+
 }
+

@@ -26,6 +26,7 @@ class CustomPolygonLayer extends StatelessWidget {
           ],
         ),
         MarkerLayer(
+          key: const Key('Polygon marker'),
           markers: [
             for (var migration in migrations)
               for(var polygon in migration.polygons!)
@@ -36,6 +37,7 @@ class CustomPolygonLayer extends StatelessWidget {
                     //TODO: Here call the screen for the popup of the polygon
                     print('tapped on polygon.');
                   },
+                  behavior: HitTestBehavior.translucent,
                   child: const Icon(
                     Icons.move_down,
                     color: Colors.red,

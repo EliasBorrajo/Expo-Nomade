@@ -28,6 +28,7 @@ class MapMarker  {
             ),
           );
         },
+        behavior: HitTestBehavior.translucent,
         child: const Icon(
           Icons.location_on,
           color: Colors.red,
