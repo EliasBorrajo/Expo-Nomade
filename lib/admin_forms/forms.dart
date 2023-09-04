@@ -1,6 +1,7 @@
 // Form qui permet de faire du CRUD (Create, Read, Update, Delete) sur un objet stocké dans la firebase.
 // Utiliser le fichier firebase_crud.dart pour faire le lien avec la firebase.
 
+import 'package:expo_nomade/admin_forms/Filter/FilterListPage.dart';
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
@@ -35,7 +36,7 @@ class AdminForms extends StatelessWidget
             bottom: const TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.accessible_forward)),
+                Tab(icon: Icon(Icons.filter_list)),
                 Tab(icon: Icon(Icons.ac_unit)),
                 Tab(icon: Icon(Icons.question_answer)),
                 Tab(icon: Icon(Icons.accessibility)),
@@ -46,7 +47,7 @@ class AdminForms extends StatelessWidget
           body: TabBarView(
             children: [
               MuseumListPage(database: database),
-              const Icon(Icons.accessible_forward), // TODO : TAGS PAGE
+              FilterListPage(database: database), // TODO : TAGS PAGE
               MigrationListPage(
                   //migrations: dummyMigrations,
                   database: database),

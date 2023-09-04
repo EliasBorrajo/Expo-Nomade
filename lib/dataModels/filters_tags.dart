@@ -1,6 +1,6 @@
 class FilterTag {
   final id;
-  final String typeName;
+  String typeName;
   List<String> options;
 
   FilterTag({
