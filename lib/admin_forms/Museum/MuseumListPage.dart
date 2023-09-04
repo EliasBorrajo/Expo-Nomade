@@ -46,11 +46,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
   @override
   void stateChanged() {
     if (mounted) {
-
       _loadMuseumsFromFirebaseAndListen();
-      //_loadMuseumsFromFirebase();
-      //_loadMuseumsFromFirebase2();
-
     }
   }
 
@@ -58,75 +54,49 @@ class _MuseumListPageState extends State<MuseumListPage> {
   /// Updates the local list of museums when the data changes.
   /// All museums are loaded at once.
   /// All objects for each museum are loaded at once.
-  void _loadMuseumsFromFirebaseAndListen() async {
+  void _loadMuseumsFromFirebaseAndListen() async
+  {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
 
     // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
-    _museumsSubscription = museumsRef.onValue.listen((DatabaseEvent event) {
-      if (event.snapshot.value != null) {
+    _museumsSubscription = museumsRef.onValue.listen((DatabaseEvent event)
+    {
+      if (event.snapshot.value != null)
+      {
         List<Museum> updatedMuseums = [];
         Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
-        // value : valeur de l'instantané, ici les musées
-        // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
-        // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
 
-        museumsData.forEach((key, value) {
-
+        museumsData.forEach((key, value)
+        {
           // M U S E U M S  O B J E C T S
+          // 1) Récupérer les objets du musée
+           List<MuseumObject>? objects = [];
 
-          /**/
-          List<MuseumObject>? objects = [];
-          if (value['objects'] != null
-              && value['objects'] is Map<String, dynamic>)
-          {
-                Map<String, dynamic> objectsData = value['objects'] as Map<String, dynamic>;
-
-                objectsData?.forEach((keyObj, valueObj) {
-                  // String museumId = value['id'];
-                  // String objectId = '$museumId-obj${objectCounter.toString().padLeft(3, '0')}';
-
-                  MuseumObject object = MuseumObject(
-                    id: keyObj,
-                    name: valueObj['name'] as String,
-                    description: valueObj['description'] as String,
-                    point: LatLng(
-                      // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-                      (valueObj['point']['latitude'] as num).toDouble(),
-                      (valueObj['point']['longitude'] as num).toDouble(),
-                    ),
-                  );
-                  objects.add(object);
-                  print('TEST SEE ID OBJECT : ${object.id}');
-                });
-          }
+           // Ajouter les objets du musée à la liste d'objets
+           objects = _getObjectsData(value, objects);
+           // display the objects data in the console TODO : Remove
+           print('LOADING OBJECTS');
+           for(var objects in objects)
+           {
+               print('OBJECT ID : ${objects.id} & OBJECT NAME : ${objects.name}');
+           }
 
           // M U S E U M S
-          Museum museum = Museum(
-            id: key,
-            name: value['name'] as String,
-            address: LatLng(
-              // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-              (value['address']['latitude'] as num).toDouble(),
-              (value['address']['longitude'] as num).toDouble(),
-            ),
-            website: value['website'] as String,
-            objects: objects.isEmpty
-                ? null
-                : objects, // Ajouter les objets du dessus au musée
-          );
+          // 2) Récupérer les musées et y ajouter les objets de l'étape 1
+          Museum museum = _getMuseumAndAddObjects(key, value, objects);
 
+
+          // 3) Ajouter le musée à la liste des musées
           updatedMuseums.add(museum);
 
 
-          // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+          // 4) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
           if (mounted)
           {
             setState(() {
               museums = updatedMuseums;
             });
           }
-
-
         });
       }
     });
@@ -135,14 +105,105 @@ class _MuseumListPageState extends State<MuseumListPage> {
     _printMuseumsData(museums);
   }
 
+  List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
+  {
+    if (value['objects'] != null
+        /*&& value['objects'] is Map<String, dynamic>*/)
+    {
+      List<dynamic> objectsData = value['objects'] as List<dynamic>;
+      print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+
+
+      for (var objValue in objectsData)
+      {
+        // 1) Create a new MuseumObject from the data
+        MuseumObject object = MuseumObject(
+          id: objValue['id'] as String,
+          name: objValue['name'] as String,
+          description: objValue['description'] as String,
+          point: LatLng(
+            (objValue['point']['latitude'] as num).toDouble(),
+            (objValue['point']['longitude'] as num).toDouble(),
+          ),
+        );
+
+        // 2) Add the new MuseumObject to the list
+        objects.add(object);
+        print('TEST SEE ID OBJECT : ${object.id}');
+        print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+
+      };
+
+      return objects;
+    }
+
+    return [];
+  }
+
+  // List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
+  // {
+  //   if (value['objects'] != null
+  //   /*&& value['objects'] is Map<String, dynamic>*/)
+  //   {
+  //     Map<String, dynamic> objectsData = value['objects'] as Map<String, dynamic>;
+  //     print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+  //
+  //
+  //     objectsData.forEach((keyObj, valueObj)
+  //     {
+  //       MuseumObject object = MuseumObject(
+  //         id: keyObj,
+  //         name: valueObj['name'] as String,
+  //         description: valueObj['description'] as String,
+  //         point: LatLng(
+  //           // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+  //           (valueObj['point']['latitude'] as num).toDouble(),
+  //           (valueObj['point']['longitude'] as num).toDouble(),
+  //         ),
+  //       );
+  //
+  //       objects.add(object);
+  //       print('TEST SEE ID OBJECT : ${object.id}');
+  //       print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+  //
+  //     });
+  //
+  //     return objects;
+  //   }
+  //
+  //   return [];
+  // }
+
+  Museum _getMuseumAndAddObjects(key, value, List<MuseumObject> objects)
+  {
+    return Museum(
+      id: key,
+      name: value['name'] as String,
+      address: LatLng(
+        // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+        (value['address']['latitude'] as num).toDouble(),
+        (value['address']['longitude'] as num).toDouble(),
+      ),
+      website: value['website'] as String,
+      objects: objects.isEmpty
+          ? null
+          : objects, // Ajouter les objets du dessus au musée // TODO: METTRE EN TO LIST ???
+    );
+  }
+
+  int _countObjects(Museum museum) {
+    // Compter le nombre d'objets dans le musée (si il y en a)
+    List<MuseumObject>? objectsData = museum.objects;
+    if (objectsData == null) {
+      return 0;
+    }
+    print('SUBTITLE : le musée ${museum.name} contient ${objectsData.length} objets !');
+
+    return objectsData.length;
+  }
 
   /// Displays the museums data in the console.
   void _printMuseumsData(List<Museum> museums) {
-    // vérifier si la liste est vide
-    if (museums.isEmpty) {
-      print('No museums found in the list / database.');
-      return;
-    }
 
     print('Museums data:');
     for (Museum museum in museums) {
@@ -295,7 +356,10 @@ class _MuseumListPageState extends State<MuseumListPage> {
                 children: [
                   ListTile(
                     title: Text(museum.name),
-                    subtitle: Text('Objects : ${museum.objects?.length.toString() ?? '0'}'),
+                    // TODO : REPARER çA
+                     subtitle: museum == null
+                         ? Text('Objects : Aucun objet')
+                         : Text('Objects : ${_countObjects(museum).toString() ?? 'Aucun objet'}'),
                     onTap: ()
                     {
                       // NAV MUSEUM DETAIL PAGE

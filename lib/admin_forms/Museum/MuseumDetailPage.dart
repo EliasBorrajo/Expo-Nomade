@@ -9,8 +9,6 @@ import '../../dataModels/MuseumObject.dart';
 import 'Object/ObjectAddPage.dart';
 import 'Object/ObjectDetailPage.dart';
 
-// TODO : ajout de la fonctionnalité de recherche d'objet par nom
-
 /// Displays the details of a museum.
 /// At the top of the page, the infos of the museum are displayed.
 /// Then, the list of objects is displayed.
