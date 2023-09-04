@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -17,7 +19,7 @@ class MuseumListPage extends StatefulWidget {
   final FirebaseDatabase database;
 
   // Constructeur
-  const MuseumListPage({super.key, required this.database});
+  const MuseumListPage({Key? key, required this.database}) : super(key: key);
 
   // Gestion de l'état de la page
   @override
@@ -28,18 +30,22 @@ class MuseumListPage extends StatefulWidget {
 class _MuseumListPageState extends State<MuseumListPage> {
   // A T T R I B U T E S
   late List<Museum> museums = []; // List to be filled by Firebase DB
-
+  late StreamSubscription<DatabaseEvent> _museumsSubscription; // Subscription to Firebase DB updates (when data changes)
 
   // M E T H O D S
   @override
   void initState() {
     super.initState();
     _loadMuseumsFromFirebaseAndListen();
-    //_loadMuseumsFromFirebase();
-    //_loadMuseumsFromFirebase2();
-
   }
 
+  @override
+  void dispose() {
+    _museumsSubscription?.cancel(); // Cancel the Firebase DB subscription when the widget is removed from the widget tree. Prevents memory leaks.
+    super.dispose();
+  }
+
+  @override
   void stateChanged() {
     if (mounted) {
 
@@ -58,7 +64,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
 
     // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
-    museumsRef.onValue.listen((DatabaseEvent event) {
+    _museumsSubscription = museumsRef.onValue.listen((DatabaseEvent event) {
       if (event.snapshot.value != null) {
         List<Museum> updatedMuseums = [];
         Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
