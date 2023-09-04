@@ -44,12 +44,12 @@ class _QuestionListItemState extends State<QuestionListItem> {
                     child:
                     Text(
                       'Question ${widget.question.id}',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                 ),
                 Text(
                   widget.question.questionText,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 const Text(

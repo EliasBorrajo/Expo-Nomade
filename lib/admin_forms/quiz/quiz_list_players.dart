@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/player.dart';
+
+enum PlayerFilter { sortByRecentDate, sortByOldestDate, sortByScore }
 
 class QuizListPlayers extends StatefulWidget {
   final FirebaseDatabase database;
@@ -11,12 +12,28 @@ class QuizListPlayers extends StatefulWidget {
   const QuizListPlayers({super.key, required this.database});
 
   @override
-  _QuizListPlayers createState() => _QuizListPlayers();
+  _QuizListPlayersState createState() => _QuizListPlayersState();
 }
 
-class _QuizListPlayers extends State<QuizListPlayers> {
+class _QuizListPlayersState extends State<QuizListPlayers> {
   List<Player> players = [];
   StreamSubscription<DatabaseEvent>? _subscription;
+  PlayerFilter currentFilter = PlayerFilter.sortByRecentDate;
+
+  List<DropdownMenuItem<PlayerFilter>> filterOptions = [
+    const DropdownMenuItem(
+      value: PlayerFilter.sortByRecentDate,
+      child: Text('Filtrer par date récente'),
+    ),
+    const DropdownMenuItem(
+      value: PlayerFilter.sortByOldestDate,
+      child: Text('Filtrer par date ancienne'),
+    ),
+    const DropdownMenuItem(
+      value: PlayerFilter.sortByScore,
+      child: Text('Filtrer par score'),
+    ),
+  ];
 
   @override
   void initState() {
@@ -57,6 +74,41 @@ class _QuizListPlayers extends State<QuizListPlayers> {
     }
   }
 
+  void applyFilter(PlayerFilter? filter) {
+    if (filter != null) {
+      setState(() {
+        currentFilter = filter;
+      });
+    }
+  }
+
+  DateTime parseDateTime(String dateTimeString) {
+    final parts = dateTimeString.split(' ');
+    final dateParts = parts[0].split('-');
+    final timeParts = parts[1].split(':');
+    final year = int.parse(dateParts[2]);
+    final month = int.parse(dateParts[1]);
+    final day = int.parse(dateParts[0]);
+    final hour = int.parse(timeParts[0]);
+    final minute = int.parse(timeParts[1]);
+    return DateTime(year, month, day, hour, minute);
+  }
+
+  List<Player> getFilteredPlayers() {
+    if (currentFilter == PlayerFilter.sortByRecentDate) {
+      players.sort((a, b) => parseDateTime(b.dateTime).compareTo(parseDateTime(a.dateTime)));
+      return players;
+    } else if (currentFilter == PlayerFilter.sortByOldestDate) {
+      players.sort((a, b) => parseDateTime(a.dateTime).compareTo(parseDateTime(b.dateTime)));
+      return players;
+    } else if (currentFilter == PlayerFilter.sortByScore) {
+      players.sort((a, b) => b.score.compareTo(a.score));
+      return players;
+    } else {
+      return players;
+    }
+  }
+
   @override
   void dispose() {
     _subscription?.cancel();
@@ -68,7 +120,6 @@ class _QuizListPlayers extends State<QuizListPlayers> {
       await widget.database.ref().child('quizPlayers').child(playerId).remove();
 
       if (!context.mounted) return;
-
 
       setState(() {
         players.removeWhere((player) => player.id == playerId);
@@ -128,80 +179,94 @@ class _QuizListPlayers extends State<QuizListPlayers> {
 
   @override
   Widget build(BuildContext context) {
+    final filteredPlayers = getFilteredPlayers();
+
     return Scaffold(
-        appBar: AppBar(title: const Text('Listes des joueurs')),
-        body: players.isEmpty
-            ? const Center(
-          child: Text(
-            'Aucun joueur trouvé dans la base de données.',
+      appBar: AppBar(
+        title: const Text('Liste des joueurs'),
+        actions: <Widget>[
+          DropdownButton<PlayerFilter>(
+            value: currentFilter,
+            onChanged: applyFilter,
+            items: filterOptions,
           ),
-        )
-            : ListView.builder(
-          itemCount: players.length,
-          itemBuilder: (context, index) {
-            final player = players[index];
-            return Column(
-              children: [
-                ListTile(
-                  title: Row(
-                    children: [
-                      const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+        ],
+      ),
+      body: filteredPlayers.isEmpty
+          ? const Center(
+        child: Text(
+          'Aucun joueur trouvé dans la base de données.',
+        ),
+      )
+          : ListView.builder(
+        itemCount: filteredPlayers.length,
+        itemBuilder: (context, index) {
+          final player = filteredPlayers[index];
+          return Column(
+            children: [
+              ListTile(
+                title: Row(
+                  children: [
+                    const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.person, size: 40),
+                      ],
+                    ),
+                    const SizedBox(width: 30),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.person, size: 40),
-                        ],
-                      ),
-                      const SizedBox(width: 30),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.info),
-                                Text('Joueur: ${player.id}'),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.email),
-                                Text(player.userEmail),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today),
-                                Text('Date et heure: ${player.dateTime}'),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.star),
-                                Text(' Score: ${player.score}'),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              _showDeleteConfirmationDialog(context, player.id);
-                            },
+                          Row(
+                            children: [
+                              const Icon(Icons.info),
+                              Text('Joueur: ${player.id}'),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.email),
+                              Text(player.userEmail),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today),
+                              Text('Date et heure: ${player.dateTime}'),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.star),
+                              Text(' Score: ${player.score}'),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            _showDeleteConfirmationDialog(context, player.id);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const Divider(height: 1),
-              ],
-            );
-          },
-        )
+              ),
+              const Divider(height: 1),
+            ],
+          );
+        },
+      ),
     );
   }
 }
