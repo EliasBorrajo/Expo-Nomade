@@ -26,8 +26,8 @@ class MuseumDetailPage extends StatefulWidget {
 class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
   // M E T H O D S
-  void _showDeleteConfirmationDialog(
-      BuildContext context, Museum museum, MuseumObject object) {
+  void _showDeleteConfirmationDialog(BuildContext context, Museum museum, MuseumObject object)
+  {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -44,11 +44,16 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
               ),
               TextButton(
                 onPressed: () {
-                  // TODO: Supprimer l'objet et mettre à jour la liste d'objets
-                  widget.database.ref().child('museums').child(museum.id)
-                      //.child("objects")
-                      .child(object.id)
-                      .remove();
+
+
+                  _deleteObject(museum, object);
+
+                  // // TODO: Supprimer l'objet et mettre à jour la liste d'objets
+                  // widget.database.ref().child('museums').child(museum.id)
+                  //     .child('objects')
+                  //     .child(object.id)
+                  //     .remove();
+
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
                 child: Text('Supprimer'),
@@ -56,6 +61,44 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
             ],
           );
         });
+  }
+
+  Future<void> _deleteObject(Museum museum, MuseumObject object) async{
+    try{
+      // stocker la ref du musée dans une variable
+      final museumRef = widget.database.ref().child('museums').child(museum.id);
+
+      // afficher dans la console la ref du musée, son nom et son id, puis sa liste d'objets
+      print('Museum ref:  ${museumRef.key}');
+      print('Museum id:   ${museum.id}');
+      print('Museum name: ${museum.name}');
+      print('Museum objects: ${museum.objects.toString()}');
+
+      // stocker la ref de l'objet voulu dans une variable
+      // final objectRef = museumRef.child('objects').child(object.id);
+      final objectRef = museumRef.child('objects').child(object as String);
+
+
+      // afficher dans la console la ref de l'objet, son nom et son id
+      print('Object ref:  ${objectRef.key}');
+      print('Object id:   ${object.id}');
+      print('Object name: ${object.name}');
+
+      // supprimer l'objet
+      await objectRef.remove();
+
+      // setState(() {
+      //   // Mettez à jour la liste des objets dans l'état du widget
+      //   widget.museum.objects?.remove(object);
+      // });
+
+
+    }
+    catch(e){
+      print("DELETE OBJECT ERROR : $e");
+    }
+
+
   }
 
   // R E N D E R I N G
