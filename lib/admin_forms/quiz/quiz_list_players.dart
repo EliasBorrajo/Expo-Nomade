@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/player.dart';
 
-enum PlayerFilter { sortByRecentDate, sortByOldestDate, sortByScore }
+enum PlayerFilter { sortByRecentDate, sortByOldestDate, sortByHighestScore, sortByLowestScore }
 
 class QuizListPlayers extends StatefulWidget {
   final FirebaseDatabase database;
@@ -23,15 +23,19 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
   List<DropdownMenuItem<PlayerFilter>> filterOptions = [
     const DropdownMenuItem(
       value: PlayerFilter.sortByRecentDate,
-      child: Text('Filtrer par date récente'),
+      child: Text('Filtrer par date la plus récente'),
     ),
     const DropdownMenuItem(
       value: PlayerFilter.sortByOldestDate,
-      child: Text('Filtrer par date ancienne'),
+      child: Text('Filtrer par date la plus ancienne'),
     ),
     const DropdownMenuItem(
-      value: PlayerFilter.sortByScore,
-      child: Text('Filtrer par score'),
+      value: PlayerFilter.sortByHighestScore,
+      child: Text('Filtrer par score le plus haut'),
+    ),
+    const DropdownMenuItem(
+      value: PlayerFilter.sortByLowestScore,
+      child: Text('Filtrer par score le plus bas'),
     ),
   ];
 
@@ -101,8 +105,11 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
     } else if (currentFilter == PlayerFilter.sortByOldestDate) {
       players.sort((a, b) => parseDateTime(a.dateTime).compareTo(parseDateTime(b.dateTime)));
       return players;
-    } else if (currentFilter == PlayerFilter.sortByScore) {
+    } else if (currentFilter == PlayerFilter.sortByHighestScore) {
       players.sort((a, b) => b.score.compareTo(a.score));
+      return players;
+    }  else if (currentFilter == PlayerFilter.sortByLowestScore) {
+      players.sort((a, b) => a.score.compareTo(b.score));
       return players;
     } else {
       return players;
@@ -185,10 +192,16 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
       appBar: AppBar(
         title: const Text('Liste des joueurs'),
         actions: <Widget>[
-          DropdownButton<PlayerFilter>(
-            value: currentFilter,
-            onChanged: applyFilter,
-            items: filterOptions,
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration (
+              color: Colors.white,
+            ),
+            child: DropdownButton<PlayerFilter>(
+              value: currentFilter,
+              onChanged: applyFilter,
+              items: filterOptions,
+            ),
           ),
         ],
       ),

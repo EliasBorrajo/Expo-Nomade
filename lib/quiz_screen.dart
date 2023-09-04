@@ -84,6 +84,14 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
     }
   }
 
+  void _redoQuiz() {
+    questions = [];
+    currentQuestionIndex = 0;
+    score = 0;
+    quizEnded = false;
+    fetchQuestions();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (questions.isEmpty) {
@@ -136,13 +144,5 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         ),
       ),
     );
-  }
-
-  void _redoQuiz() {
-    questions = [];
-    currentQuestionIndex = 0;
-    score = 0;
-    quizEnded = false;
-    fetchQuestions();
   }
 }

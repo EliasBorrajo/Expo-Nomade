@@ -23,6 +23,40 @@ class _QuestionListItemState extends State<QuestionListItem> {
     super.initState();
   }
 
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation de suppression'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
+              SizedBox(height: 8),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () {
+                widget.onDeletePressed(widget.question.id);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Supprimer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -40,12 +74,12 @@ class _QuestionListItemState extends State<QuestionListItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Title(
-                    color: Colors.black,
-                    child:
-                    Text(
-                      'Question ${widget.question.id}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+                  color: Colors.black,
+                  child:
+                  Text(
+                    'Question ${widget.question.id}',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 Text(
                   widget.question.questionText,
@@ -105,40 +139,6 @@ class _QuestionListItemState extends State<QuestionListItem> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirmation de suppression'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Êtes-vous sûr de vouloir supprimer cette question ?'),
-              SizedBox(height: 8),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Annuler'),
-            ),
-            TextButton(
-              onPressed: () {
-                widget.onDeletePressed(widget.question.id);
-                Navigator.of(context).pop();
-              },
-              child: const Text('Supprimer'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

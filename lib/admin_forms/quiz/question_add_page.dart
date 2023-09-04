@@ -23,56 +23,6 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   final TextEditingController answer3Controller = TextEditingController();
   int correctAnswer = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Ajouter une Question')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Texte de la question:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            TextField(controller: questionTextController),
-            const SizedBox(height: 16),
-            const Text(
-              'Réponses:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            TextField(controller: answer1Controller),
-            TextField(controller: answer2Controller),
-            TextField(controller: answer3Controller),
-            const SizedBox(height: 8),
-            const Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
-            DropdownButton<int>(
-              value: correctAnswer,
-              onChanged: (value) {
-                setState(() {
-                  correctAnswer = value!;
-                });
-              },
-              items: const [
-                DropdownMenuItem(value: 0, child: Text('Réponse 1')),
-                DropdownMenuItem(value: 1, child: Text('Réponse 2')),
-                DropdownMenuItem(value: 2, child: Text('Réponse 3')),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                _addQuestionToDatabase();
-              },
-              child: const Text('Ajouter la question'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _addQuestionToDatabase() async {
 
     final questionText = questionTextController.text.trim();
@@ -124,5 +74,55 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         ),
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Ajouter une Question')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Texte de la question:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            TextField(controller: questionTextController),
+            const SizedBox(height: 16),
+            const Text(
+              'Réponses:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            TextField(controller: answer1Controller),
+            TextField(controller: answer2Controller),
+            TextField(controller: answer3Controller),
+            const SizedBox(height: 8),
+            const Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
+            DropdownButton<int>(
+              value: correctAnswer,
+              onChanged: (value) {
+                setState(() {
+                  correctAnswer = value!;
+                });
+              },
+              items: const [
+                DropdownMenuItem(value: 0, child: Text('Réponse 1')),
+                DropdownMenuItem(value: 1, child: Text('Réponse 2')),
+                DropdownMenuItem(value: 2, child: Text('Réponse 3')),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                _addQuestionToDatabase();
+              },
+              child: const Text('Ajouter la question'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

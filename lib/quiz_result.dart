@@ -25,73 +25,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   bool isValidEmail = true;
   bool isEmailSent = false;
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Quiz terminé !'),
-        const SizedBox(height: 16),
-        Text('Votre score: ${widget.score}/${widget.totalQuestions}'),
-        const SizedBox(height: 16),
-        Column(
-          children: [
-            const Text('Entrez votre e-mail et tentez votre chance pour gagner un cadeau !'),
-            Container (
-              width: 410.0,
-                child: TextField(
-                  controller: emailController,
-                  maxLines: 1,
-                  onChanged: (value) {
-                    setState(() {
-                      isValidEmail = isValidEmailFormat(value);
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Entrez votre e-mail',
-                    errorText: isValidEmail ? null : 'E-mail invalide',
-                  ),
-                  enabled: !isEmailSent,
-                )
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: isEmailSent ? null : () {
-                if (isValidEmail) {
-                  _addEmailToDatabase();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Veuillez entrer une adresse e-mail valide.'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-              ),
-              child: const Text('Soumettre l\'e-mail'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () {
-            widget.redoQuiz();
-          },
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-          ),
-          child: const Text('Refaire le test'),
-        ),
-      ],
-    );
-  }
-
   void _addEmailToDatabase() async {
     final userEmail = emailController.text.trim();
 
@@ -146,5 +79,72 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   bool isValidEmailFormat(String email) {
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     return emailRegex.hasMatch(email);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text('Quiz terminé !'),
+        const SizedBox(height: 16),
+        Text('Votre score: ${widget.score}/${widget.totalQuestions}'),
+        const SizedBox(height: 16),
+        Column(
+          children: [
+            const Text('Entrez votre e-mail et tentez votre chance pour gagner un cadeau !'),
+            Container (
+                width: 410.0,
+                child: TextField(
+                  controller: emailController,
+                  maxLines: 1,
+                  onChanged: (value) {
+                    setState(() {
+                      isValidEmail = isValidEmailFormat(value);
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Entrez votre e-mail',
+                    errorText: isValidEmail ? null : 'E-mail invalide',
+                  ),
+                  enabled: !isEmailSent,
+                )
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: isEmailSent ? null : () {
+                if (isValidEmail) {
+                  _addEmailToDatabase();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Veuillez entrer une adresse e-mail valide.'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+              child: const Text('Soumettre l\'e-mail'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () {
+            widget.redoQuiz();
+          },
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+          child: const Text('Refaire le test'),
+        ),
+      ],
+    );
   }
 }
