@@ -74,6 +74,7 @@ class _PageManagerState extends State<PageManager> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton.extended(
+            heroTag: 'switchPage',
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
             elevation: 8, // Add a slight elevation
@@ -82,6 +83,7 @@ class _PageManagerState extends State<PageManager> {
           ),
           const SizedBox(height: 16),
           FloatingActionButton.extended(
+            heroTag: 'adminForms',
             onPressed: () {
               Navigator.push(
                 context,

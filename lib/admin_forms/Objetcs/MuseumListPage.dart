@@ -307,7 +307,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
               onPressed: _seedDatabase,
               label: Text('Seed Database'),
               icon: Icon(Icons.cloud_upload),
-              heroTag: 'seed_database',
+              heroTag: 'seed_database_museum',
             ),
             SizedBox(height: 10),
             FloatingActionButton.extended(

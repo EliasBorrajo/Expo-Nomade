@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
 import '../firebase/firebase_crud.dart';
+import 'map_filters.dart';
 
 class MapScreen extends StatefulWidget {
 
@@ -46,7 +47,15 @@ class _MapScreenState extends State<MapScreen> {
         migrations = updatedMigrations;
       });
     });
+  }
 
+  void _openFilters() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FiltersWindow(database: widget.database); // Remplacez par le widget de votre fenêtre de filtre
+      },
+    );
   }
 
   @override
@@ -77,11 +86,18 @@ class _MapScreenState extends State<MapScreen> {
                     ).createMarker(context),
                 ]
               ),
-
             ],
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          _openFilters();
+        },
+        label: const Text('Filtres'),
+        icon: const Icon(Icons.filter_list_alt),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 

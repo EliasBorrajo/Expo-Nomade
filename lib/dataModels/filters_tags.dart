@@ -1,14 +1,13 @@
-class Tag {
+class FilterTag {
   final id;
   final String typeName;
-  final List<String> options;
+  List<String> options;
 
-  Tag({
+  FilterTag({
     required this.id,
     required this.typeName,
     required this.options,
   });
-
 }
 
 

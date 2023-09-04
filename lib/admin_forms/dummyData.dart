@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
+import '../dataModels/filters_tags.dart';
 import '../dataModels/question_models.dart';
 
 final dummyMuseums = [
@@ -53,6 +54,82 @@ final dummyMuseums = [
     address: const LatLng( 77.2,  160.89),
     website: 'Website 4',
     objects: const <MuseumObject>[], // Empty list of objects for this museum // TODO : supprimer ? Ne peut pas arriver je crois
+  ),
+];
+
+final dummyFilters = [
+  FilterTag(
+    id: 1,
+    typeName: "Chronologie",
+    options: [
+      "Préhistoire",
+      "Antiquité",
+      "Moyen Age",
+      "Temps modernes",
+      "Epoque contemporaine"
+    ]
+  ),
+  FilterTag(
+      id: 2,
+      typeName: "Raison de migration",
+      options: [
+        "Recherche de meilleures terres",
+        "Fuite",
+        "Travail",
+        "Établissement",
+        "Influence",
+        "Conquête",
+        "Domination",
+        "Refuge",
+        "Art"
+      ]
+  ),
+  FilterTag(
+      id: 3,
+      typeName: "Musées",
+      options: [
+        "Liste des musées"
+      ]
+  ),
+  FilterTag(
+      id: 4,
+      typeName: "Population",
+      options: [
+        "Francs",
+        "Allemands",
+        "Italiens",
+        "Belges",
+        "Ottomans"
+      ]
+  ),
+  FilterTag(
+      id: 5,
+      typeName: "Oeuvres d'art",
+      options: [
+        "Peinture",
+        "Sculptures",
+        "Dessins",
+        "Gravures",
+        "Photographie"
+      ]
+  ),
+  FilterTag(
+      id: 6,
+      typeName: "Antiquités",
+      options: [
+        "Poterie",
+        "Céramiques",
+        "Objets en bronze"
+      ]
+  ),
+  FilterTag(
+      id: 7,
+      typeName: "Artisanat",
+      options: [
+        "Tapisserie",
+        "Bijoux",
+        "Poterie décorative"
+      ]
   ),
 ];
 

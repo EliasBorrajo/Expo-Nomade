@@ -193,7 +193,6 @@ class _QuizListPageState extends State<QuizListPage> {
   }
 
   void _seedDatabase() async {
-    // Get a reference to your Firebase database
     DatabaseReference databaseReference = widget.database.ref();
 
     // Loop through the dummyQuiz and add them to the database
