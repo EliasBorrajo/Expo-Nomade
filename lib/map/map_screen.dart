@@ -23,6 +23,13 @@ class _MapScreenState extends State<MapScreen> {
   bool isPopupOpen = false;
   String popupTitle = '';
   late List<Migration> migrations = [];
+  bool isFiltersWindowOpen = false;
+
+  void _toggleFiltersWindow() {
+    setState(() {
+      isFiltersWindowOpen = !isFiltersWindowOpen;
+    });
+  }
 
   void openPopup(String title) {
     setState(() {
@@ -49,25 +56,16 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  void _openFilters() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return FiltersWindow(database: widget.database); // Remplacez par le widget de votre fenêtre de filtre
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FlutterMap(
-        options: MapOptions(
-          center: const LatLng(46.2228401, 7.2939617),
-          zoom: 12.0,
-        ),
+      body: Stack(
         children: [
-          Stack(
+          FlutterMap(
+            options: MapOptions(
+              center: const LatLng(46.2228401, 7.2939617),
+              zoom: 12.0,
+            ),
             children: [
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -84,15 +82,19 @@ class _MapScreenState extends State<MapScreen> {
                         const MapEntry('Age', '25'),
                       ],
                     ).createMarker(context),
-                ]
+                ],
               ),
             ],
           ),
+          if (isFiltersWindowOpen)
+            Positioned(
+              child: FiltersWindow(database: widget.database),
+            ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          _openFilters();
+          _toggleFiltersWindow();
         },
         label: const Text('Filtres'),
         icon: const Icon(Icons.filter_list_alt),
