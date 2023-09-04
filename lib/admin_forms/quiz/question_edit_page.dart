@@ -6,7 +6,7 @@ class EditQuestionPage extends StatefulWidget {
   final FirebaseDatabase database;
   final Question question;
 
-  const EditQuestionPage({Key? key, required this.database, required this.question}) : super(key: key);
+  const EditQuestionPage({super.key, required this.database, required this.question});
 
   @override
   _EditQuestionPageState createState() => _EditQuestionPageState();
@@ -29,6 +29,44 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
     correctAnswer = widget.question.correctAnswer;
   }
 
+  void _updateQuestionInDatabase() async {
+    try {
+      DatabaseReference questionsRef = widget.database.ref().child('quiz').child(widget.question.id);
+
+      Map<String, dynamic> updatedQuestion =
+      {
+        'questionText': questionTextController.text,
+        'answers': {
+          '0': answer1Controller.text,
+          '1': answer2Controller.text,
+          '2': answer3Controller.text,
+        },
+        'correctAnswer': correctAnswer,
+      };
+
+      await questionsRef.update(updatedQuestion);
+
+      if (!context.mounted) return;
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La question a été éditée avec succès.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (error) {
+      print('Error updating question: $error');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Échec de l\'édition de la question.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,21 +76,21 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Question Text:',
+            const Text(
+              'Texte de la question:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(controller: questionTextController),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Réponses:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(controller: answer1Controller),
             TextField(controller: answer2Controller),
             TextField(controller: answer3Controller),
-            SizedBox(height: 8),
-            Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 8),
+            const Text('Réponse correcte:', style: TextStyle(fontSize: 16)),
             DropdownButton<int>(
               value: correctAnswer,
               onChanged: (value) {
@@ -60,55 +98,22 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
                   correctAnswer = value!;
                 });
               },
-              items: [
+              items: const [
                 DropdownMenuItem(value: 0, child: Text('Réponse 1')),
                 DropdownMenuItem(value: 1, child: Text('Réponse 2')),
                 DropdownMenuItem(value: 2, child: Text('Réponse 3')),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 _updateQuestionInDatabase();
               },
-              child: Text('Mettre à jour la Question'),
+              child: const Text('Mettre à jour la question'),
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _updateQuestionInDatabase() async {
-    try {
-      DatabaseReference questionsRef = widget.database.reference().child('quiz').child(widget.question.id);
-
-      Question updatedQuestion = Question(
-        id: widget.question.id,
-        questionText: questionTextController.text,
-        answers: [
-          answer1Controller.text,
-          answer2Controller.text,
-          answer3Controller.text,
-        ],
-        correctAnswer: correctAnswer,
-      );
-
-      Map<String, dynamic> questionToUpdate = {
-        'questionText': updatedQuestion.questionText,
-        'answers': {
-          'answer1': updatedQuestion.answers[0],
-          'answer2': updatedQuestion.answers[1],
-          'answer3': updatedQuestion.answers[2],
-        },
-        'correctAnswer': updatedQuestion.correctAnswer,
-      };
-
-      await questionsRef.update(questionToUpdate);
-
-      Navigator.pop(context); // Revenir à la liste après la mise à jour
-    } catch (error) {
-      print('Error updating question: $error');
-    }
   }
 }

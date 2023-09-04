@@ -1,71 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../dataModels/question_models.dart';
 
-class QuestionListItem extends StatelessWidget {
+class QuestionListItem extends StatefulWidget {
   final Question question;
   final Function(String) onDeletePressed;
+  final Function(Question) onEditPressed;
 
-  const QuestionListItem({required this.question, required this.onDeletePressed});
+  const QuestionListItem({
+    super.key,
+    required this.question,
+    required this.onDeletePressed,
+    required this.onEditPressed,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('Question ${question.id}'),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            question.questionText,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Answers:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (var i = 0; i < question.answers.length; i++)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        i == question.correctAnswer
-                            ? Icons.check_circle
-                            : Icons.circle,
-                        color: i == question.correctAnswer
-                            ? Colors.green
-                            : Colors.grey,
-                      ),
-                      SizedBox(width: 8),
-                      Text(question.answers[i]),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: () {
-              //_EditQuestionPageState(question);
-            },
-            icon: const Icon(Icons.edit),
-          ),
-          IconButton(
-            onPressed: () {
-              _showDeleteConfirmationDialog(context);
-            },
-            icon: const Icon(Icons.delete),
-          ),
-        ],
-      ),
-    );
+  _QuestionListItemState createState() => _QuestionListItemState();
+}
+
+class _QuestionListItemState extends State<QuestionListItem> {
+  @override
+  void initState() {
+    super.initState();
   }
 
   void _showDeleteConfirmationDialog(BuildContext context) {
@@ -73,7 +28,7 @@ class QuestionListItem extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation de suppression'),
+          title: const Text('Confirmation de suppression'),
           content: const Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,20 +40,105 @@ class QuestionListItem extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                Navigator.of(context).pop();
               },
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
-                onDeletePressed(question.id);
-                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                widget.onDeletePressed(widget.question.id);
+                Navigator.of(context).pop();
               },
-              child: Text('Supprimer'),
+              child: const Text('Supprimer'),
             ),
           ],
         );
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Row(
+        children: [
+          const Column(
+            mainAxisAlignment:  MainAxisAlignment.center,
+            children: [
+              Icon(Icons.question_mark, size: 40),
+            ],
+          ),
+          const SizedBox(width: 30), // Espace entre les colonnes
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Title(
+                  color: Colors.black,
+                  child:
+                  Text(
+                    'Question ${widget.question.id}',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Text(
+                  widget.question.questionText,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Answers:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var i = 0; i < widget.question.answers.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              i == widget.question.correctAnswer
+                                  ? Icons.check_circle
+                                  : Icons.circle,
+                              color: i == widget.question.correctAnswer
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(widget.question.answers[i]),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      widget.onEditPressed(widget.question);
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      _showDeleteConfirmationDialog(context);
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
