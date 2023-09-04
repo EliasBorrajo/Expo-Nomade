@@ -1,12 +1,12 @@
 class Tag {
   final id;
   final String typeName;
-  late List<String>? options;
+  final List<String> options;
 
   Tag({
     required this.id,
     required this.typeName,
-    this.options,
+    required this.options,
   });
 
 }

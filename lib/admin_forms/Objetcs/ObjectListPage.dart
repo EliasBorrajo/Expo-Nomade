@@ -3,6 +3,8 @@ import 'package:expo_nomade/admin_forms/quiz/question_edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/MuseumObject.dart';
+import '../../dataModels/Tag.dart';
+import 'package:latlong2/latlong.dart';
 
 
 class ObjectListPage extends StatefulWidget {
@@ -26,7 +28,7 @@ class _ObjectListPage extends State<ObjectListPage> {
 
   void fetchObjects() async {
     //try {
-    DatabaseReference objectRef = widget.database.ref().child('objects');
+    DatabaseReference objectRef = widget.database.ref().child('museumObjects');
     objectRef.onValue.listen((DatabaseEvent event) {
       DataSnapshot snapshot = event.snapshot;
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
@@ -36,11 +38,12 @@ class _ObjectListPage extends State<ObjectListPage> {
           Map<String, dynamic>.from(entry.value);
           return MuseumObject(
             name: objectData['name'] ?? '',
-            description: objectData['descripton'] ?? '', point: null,
-            //LatLng
-            /*tags: json['tags'] != null
-                ? List<Tag>.from(json['tags'].map((tagJson) => Tag.fromJson(tagJson)))
-                : null,*/
+            description: objectData['descripton'] ?? '',
+              point: LatLng(
+              (objectData['point']['latitude'] as num).toDouble(),
+              (objectData['point']['longitude'] as num).toDouble(),
+              ),
+              tags: List<Tag>.from(objectData['tags'] ?? []),
             //images
           );
         }).toList();
@@ -52,31 +55,31 @@ class _ObjectListPage extends State<ObjectListPage> {
     });
   }
 
-  /*void _deleteQuestion(String questionId) async {
+  void _deleteMuseumObject(String name) async {
     try {
-      await widget.database.ref().child('quiz').child(questionId).remove();
-      fetchQuestions(); // Rafraîchir la liste des questions après la suppression
+      await widget.database.ref().child('museumObjects').child(name).remove();
+      fetchObjects(); // Rafraîchir la liste des questions après la suppression
 
       // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('La question a été supprimée avec succès.'),
+          content: Text('Cet objet a été supprimé avec succès.'),
           duration: Duration(seconds: 2),
         ),
       );
     } catch (error) {
-      print('Error deleting question: $error');
+      print('Error deleting object: $error');
 
       // Afficher un message d'échec
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Échec de la suppression de la question.'),
+          content: Text('Échec de la suppression de cet objet.'),
           duration: Duration(seconds: 2),
         ),
       );
     }
   }
-
+/*
   void _navigateToAddQuestionPage() async {
     // Naviguer vers la page d'ajout de question et attendre un éventuel retour
     final result = await Navigator.push(
