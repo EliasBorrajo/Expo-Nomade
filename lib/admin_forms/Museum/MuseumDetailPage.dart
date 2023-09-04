@@ -39,16 +39,18 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   void initState() {
     super.initState();
 
-    // Récupère le musée passé en paramètre
-    museum = widget.museum;
-    if(widget.museum.objects != null)
-      {
-        // Recupere la liste des objets du musée
-        objects = widget.museum.objects!;
-      }
+    // // Récupère le musée passé en paramètre
+     museum = widget.museum;
+    // if(widget.museum.objects != null)
+    //   {
+    //     // Recupere la liste des objets du musée
+    //     objects = widget.museum.objects!;
+    //   }
 
     // Load the objects of the museum from firebase & override the local objects list
-    _loadDataAndListen();
+    _loadDataAndListen()
+        .whenComplete(() => 'Data loaded successfully')
+        .catchError((e) => print('Data load error $e'));
 
   }
 
@@ -67,6 +69,8 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   void dispose() {
     _museumSubscription?.cancel();
     _objectsSubscription?.cancel();
+    museum.objects?.clear();
+    objects?.clear();
     super.dispose();
 
   }
@@ -97,7 +101,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                   // Réactivez cette partie pour mettre à jour l'interface utilisateur après la suppression de l'objet
                   setState(() {
                     // Mettez à jour la liste des objets dans l'état du widget
-                    widget.museum.objects?.remove(object);
+                    museum.objects?.remove(object);
                   });
 
 
@@ -113,7 +117,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   Future<void> _deleteObject(Museum museum, MuseumObject object) async{
     try{
       // stocker la ref du musée dans une variable
-      final museumRef = widget.database.ref().child('museums').child(museum.id);
+      DatabaseReference museumRef = widget.database.ref().child('museums').child(museum.id);
 
       // afficher dans la console la ref du musée, son nom et son id, puis sa liste d'objets
       print('Museum ref:  ${museumRef.key}');
@@ -123,21 +127,36 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
       // stocker la ref de l'objet voulu dans une variable
       // final objectRef = museumRef.child('objects').child(object.id);
-      final objectRef = museumRef.child('objects').child(object.id);
+      DatabaseReference objectRef = museumRef.child('objects').child(object.id);
+      print('Object ref:  ${objectRef.key} AND ${objectRef.toString()}');
 
 
       // afficher dans la console la ref de l'objet, son nom et son id
       print('Object ref:  ${objectRef.key}');
-      print('Object id:   ${object.id}');
       print('Object name: ${object.name}');
 
       try{
         // supprimer l'objet
+        // // Récupérez la référence du musée
+        // DatabaseReference museumRef = widget.database.ref().child('museums').child(museum.id);
+        //
+        // // Supprimez l'objet en utilisant son ID
+        // await museumRef.child('objects').child(object.id).remove();
+        //
+        // // Mettez à jour la liste locale d'objets
+        // setState(() {
+        //   objects.removeWhere((object) => object.id == object.id);
+        // });
+
+
         await objectRef.remove()
             .whenComplete(() => print("DELETE OBJECT SUCCESS"))
             .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
 
-        //await objectRef.set(null);
+        // Re-Load la liste d'objets du musée
+        await _loadObjectsAndListen()
+            .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
+            .catchError((e) => print('Objects Load Error $e'));
       }
       catch(e){
         print("DELETE OBJECT ERROR specific : $e");
@@ -151,18 +170,17 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
   }
 
-  void _loadDataAndListen() async
+  Future<void> _loadDataAndListen() async
   {
     // 1) Récuperer de la DB le musée passé en paramètre, et écouter les changements
-    _loadMuseumAndListen()
-        .whenComplete(() => print('Museum Loaded successfully : ${museum.toString()}'))
-        .catchError((e) => print('Museum Load Error $e'));
+    await _loadMuseumAndListen()
+            .whenComplete(() => print('Museum Loaded successfully : ${museum.toString()}'))
+            .catchError((e) => print('Museum Load Error $e'));
 
     // 2) Récupérer de la DB les objets du musée passé en paramètre, et écouter les changements
-    _loadObjectsAndListen()
-        .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
-        .catchError((e) => print('Objects Load Error $e'));
-
+    await _loadObjectsAndListen()
+            .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
+            .catchError((e) => print('Objects Load Error $e'));
 
   }
 
@@ -192,6 +210,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
         // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
         if (mounted)
         {
+          print("UPDATE MUSEUM ${updatedMuseum.toString()}");
           setState(() {
             museum = updatedMuseum;
           });
@@ -212,33 +231,34 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       if (event.snapshot.value != null)
       {
         List<MuseumObject> updatedObjects = [];
-        Map<dynamic, dynamic> objectsData = event.snapshot.value as Map<dynamic,dynamic>;
+        List<dynamic> objectsData = event.snapshot.value as List<dynamic>;
         // value : valeur de l'instantané, ici les musées
         // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
         // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
 
         // For each object in the DB
-        objectsData.forEach((key, value)
+        for (var objValue in objectsData)
         {
           // 1) Create a new MuseumObject from the data
           MuseumObject object = MuseumObject(
-            id: key as String,
-            name: value['name'] as String,
-            description: value['description'] as String,
+            id: objValue['id'] as String,
+            name: objValue['name'] as String,
+            description: objValue['description'] as String,
             point: LatLng(
-              (value['point']['latitude'] as num).toDouble(),
-              (value['point']['longitude'] as num).toDouble(),
+              (objValue['point']['latitude'] as num).toDouble(),
+              (objValue['point']['longitude'] as num).toDouble(),
             ),
           );
 
           // 2) Add the new MuseumObject to the list
           updatedObjects.add(object);
-        });
+        }
 
 
         // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
         if (mounted)
         {
+          print("UPDATE OBJECTS LIST ${updatedObjects.toString()}");
           setState(() {
             objects = updatedObjects;
           });
@@ -254,75 +274,78 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(museum.name),
+        title: Text(widget.museum.name),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              'Adresse: latitude ${museum.address.latitude} & longitude ${museum.address.longitude} '),
-          Text('Site web: ${museum.website}'),
-          Text('Objets:'),
+      body: museum != null
+          ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Adresse: latitude ${museum.address.latitude} & longitude ${museum.address.longitude} '),
+              Text('Site web: ${museum.website}'),
+              Text('Objets:'),
 
-          // Display the list of objects
-          objects != null
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: objects?.length ?? 0,
-                  // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
-                  itemBuilder: (context, index) {
-                    final object = objects?[index];
-                    return Column(
-                      children: [
-                        ListTile(
-                          title: Text(object?.name ?? ''),
-                          subtitle: Text(object?.description ?? ''),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ObjectDetailPage(
-                                      object: object!,
-                                      database: widget.database)), // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-                            );
-                          },
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                // NAV MUSEUM EDIT PAGE
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => ObjectEditPage(
-                                            object: object!,
-                                            database: widget.database)),
-                                  );
-                                },
-                                icon: const Icon(Icons.edit),
-                              ),
-                              IconButton(
-                                // DELETE MUSEUM
-                                onPressed: () {
-                                  _showDeleteConfirmationDialog(
-                                      context,
-                                      museum,
-                                      object!); // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-                                },
-                                icon: const Icon(Icons.delete),
-                              ),
-                            ],
+            // Display the list of objects
+            objects != null
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: objects?.length ?? 0,
+                    // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
+                    itemBuilder: (context, index) {
+                      final object = objects?[index];
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(object?.name ?? ''),
+                            subtitle: Text(object?.description ?? ''),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ObjectDetailPage(
+                                        object: object!,
+                                        database: widget.database)), // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                              );
+                            },
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  // NAV MUSEUM EDIT PAGE
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => ObjectEditPage(
+                                              object: object!,
+                                              database: widget.database)),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                ),
+                                IconButton(
+                                  // DELETE MUSEUM
+                                  onPressed: () {
+                                    _showDeleteConfirmationDialog(
+                                        context,
+                                        museum,
+                                        object!); // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
 
-                        const Divider(height: 2),
-                        // Add a divider between each ListTile
-                      ],
-                    );
-                  },
-                )
+                          const Divider(height: 2),
+                          // Add a divider between each ListTile
+                        ],
+                      );
+                    },
+                  )
               : const Text('Aucun objet disponible pour ce musée'),
         ],
+      )
+          : Center(
+            child: CircularProgressIndicator(), // Show a loading indicator while data is loading
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
