@@ -137,7 +137,7 @@ class _QuizListPageState extends State<QuizListPage> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Rechercher...',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? ElevatedButton(
                   onPressed: _clearSearch,

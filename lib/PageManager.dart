@@ -1,4 +1,4 @@
-import 'package:expo_nomade/quiz_screen.dart';
+import 'package:expo_nomade/quiz/quiz_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
