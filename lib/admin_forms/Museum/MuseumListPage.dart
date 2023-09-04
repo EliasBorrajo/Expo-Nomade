@@ -1,6 +1,5 @@
 
 import 'dart:async';
-
 import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -77,28 +76,27 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
           /**/
           List<MuseumObject>? objects = [];
-          if (value['objects'] != null) // Si le musée a des objets associés dans la firebase
+          if (value['objects'] != null
+              && value['objects'] is Map<String, dynamic>)
           {
-                List<dynamic> objectsData = value['objects'] as List<dynamic>;
-                int objectCounter = 0; // Pour générer un identifiant unique pour chaque objet
+                Map<String, dynamic> objectsData = value['objects'] as Map<String, dynamic>;
 
-                // Création d'un ID unique pour chaque objet
-
-                objectsData.forEach((objValue) {
+                objectsData?.forEach((keyObj, valueObj) {
                   // String museumId = value['id'];
                   // String objectId = '$museumId-obj${objectCounter.toString().padLeft(3, '0')}';
 
                   MuseumObject object = MuseumObject(
-                    id: objValue['id'] as String,
-                    name: objValue['name'] as String,
-                    description: objValue['description'] as String,
+                    id: keyObj,
+                    name: valueObj['name'] as String,
+                    description: valueObj['description'] as String,
                     point: LatLng(
                       // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-                      (objValue['point']['latitude'] as num).toDouble(),
-                      (objValue['point']['longitude'] as num).toDouble(),
+                      (valueObj['point']['latitude'] as num).toDouble(),
+                      (valueObj['point']['longitude'] as num).toDouble(),
                     ),
                   );
                   objects.add(object);
+                  print('TEST SEE ID OBJECT : ${object.id}');
                 });
           }
 
