@@ -169,7 +169,7 @@ class _MigrationListPageState extends State<MigrationListPage>{
               onPressed: _seedDatabase,
               label: Text('Seed Database'),
               icon: Icon(Icons.cloud_upload),
-              heroTag: 'seed_database',
+              heroTag: 'seed_database_migration',
             ),
           ],
         ),
