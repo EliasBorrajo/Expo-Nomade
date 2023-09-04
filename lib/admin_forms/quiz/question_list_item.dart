@@ -26,58 +26,82 @@ class _QuestionListItemState extends State<QuestionListItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('Question ${widget.question.id}'),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      title: Row(
         children: [
-          Text(
-            widget.question.questionText,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Answers:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const Column(
+            mainAxisAlignment:  MainAxisAlignment.center,
             children: [
-              for (var i = 0; i < widget.question.answers.length; i++)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        i == widget.question.correctAnswer
-                            ? Icons.check_circle
-                            : Icons.circle,
-                        color: i == widget.question.correctAnswer
-                            ? Colors.green
-                            : Colors.grey,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(widget.question.answers[i]),
-                    ],
-                  ),
-                ),
+              Icon(Icons.question_mark, size: 40),
             ],
           ),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: () {
-              widget.onEditPressed(widget.question);
-            },
-            icon: const Icon(Icons.edit),
+          const SizedBox(width: 30), // Espace entre les colonnes
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Title(
+                    color: Colors.black,
+                    child:
+                    Text(
+                      'Question ${widget.question.id}',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    )
+                ),
+                Text(
+                  widget.question.questionText,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Answers:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var i = 0; i < widget.question.answers.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              i == widget.question.correctAnswer
+                                  ? Icons.check_circle
+                                  : Icons.circle,
+                              color: i == widget.question.correctAnswer
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(widget.question.answers[i]),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          IconButton(
-            onPressed: () async {
-              _showDeleteConfirmationDialog(context);
-            },
-            icon: const Icon(Icons.delete),
+          const SizedBox(width: 8),
+          Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      widget.onEditPressed(widget.question);
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      _showDeleteConfirmationDialog(context);
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

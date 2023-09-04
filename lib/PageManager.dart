@@ -73,33 +73,23 @@ class _PageManagerState extends State<PageManager> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FloatingActionButton(
+          FloatingActionButton.extended(
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
             elevation: 8, // Add a slight elevation
-            backgroundColor: Colors.blue,
-            child: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
+            label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
+            icon: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
+          FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AdminForms()),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              elevation: 8, // Add a slight elevation
-            ),
-            child: const Text(
-              'Admin Login',
-              style: TextStyle(fontSize: 16),
-            ),
+            label: const Text('Admin'),
+            icon: const Icon(Icons.admin_panel_settings),
           ),
         ],
       ),

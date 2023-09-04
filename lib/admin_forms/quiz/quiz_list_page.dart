@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/admin_forms/quiz/question_add_page.dart';
 import 'package:expo_nomade/admin_forms/quiz/question_edit_page.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,10 @@ class _QuizListPageState extends State<QuizListPage> {
 
       if (!context.mounted) return;
 
+      setState(() {
+        questions.removeWhere((question) => question.id == questionId);
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('La question a été supprimée avec succès.'),
@@ -132,10 +137,25 @@ class _QuizListPageState extends State<QuizListPage> {
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
+        //onPressed: _seedDatabase,
         onPressed: _navigateToAddQuestionPage,
         label: const Text('Ajouter une question'),
         icon: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _seedDatabase() async {
+    // Get a reference to your Firebase database
+    DatabaseReference databaseReference = widget.database.ref();
+
+    // Loop through the dummyQuiz and add them to the database
+    for (var question in dummyQuiz) {
+      await databaseReference.child('quiz').push().set({
+        'questionText': question.questionText,
+        'answers': question.answers.map((answer) => answer).toList(),
+        'correctAnswer': question.correctAnswer,
+      });
+    }
   }
 }

@@ -68,6 +68,12 @@ class _QuizListPlayers extends State<QuizListPlayers> {
       await widget.database.ref().child('quizPlayers').child(playerId).remove();
 
       if (!context.mounted) return;
+
+
+      setState(() {
+        players.removeWhere((player) => player.id == playerId);
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Le joueur a été supprimé avec succès.'),
@@ -123,67 +129,79 @@ class _QuizListPlayers extends State<QuizListPlayers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Listes des joueurs')),
-      body: players.isEmpty
-          ? const Center(
-        child: Text(
-          'Aucun joueur trouvé dans la base de données.',
-        ),
-      )
-          : ListView.builder(
-        itemCount: players.length,
-        itemBuilder: (context, index) {
-          final player = players[index];
-          return ListTile(
-            title: Row(
+        appBar: AppBar(title: const Text('Listes des joueurs')),
+        body: players.isEmpty
+            ? const Center(
+          child: Text(
+            'Aucun joueur trouvé dans la base de données.',
+          ),
+        )
+            : ListView.builder(
+          itemCount: players.length,
+          itemBuilder: (context, index) {
+            final player = players[index];
+            return Column(
               children: [
-                const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.person, size: 40,),
-                  ],
+                ListTile(
+                  title: Row(
+                    children: [
+                      const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.person, size: 40),
+                        ],
+                      ),
+                      const SizedBox(width: 30),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.info),
+                                Text('Joueur: ${player.id}'),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.email),
+                                Text(player.userEmail),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today),
+                                Text('Date et heure: ${player.dateTime}'),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.star),
+                                Text(' Score: ${player.score}'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              _showDeleteConfirmationDialog(context, player.id);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 30), // Espace entre l'icône et les informations
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.info),
-                        Text(' Joueur: ${player.id}'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.email),
-                        Text(' ${player.userEmail}'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_today),
-                        Text(' Date et heure: ${player.dateTime}'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.star),
-                        Text(' Score: ${player.score}'),
-                      ],
-                    ),
-                  ],
-                ),
+                const Divider(height: 1),
               ],
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                _showDeleteConfirmationDialog(context, player.id);
-              },
-            ),
-          );
-        },
-      )
+            );
+          },
+        )
     );
   }
 }
