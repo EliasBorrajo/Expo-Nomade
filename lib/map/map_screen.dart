@@ -53,7 +53,7 @@ class _MapScreenState extends State<MapScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return FiltersWindow(); // Remplacez par le widget de votre fenêtre de filtre
+        return FiltersWindow(database: widget.database); // Remplacez par le widget de votre fenêtre de filtre
       },
     );
   }
@@ -92,7 +92,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          _openFilters;
+          _openFilters();
         },
         label: const Text('Filtres'),
         icon: const Icon(Icons.filter_list_alt),

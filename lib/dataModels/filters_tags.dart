@@ -1,9 +1,9 @@
-class Tag {
+class FilterTag {
   final id;
   final String typeName;
   List<String> options;
 
-  Tag({
+  FilterTag({
     required this.id,
     required this.typeName,
     required this.options,
