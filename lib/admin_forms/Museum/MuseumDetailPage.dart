@@ -43,7 +43,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                 child: Text('Annuler'),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
 
 
                   _deleteObject(museum, object);
@@ -68,6 +68,10 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       // stocker la ref du musée dans une variable
       final museumRef = widget.database.ref().child('museums').child(museum.id);
 
+      // Désactiver l'écouteur en temps réel
+      final museumsRef_OFF = widget.database.ref().child('museums');
+      //useumsRef_OFF.removeEventListener(); // Désactive l'écouteur
+
       // afficher dans la console la ref du musée, son nom et son id, puis sa liste d'objets
       print('Museum ref:  ${museumRef.key}');
       print('Museum id:   ${museum.id}');
@@ -76,7 +80,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
       // stocker la ref de l'objet voulu dans une variable
       // final objectRef = museumRef.child('objects').child(object.id);
-      final objectRef = museumRef.child('objects').child(object as String);
+      final objectRef = museumRef.child('objects').child(object.id);
 
 
       // afficher dans la console la ref de l'objet, son nom et son id
@@ -84,8 +88,18 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       print('Object id:   ${object.id}');
       print('Object name: ${object.name}');
 
-      // supprimer l'objet
-      await objectRef.remove();
+      try{
+        // supprimer l'objet
+        await objectRef.remove();
+        await objectRef.set(null);
+      }
+      catch(e){
+        print("DELETE OBJECT ERROR specific : $e");
+      }
+      // // supprimer l'objet
+      // await objectRef.remove();
+      // await objectRef.set(null);
+
 
       // setState(() {
       //   // Mettez à jour la liste des objets dans l'état du widget

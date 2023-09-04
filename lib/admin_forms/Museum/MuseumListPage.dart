@@ -1,3 +1,4 @@
+
 import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -34,6 +35,19 @@ class _MuseumListPageState extends State<MuseumListPage> {
   void initState() {
     super.initState();
     _loadMuseumsFromFirebaseAndListen();
+    //_loadMuseumsFromFirebase();
+    //_loadMuseumsFromFirebase2();
+
+  }
+
+  void stateChanged() {
+    if (mounted) {
+
+      _loadMuseumsFromFirebaseAndListen();
+      //_loadMuseumsFromFirebase();
+      //_loadMuseumsFromFirebase2();
+
+    }
   }
 
   /// Loads the museums from Firebase and listens for updates.
@@ -141,9 +155,16 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
           updatedMuseums.add(museum);
 
-          setState(() {
-            museums = updatedMuseums;
-          });
+
+          // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+          if (mounted)
+          {
+            setState(() {
+              museums = updatedMuseums;
+            });
+          }
+
+
         });
       }
     });
@@ -151,6 +172,73 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // Display the museums data in the console TODO : Remove
     _printMuseumsData(museums);
   }
+
+
+    void _loadMuseumsFromFirebase2() async {
+    DatabaseReference museumsRef = widget.database.ref().child('museums');
+
+    try {
+      final snapshot = await museumsRef.get();
+
+      if (snapshot.exists) {
+        List<Museum> updatedMuseums = [];
+        Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic, dynamic>;
+
+        museumsData.forEach((key, value) {
+          // M U S E U M S  O B J E C T S
+          List<MuseumObject>? objects = [];
+
+          if (value['objects'] != null) {
+            List<dynamic> objectsData = value['objects'] as List<dynamic>;
+            const uuid = Uuid();
+
+            objectsData.forEach((objValue) {
+              MuseumObject object = MuseumObject(
+                id: uuid.v4(),
+                name: objValue['name'] as String,
+                description: objValue['description'] as String,
+                point: LatLng(
+                  (objValue['point']['latitude'] as num).toDouble(),
+                  (objValue['point']['longitude'] as num).toDouble(),
+                ),
+              );
+              objects.add(object);
+            });
+          }
+
+          // M U S E U M S
+          Museum museum = Museum(
+            id: key,
+            name: value['name'] as String,
+            address: LatLng(
+              (value['address']['latitude'] as num).toDouble(),
+              (value['address']['longitude'] as num).toDouble(),
+            ),
+            website: value['website'] as String,
+            objects: objects.isEmpty ? null : objects,
+          );
+
+          updatedMuseums.add(museum);
+
+          if (mounted) {
+            setState(() {
+              museums = updatedMuseums;
+            });
+          }
+
+
+
+        });
+      } else {
+        // Aucune donnée trouvée dans Firebase
+        print('No museums found in Firebase.');
+      }
+    } catch (error) {
+      // Gérer les erreurs éventuelles
+      print('Error loading museums from Firebase: $error');
+    }
+  }
+
 
   /// Displays the museums data in the console.
   void _printMuseumsData(List<Museum> museums) {
