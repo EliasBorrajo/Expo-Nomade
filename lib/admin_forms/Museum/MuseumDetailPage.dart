@@ -57,7 +57,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   }
 
 
-  void _showDeleteConfirmationDialog(BuildContext context, Museum museum, MuseumObject object)
+  void _showDeleteConfirmationDialog(BuildContext context, MuseumObject object)
   {
     showDialog(
         context: context,
@@ -77,11 +77,10 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                 onPressed: () async {
 
 
-                  _deleteObject(museum, object);
+                  _deleteObject(object);
 
-                  // Réactivez cette partie pour mettre à jour l'interface utilisateur après la suppression de l'objet
+                  //mettre à jour l'interface utilisateur après la suppression de l'objet
                   setState(() {
-                    // Mettez à jour la liste des objets dans l'état du widget
                     objects?.remove(object);
                   });
 
@@ -95,60 +94,21 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
         });
   }
 
-  Future<void> _deleteObject(Museum museum, MuseumObject object) async{
+  Future<void> _deleteObject(MuseumObject object) async{
     try{
-      // stocker la ref du musée dans une variable
-      DatabaseReference museumRef = widget.database.ref().child('museums').child(museum.id);
 
-      // afficher dans la console la ref du musée, son nom et son id, puis sa liste d'objets
-      print('Museum ref:  ${museumRef.key}');
-      print('Museum id:   ${museum.id}');
-      print('Museum name: ${museum.name}');
-      print('Museum objects: ${objects.toString()}');
+      await widget.database.ref().child('museumObjects').child(object.id).remove()
+                  .whenComplete(() => print("DELETE OBJECT SUCCESS"))
+                  .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
 
-      // stocker la ref de l'objet voulu dans une variable
-      // final objectRef = museumRef.child('objects').child(object.id);
-      DatabaseReference objectRef = museumRef.child('objects').child(object.id);
-      print('Object ref:  ${objectRef.key} AND ${objectRef.toString()}');
-
-
-      // afficher dans la console la ref de l'objet, son nom et son id
-      print('Object ref:  ${objectRef.key}');
-      print('Object name: ${object.name}');
-
-      try{
-        // supprimer l'objet
-        // // Récupérez la référence du musée
-        // DatabaseReference museumRef = widget.database.ref().child('museums').child(museum.id);
-        //
-        // // Supprimez l'objet en utilisant son ID
-        // await museumRef.child('objects').child(object.id).remove();
-        //
-        // // Mettez à jour la liste locale d'objets
-        // setState(() {
-        //   objects.removeWhere((object) => object.id == object.id);
-        // });
-
-
-        await objectRef.remove()
-            .whenComplete(() => print("DELETE OBJECT SUCCESS"))
-            .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
-
-        // Re-Load la liste d'objets du musée
-        await _loadObjectsAndListen()
-            .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
-            .catchError((e) => print('Objects Load Error $e'));
+        // // Re-Load la liste d'objets du musée
+        // await _loadObjectsAndListen()
+        //     .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
+        //     .catchError((e) => print('Objects Load Error $e'));
       }
       catch(e){
-        print("DELETE OBJECT ERROR specific : $e");
+        print("DELETE OBJECT ERROR: $e");
       }
-
-    }
-    catch(e){
-      print("DELETE OBJECT ERROR : $e");
-    }
-
-
   }
 
   Future<void> _loadDataAndListen() async
@@ -310,8 +270,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                                   onPressed: () {
                                     _showDeleteConfirmationDialog(
                                         context,
-                                        museum,
-                                        object!); // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                                        object!);
                                   },
                                   icon: const Icon(Icons.delete),
                                 ),

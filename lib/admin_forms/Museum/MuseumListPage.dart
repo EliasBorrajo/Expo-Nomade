@@ -178,6 +178,11 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
                   await _deleteMuseum(museum).whenComplete(() => print('Museum deleted successfully'));
 
+                  //mettre à jour l'interface utilisateur après la suppression du musée
+                  setState(() {
+                    museums?.remove(museum);
+                  });
+
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
                 child: Text('Supprimer'),
