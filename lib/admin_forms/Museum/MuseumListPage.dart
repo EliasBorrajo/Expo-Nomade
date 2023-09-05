@@ -63,6 +63,8 @@ class _MuseumListPageState extends State<MuseumListPage> {
     {
       if (event.snapshot.value != null)
       {
+        print ('SNAPSHOT : ${event.snapshot.value.toString()}');
+
         List<Museum> updatedMuseums = [];
         Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
 
@@ -73,13 +75,11 @@ class _MuseumListPageState extends State<MuseumListPage> {
            List<MuseumObject>? objects = [];
 
            // Ajouter les objets du musée à la liste d'objets
+           print('LOADING OBJECTS');
            objects = _getObjectsData(value, objects);
            // display the objects data in the console TODO : Remove
-           print('LOADING OBJECTS');
-           for(var objects in objects)
-           {
-               print('OBJECT ID : ${objects.id} & OBJECT NAME : ${objects.name}');
-           }
+
+
 
           // M U S E U M S
           // 2) Récupérer les musées et y ajouter les objets de l'étape 1
@@ -105,43 +105,115 @@ class _MuseumListPageState extends State<MuseumListPage> {
     _printMuseumsData(museums);
   }
 
-  List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
-  {
-    if (value['objects'] != null
-        /*&& value['objects'] is Map<String, dynamic>*/)
+
+  List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects) {
+    // Print the value of objects
+    print('Objects Value: $value'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+
+    if (value['objects'] != null)
     {
-      List<dynamic> objectsData = value['objects'] as List<dynamic>;
-      print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+      final objectsData = value['objects'];
+      print('Objects Data: $objectsData');
 
-
-      for (var objValue in objectsData)
+      if (objectsData is Map<String, dynamic>)
       {
-        // 1) Create a new MuseumObject from the data
-        MuseumObject object = MuseumObject(
-          id: objValue['id'] as String,
-          name: objValue['name'] as String,
-          description: objValue['description'] as String,
-          point: LatLng(
-            (objValue['point']['latitude'] as num).toDouble(),
-            (objValue['point']['longitude'] as num).toDouble(),
-          ),
-        );
+        print('VALUE IS MAP');
+        // Le cas où objectsData est une carte (Map)
+        objectsData.forEach((keyObj, objValue) {
+          MuseumObject object = MuseumObject(
+            id: keyObj,
+            name: objValue['name'] as String,
+            description: objValue['description'] as String,
+            point: LatLng(
+              (objValue['point']['latitude'] as num).toDouble(),
+              (objValue['point']['longitude'] as num).toDouble(),
+            ),
+          );
 
-        // 2) Add the new MuseumObject to the list
-        objects.add(object);
-        print('TEST SEE ID OBJECT : ${object.id}');
-        print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+          objects.add(object);
+          print('TEST SEE ID OBJECT : ${object.id}');
+          print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+        });
+      }
+      else if (objectsData is List<dynamic>)
+      {
+        print('VALUE IS LIST');
+        // Le cas où objectsData est une liste (List)
+        for (var objValue in objectsData) {
+          MuseumObject object = MuseumObject(
+            // Vous devrez utiliser une logique pour générer un ID unique ici
+            id: objValue['id'] as String,//objectId, // Utilisez une logique appropriée
+            name: objValue['name'] as String,
+            description: objValue['description'] as String,
+            point: LatLng(
+              (objValue['point']['latitude'] as num).toDouble(),
+              (objValue['point']['longitude'] as num).toDouble(),
+            ),
+          );
 
-      };
-
-      return objects;
+          objects.add(object);
+          print('TEST SEE ID OBJECT : ${object.id}');
+          print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+        }
+      }
+      else{
+        print('VALUE IS SOMETHING ELSE');
+        // Le cas où objectsData est autre chose
+        print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+      }
     }
 
-    return [];
+    return objects;
   }
+
+
 
   // List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
   // {
+  //
+  //   // print the value of objects
+  //   print('Objects Value: $value'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+  //
+  //   if (value['objects'] != null)
+  //   {
+  //     List<dynamic> objectsData = value['objects'] as List<dynamic>;
+  //     print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+  //
+  //
+  //     for (var objValue in objectsData)
+  //     {
+  //       // 1) Create a new MuseumObject from the data
+  //       MuseumObject object = MuseumObject(
+  //         id: objValue['id'] as String,
+  //         name: objValue['name'] as String,
+  //         description: objValue['description'] as String,
+  //         point: LatLng(
+  //           (objValue['point']['latitude'] as num).toDouble(),
+  //           (objValue['point']['longitude'] as num).toDouble(),
+  //         ),
+  //       );
+  //
+  //       // 2) Add the new MuseumObject to the list
+  //       objects.add(object);
+  //       print('TEST SEE ID OBJECT : ${object.id}');
+  //       print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+  //
+  //     };
+  //
+  //     return objects;
+  //   }
+  //
+  //   return [];
+  // }
+
+
+
+  // List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
+  // {
+  //   // print the value of objects
+  //   print('Objects Value: $value'); // Ajoutez cette ligne pour afficher les données des objets dans la console
+  //
+  //
   //   if (value['objects'] != null
   //   /*&& value['objects'] is Map<String, dynamic>*/)
   //   {
@@ -249,6 +321,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
             // Ajoute chaque objet du musée dans la Firebase en utilisant son ID unique
             objectsData[objectId] = {
               'name': object.name,
+              'id': objectId,
               'description': object.description,
               'point': {
                 'latitude': object.point.latitude.toDouble(),

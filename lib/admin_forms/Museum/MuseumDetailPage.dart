@@ -228,6 +228,10 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
     {
       if (event.snapshot.value != null)
       {
+
+        print ('SNAPSHOT : ${event.snapshot.value.toString()}');
+
+
         List<MuseumObject> updatedObjects = [];
         List<dynamic> objectsData = event.snapshot.value as List<dynamic>;
         // value : valeur de l'instantané, ici les musées
@@ -239,7 +243,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
         {
           // 1) Create a new MuseumObject from the data
           MuseumObject object = MuseumObject(
-            id: objValue['id'] as String,
+            id: objectsRef.key!,
             name: objValue['name'] as String,
             description: objValue['description'] as String,
             point: LatLng(
