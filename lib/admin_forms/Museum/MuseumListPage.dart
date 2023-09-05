@@ -171,8 +171,13 @@ class _MuseumListPageState extends State<MuseumListPage> {
                 child: Text('Annuler'),
               ),
               TextButton(
-                onPressed: () {
-                  widget.database.ref().child('museums').child(museum.id).remove();
+                onPressed: () async {
+                  // widget.database.ref().child('museumObjects').child(museum.name).remove();
+                  // widget.database.ref().child('museums').child(museum.id).remove();
+                  // Navigator.pop(context); // Ferme la boîte de dialogue
+
+                  await _deleteMuseum(museum).whenComplete(() => print('Museum deleted successfully'));
+
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
                 child: Text('Supprimer'),
@@ -181,6 +186,29 @@ class _MuseumListPageState extends State<MuseumListPage> {
           );
         }
     );
+  }
+
+  Future<void> _deleteMuseum(Museum museum) async {
+    final DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
+
+    // Utilisez une requête pour obtenir les objets du musée ayant le même nom que museum.name
+    final Query query = objectsRef.orderByChild('museumName').equalTo(museum.name);
+    final DataSnapshot snapshot = await query.get();
+
+    print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
+
+    // Parcourez les résultats et supprimez les objets correspondants
+    if (snapshot.exists) {
+      final Map<dynamic, dynamic> objectsData = snapshot.value as Map<dynamic, dynamic>;
+      for (final entry in objectsData.entries)
+      {
+        final String objectId = entry.key;
+        await objectsRef.child(objectId).remove();
+      }
+    }
+
+    // Enfin, supprimez le musée lui-même
+    await widget.database.ref().child('museums').child(museum.id).remove();
   }
 
 

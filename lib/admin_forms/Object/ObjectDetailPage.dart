@@ -1,4 +1,4 @@
-import 'package:expo_nomade/admin_forms/Museum/Object/ObjectAddPage.dart';
+import 'package:expo_nomade/admin_forms/Object/ObjectAddPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../../dataModels/MuseumObject.dart';

@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
+import 'admin_forms/forms.dart';
 import 'map/map_screen.dart';
 
 
@@ -87,7 +88,8 @@ class _PageManagerState extends State<PageManager> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SignInPage()),
+                // MaterialPageRoute(builder: (context) => SignInPage()),
+                MaterialPageRoute(builder: (context) => const AdminForms()),
               );
             },
             label: const Text('Admin'),

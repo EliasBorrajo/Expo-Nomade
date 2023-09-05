@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:expo_nomade/admin_forms/Museum/Object/ObjectEditPage.dart';
+import 'package:expo_nomade/admin_forms/Object/ObjectEditPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
 import '../../dataModels/MuseumObject.dart';
-import 'Object/ObjectAddPage.dart';
-import 'Object/ObjectDetailPage.dart';
+import '../Object/ObjectAddPage.dart';
+import '../Object/ObjectDetailPage.dart';
+
 
 /// Displays the details of a museum.
 /// At the top of the page, the infos of the museum are displayed.
