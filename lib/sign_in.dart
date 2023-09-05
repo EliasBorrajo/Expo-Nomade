@@ -9,6 +9,8 @@ class SignInPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  SignInPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,17 +21,17 @@ class SignInPage extends StatelessWidget {
           children: [
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             ElevatedButton(
-              child: Text('Sign in with Email & Password'),
+              child: const Text('Sign in'),
               onPressed: () async {
                 User? user = await authService.signInWithEmailPassword(
                   emailController.text,
@@ -47,9 +49,9 @@ class SignInPage extends StatelessWidget {
                 }
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
-              child: Text('Return to Map'),
+              child: const Text('Return to Map'),
               onPressed: () {
                 // Navigate back to the map
                 Navigator.pop(context);
