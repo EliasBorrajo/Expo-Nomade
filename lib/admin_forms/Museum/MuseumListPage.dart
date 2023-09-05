@@ -172,11 +172,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
               ),
               TextButton(
                 onPressed: () async {
-                  // widget.database.ref().child('museumObjects').child(museum.name).remove();
-                  // widget.database.ref().child('museums').child(museum.id).remove();
-                  // Navigator.pop(context); // Ferme la boîte de dialogue
 
-                  await _deleteMuseum(museum).whenComplete(() => print('Museum deleted successfully'));
+                  await _deleteMuseum(museum)
+                            .whenComplete(() => print('Museum deleted successfully'));
 
                   //mettre à jour l'interface utilisateur après la suppression du musée
                   setState(() {

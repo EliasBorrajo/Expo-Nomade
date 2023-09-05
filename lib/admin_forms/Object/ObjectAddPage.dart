@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:expo_nomade/dataModels/MuseumObject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -32,6 +33,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late DatabaseReference _objectsRef;
   late List<Museum> museumsList = [];
   late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
+  late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
   late StreamSubscription<DatabaseEvent> _museumsSubscription;
 
   // form Key allows to validate the form and save the data in the form fields
@@ -51,6 +53,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
     print('MUSEUM SOURCE IS : ${widget.sourceMuseum?.name}');
     _loadMuseumsFromFirebaseAndListen()
+        .then((_) => { _loadAllObjectsFromAMuseum(_selectedMuseum) }) // Permet de précharger la liste,
         .whenComplete(() => print('Museums loaded'));
 
   }
@@ -157,6 +160,9 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
           _selectedMuseum = museumsList[0]; // first museum from list by default
       }
 
+      // 3) Charger la liste des objets du musée sélectionné
+      _loadAllObjectsFromAMuseum(_selectedMuseum);
+
       });
     }
   }
@@ -197,6 +203,50 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
   }
 
+  Future<List<MuseumObject>> _loadAllObjectsFromAMuseum(Museum museum) async
+  {
+    final DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
+    final List<MuseumObject> fetchedObjects = [];
+
+    // Utilisez une requête pour obtenir les objets du musée ayant le même nom que museum.name
+    final Query query = objectsRef.orderByChild('museumName').equalTo(museum.name);
+    final DataSnapshot snapshot = await query.get();
+
+    print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
+
+    // Parcourez les résultats et supprimez les objets correspondants
+    if (snapshot.exists) {
+      final Map<dynamic, dynamic> objectsData = snapshot.value as Map<dynamic, dynamic>;
+
+      objectsData.forEach((key, value)
+      {
+        final MuseumObject object = MuseumObject(
+          // Remplacez ces champs par les champs réels de votre objet
+          id: key,
+          museumName: value['museumName'] as String,
+          name: value['name'] as String,
+          description: value['description'] as String,
+          point: LatLng(
+            // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+            (value['point']['latitude'] as num).toDouble(),
+            (value['point']['longitude'] as num).toDouble(),
+          ),
+        );
+
+        fetchedObjects.add(object);
+      });
+    }
+
+    if (mounted)
+    {
+      setState(() {
+        museumObjectsFromSelectedMuseum = fetchedObjects;
+      });
+    }
+
+    return fetchedObjects;
+  }
+
   // V A L I D A T I O N S
   // TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
   String? _validateName(String? name) {
@@ -206,11 +256,36 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     return null;
   }
 
+  // Validation : Vérifier que le nom de l'objet n'existe pas déjà pour ce musée
+  String? _validateObjectName(String? name) {
+    if (name == null || name.isEmpty) {
+      return 'Veuillez entrer un nom';
+    }
+
+    // Vérifier si le musée sélectionné (dans _selectedMuseum) existe
+    if (_selectedMuseum != null) {
+
+      _loadAllObjectsFromAMuseum(_selectedMuseum) ;
+      print('Museum Objects from selected museum : ${museumObjectsFromSelectedMuseum.toString()} ');
+
+      // Parcourir la liste des objets du musée sélectionné
+      for (var object in museumObjectsFromSelectedMuseum) {
+        if (object.name.toLowerCase() == name.toLowerCase()) {
+          print('Object name already exists in this museum');
+          return 'Ce nom d\'objet existe déjà dans ce musée';
+        }
+      }
+    }
+
+    return null;
+  }
+
   // Verification que la description n'est pas vide
   String? _validateDescription(String? description) {
     if (description == null || description.isEmpty) {
       return 'Veuillez entrer une description';
     }
+
     return null;
   }
 
@@ -240,7 +315,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     decoration: const InputDecoration(
                       hintText: 'Epée de Charlemagne',
                     ),
-                    validator: _validateName),
+                    validator: _validateObjectName),
                 const SizedBox(height: 16),
 
                 const Text('Description'),
@@ -262,6 +337,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     setState(() {
                       _selectedMuseum = newValue!;
                       _museumNameController.text = newValue?.name ?? 'No museum selected';
+                      _loadAllObjectsFromAMuseum(newValue); // Chaque fois que on change de musée, on recharge la liste des objets du musée
                     });
                   },
                   items: museumsList.map((Museum museum)
