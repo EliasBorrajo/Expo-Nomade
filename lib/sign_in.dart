@@ -67,7 +67,12 @@ class SignInPage extends StatelessWidget {
                         ),
                       );
                     } else {
-                      print('Failed to sign in with Email & Password');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Erreur lors de la connexion. Email ou mot de passe incorrect.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     }
                   },
                 ),
