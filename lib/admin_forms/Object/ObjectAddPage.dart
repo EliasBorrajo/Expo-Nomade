@@ -10,7 +10,6 @@ import '../map_point_picker.dart';
 // TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
 // TODO : Ajouter images
 // TODO : Ajouter tags
-// TODO : PICKER LOCATION
 
 class ObjectAddPage extends StatefulWidget{
 
@@ -51,15 +50,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     _objectsRef = widget.database.ref().child('museumObjects');
 
     _loadMuseumsFromFirebaseAndListen()
-        // .then((_) => _selectedMuseum = museumsList[0])
         .whenComplete(() => print('Museums loaded'));
-
-    // // Si le musée source est non-null, mettre le musée source de la page précédente,
-    // // sinon mettre le premier musée de la liste
-    // widget.sourceMuseum != null ? _selectedMuseum = widget.sourceMuseum! : _selectedMuseum = museumsList[0];
-
-    // TODO : Selectionner le musée de la page précedente
-    // Todo : Soit récuperer en paramètre du widget, soit regarder depuis la DB
 
   }
 
@@ -106,12 +97,32 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
           // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
           if (mounted)
           {
-            setState(() {
+            setState(()
+            {
+              // 1) Affection de la liste des musées à la liste des musées de la page en local
               museumsList = updatedMuseums;
-              _selectedMuseum = museumsList[0];
-              // Si le musée source est non-null, mettre le musée source de la page précédente,
-              // sinon mettre le premier musée de la liste
-              // widget.sourceMuseum != null ? _selectedMuseum = widget.sourceMuseum! : _selectedMuseum = museumsList[0];
+
+              // 2) Si le musée source est non-null, mettre le musée source dans la dropdown list comme musée sélectionné
+              if(widget.sourceMuseum != null)
+              {
+                // Verifier si un des musées de la liste est le musée source
+                // Si oui, mettre ce musée de la liste comme musée sélectionné
+                // Sinon, mettre le premier musée de la liste comme musée sélectionné
+                museumsList.forEach((museum)
+                {
+                  if (museum.id == widget.sourceMuseum?.id)
+                    _selectedMuseum = museum;           // specific museum from list
+                  else
+                    _selectedMuseum = museumsList[0];   // first museum from list by default
+                });
+              }
+              else
+              {
+                _selectedMuseum = museumsList[0];
+              }
+
+              print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
+
             });
           }
         });
@@ -173,12 +184,16 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     return null;
   }
 
-  // TODO : Vérification que le museumName existe bien dans la DB
+  // Verification que le nom de l'objet n'existe pas déja pour ce musée
 
 
   // R E N D E R I N G
   @override
   Widget build(BuildContext context) {
+
+    // Triez la liste des musées par ordre alphabétique en utilisant le nom du musée
+    museumsList.sort((a, b) => a.name.compareTo(b.name));
+
     return Scaffold(
       appBar: AppBar(title: const Text('Ajouter un objet')),
       body: Form(
@@ -208,13 +223,14 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     validator: _validateDescription),
                 const SizedBox(height: 16),
 
+
                 // DropdownButtonFormField pour sélectionner un musée
                 DropdownButtonFormField<Museum>(
                   value: _selectedMuseum ?? null,
                   onChanged: (Museum? newValue)
                   {
                     setState(() {
-                      _selectedMuseum = newValue!; // TODO : Source de BUG ?
+                      _selectedMuseum = newValue!;
                       _museumNameController.text = newValue?.name ?? 'No museum selected';
                     });
                   },
@@ -229,6 +245,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     labelText: 'Sélectionner un musée auquel attribuer l\'objet',
                   ),
                 ),
+                const SizedBox(height: 16),
 
 
                 ElevatedButton(
