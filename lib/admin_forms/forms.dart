@@ -4,6 +4,7 @@
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Museum/MuseumListPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
+import 'package:expo_nomade/admin_forms/quiz/quiz_list_players.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dummyData.dart';
@@ -24,7 +25,7 @@ class AdminForms extends StatelessWidget
     return MaterialApp(
       title: appTitle,
       home: DefaultTabController(                             // 1. Create a TabController
-        length: 4,
+        length: 5,
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -34,9 +35,10 @@ class AdminForms extends StatelessWidget
             bottom: const TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.account_balance)),
                 Tab(icon: Icon(Icons.accessible_forward)),
                 Tab(icon: Icon(Icons.ac_unit)),
+                Tab(icon: Icon(Icons.question_answer)),
+                Tab(icon: Icon(Icons.accessibility)),
               ],
             ),
             title: const Text('Admin data management'),
@@ -44,13 +46,12 @@ class AdminForms extends StatelessWidget
           body: TabBarView(
             children: [
               MuseumListPage(database: database),
-              QuizListPage(database: database),
-              Icon(Icons.accessible_forward), // TODO : TAGS PAGE
+              const Icon(Icons.accessible_forward), // TODO : TAGS PAGE
               MigrationListPage(
-                  migrations: dummyMigrations,
-                  database: database)
-
-
+                  //migrations: dummyMigrations,
+                  database: database),
+              QuizListPage(database: database),
+              QuizListPlayers(database: database)
             ],
           ),
         ),

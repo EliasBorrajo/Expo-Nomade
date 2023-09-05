@@ -1,6 +1,6 @@
 import 'package:latlong2/latlong.dart';
 
-import 'Tag.dart';
+import 'filters_tags.dart';
 
 // OBJETS
 class MuseumObject {
@@ -9,7 +9,7 @@ class MuseumObject {
   String name;
   String description;
   LatLng point;
-  late List<Tag>? tags;                  // optional & initialized later
+  late List<FilterTag>? tags;                  // optional & initialized later
   List<String>? images;                  // optional
 
 

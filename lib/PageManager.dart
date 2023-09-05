@@ -1,12 +1,17 @@
-import 'package:expo_nomade/quiz_screen.dart';
+import 'package:expo_nomade/quiz/quiz_screen.dart';
+import 'package:expo_nomade/sign_in.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
-import 'admin_forms/forms.dart';
 import 'map/map_screen.dart';
 
 
 class PageManager extends StatefulWidget {
+
+  final FirebaseDatabase database;
+
+  const PageManager({super.key, required this.database});
   @override
   _PageManagerState createState() => _PageManagerState();
 }
@@ -63,41 +68,30 @@ class _PageManagerState extends State<PageManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar( // TODO : REMOVE ?
-        // title: Text(_showMap ? 'Map Page' : 'Questionnaire Page'),
-      ),*/
-      body: _showMap ? MapScreen(points: test,) : QuizScreen(),
+      body: _showMap ? MapScreen(points: test, database: widget.database) : QuizScreen(database: widget.database),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FloatingActionButton(
+          FloatingActionButton.extended(
+            heroTag: 'switchPage',
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
-            child: Icon(_showMap ? Icons.question_answer : Icons.map),
             elevation: 8, // Add a slight elevation
-            backgroundColor: Colors.blue, // Change button color
+            label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
+            icon: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
           ),
-          SizedBox(height: 16),
-          ElevatedButton(
+          const SizedBox(height: 16),
+          FloatingActionButton.extended(
+            heroTag: 'adminForms',
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AdminForms()),
+                MaterialPageRoute(builder: (context) => SignInPage()),
               );
             },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              elevation: 8, // Add a slight elevation
-            ),
-            child: Text(
-              'Admin Login',
-              style: TextStyle(fontSize: 16),
-            ),
+            label: const Text('Admin'),
+            icon: const Icon(Icons.admin_panel_settings),
           ),
         ],
       ),

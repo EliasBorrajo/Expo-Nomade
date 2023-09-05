@@ -15,17 +15,6 @@ class MigrationDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(migration.name),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MigrationEditpage(migration: migration)),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +43,7 @@ class MigrationDetailsPage extends StatelessWidget {
               );
             },
           )
-              : const Text('Aucun objet disponible'),
+              : const Text('Aucune zone'),
         ],
       ),
       floatingActionButton: FloatingActionButton(

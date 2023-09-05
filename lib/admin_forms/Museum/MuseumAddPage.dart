@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../dataModels/Museum.dart';
+import '../map_point_picker.dart';
 
 class MuseumAddPage extends StatefulWidget {
 
@@ -22,6 +23,8 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
   late TextEditingController _latitudeController;
   late TextEditingController _longitudeController;
   late TextEditingController _websiteController;
+  late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
+  late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
   late DatabaseReference _museumsRef;
 
   // form Key allows to validate the form and save the data in the form fields
@@ -57,9 +60,9 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
       {
         'name': _nameController.text,
         'website': _websiteController.text,
-        'address': {  // TODO : Remplacer par les coordonnées GPS du PICKER
-          'latitude': 88.5.toDouble(),
-          'longitude': 160.6.toDouble(),
+        'address': {
+          'latitude': selectedAddressPoint.latitude.toDouble(),
+          'longitude': selectedAddressPoint.longitude.toDouble(),
         },
 
       };
@@ -76,48 +79,64 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
 
   }
 
+  void updatePoint(){
+    setState(() {
+      displayAddressPoint = selectedAddressPoint; // Change this to your updated value
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Ajouter un musée'),
-        ),
-        body: Form(
-          key: _formKey,  // Permet de valider le formulaire et de sauvegarder les données dans les champs du formulaire
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Ajouter un musée'),
+      ),
+      body: Form(
+        key: _formKey,  // Permet de valider le formulaire et de sauvegarder les données dans les champs du formulaire
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Nom du musée'),
+                const Text('Nom du musée'),
                 TextFormField(
                     controller: _nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Musée du louvre',
                     ),
                     validator: _validateName),
-                SizedBox(height: 16),
-                Text('Site web'),
+                const SizedBox(height: 16),
+                const Text('Site web'),
                 TextFormField(
                     controller: _websiteController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'https://www.musee.com',
                     ),
                     validator: _validateWebSite),
-                SizedBox(height: 16),
-                // TODO : Ajouter un LOCATION PICKER
-                SizedBox(height: 32),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                    onPressed: () async {
+                      selectedAddressPoint = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
+                      );
+                      updatePoint();
+                    },
+                    child: const Text('Selectionner l\'adresse')
+                ),
+                Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _saveChanges,
-                  child: Text('Enregistrer'),
+                  child: const Text('Enregistrer'),
                 ),
               ],
             )
-          ),
-
-
         ),
+
+
       ),
     );
   }

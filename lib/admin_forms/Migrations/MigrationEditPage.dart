@@ -1,16 +1,199 @@
+import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneEditPage.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../map_point_picker.dart';
 
 class MigrationEditpage extends StatefulWidget {
   final Migration migration;
+  final FirebaseDatabase database;
 
-  const MigrationEditpage({super.key, required this.migration});
+  const MigrationEditpage({super.key, required this.migration, required this.database});
 
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
+  _MigrationEditpageState createState() => _MigrationEditpageState();
+
+
+}
+
+class _MigrationEditpageState extends State<MigrationEditpage>{
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _arrivalController;
+  late DatabaseReference _migrationsRef;
+
+  // form Key allows to validate the form and save the data in the form fields
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.migration.name);
+    _descriptionController = TextEditingController(text: widget.migration.description);
+    _arrivalController = TextEditingController(text: widget.migration.arrival);
+    _migrationsRef = widget.database.ref().child('migrations');
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _arrivalController.dispose();
+    super.dispose();
+  }
 
+  Future<void> _saveChanges() async {
+    // Local update
+    if (_formKey.currentState!.validate()) {
+      widget.migration.name = _nameController.text;
+      widget.migration.description = _descriptionController.text;
+      widget.migration.arrival = _arrivalController.text;
+    }
+    // Firebase update
+    await _migrationsRef.child(widget.migration.id).update({
+      'name': widget.migration.name,
+      'description': widget.migration.description,
+      'arrival': widget.migration.arrival,
+    });
+    Navigator.pop(context);
+  }
+
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Le nom de la migration ne peut pas être vide';
+    }
+    return null;
+  }
+
+  String? _validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'La description de la migration ne peut pas être vide';
+    }
+    return null;
+  }
+
+  String? _validateArrival(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'L\' arrivée de la migration ne peut pas être vide';
+    }
+    return null;
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, String id) {
+    //source.points = null;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirmation'),
+            content: Text('Êtes-vous sûr de vouloir supprimer cet objet ?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () {
+                 //widget.database.ref().child('migrations').child('polygons').child(source.id).remove();
+
+                  //source.points = null;
+                  Navigator.pop(context); // Ferme la boîte de dialogue
+                },
+                child: Text('Supprimer'),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Éditer ${widget.migration.name}'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView( // Wrap the entire content in a SingleChildScrollView
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Nom de la migration'),
+                TextFormField(controller: _nameController, validator: _validateName),
+                const SizedBox(height: 16),
+                const Text('Description'),
+                TextFormField(controller: _descriptionController, validator: _validateDescription),
+                const SizedBox(height: 16),
+                const Text('Arrivée'),
+                TextFormField(controller: _arrivalController, validator: _validateArrival),
+                const SizedBox(height: 16),
+                const Text('Zones'),
+                // Display the list of zones
+                widget.migration.polygons != null
+                    ?
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.migration.polygons?.length ?? 0,   // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
+                  physics: NeverScrollableScrollPhysics(), // Disable scrolling within the ListView
+                  itemBuilder: (context, index) {
+                    final flowMigration = widget.migration.polygons?[index];
+                    return ListTile(
+                      title: Text(flowMigration?.name ?? ''),
+                      onTap: () async {
+                        final polygonPoints = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)), // Here redirect to the map
+                        );
+                        print(polygonPoints);
+                      },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            // NAV MUSEUM EDIT PAGE
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => ZoneEditPage(migration: widget.migration, index: index, database: widget.database)),
+                              );
+                            },
+                            icon: const Icon(Icons.edit),
+                          ),
+                          IconButton(
+                            // DELETE MUSEUM
+                            onPressed: () {
+                              //_showDeleteConfirmationDialog(context);
+                              _showDeleteConfirmationDialog(context, widget.migration.polygons![index]!.id);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                            },
+                            icon: const Icon(Icons.delete),
+                          ),
+                        ],
+                      ),
+                      /*onLongPress: () {
+                    _showDeleteConfirmationDialog(context, flowMigration!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                  },*/
+                    );
+                  },
+                )
+                    : const Text('Aucune zone'),
+
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _saveChanges,
+                  child: const Text('Enregistrer'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
+    );
+  }
 }
