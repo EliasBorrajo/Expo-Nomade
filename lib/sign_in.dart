@@ -1,4 +1,3 @@
-import 'package:expo_nomade/quiz_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:expo_nomade/admin_forms/forms.dart';
