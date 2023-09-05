@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -13,8 +15,9 @@ import '../map_point_picker.dart';
 class ObjectAddPage extends StatefulWidget{
 
   final FirebaseDatabase database;
+  final Museum? sourceMuseum;
 
-  const ObjectAddPage({Key? key, required this.database}) : super(key: key);
+  const ObjectAddPage({Key? key, required this.database, this.sourceMuseum}) : super(key: key);
 
   @override
   _ObjectAddPageState createState() => _ObjectAddPageState();
@@ -29,6 +32,8 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
   late DatabaseReference _objectsRef;
   late List<Museum> museumsList = [];
+  late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
+  late StreamSubscription<DatabaseEvent> _museumsSubscription;
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -38,13 +43,23 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   void initState() {
     super.initState();
     _nameController        = TextEditingController(text: "");
-    _museumNameController  = TextEditingController(text: "");
     _descriptionController = TextEditingController(text: "");
+    _museumNameController  = TextEditingController(text: widget.sourceMuseum?.name ?? ""); // Si le musée source est null, mettre une chaine vide
+
 
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
 
-    loadMuseumList();
+    _loadMuseumsFromFirebaseAndListen()
+        // .then((_) => _selectedMuseum = museumsList[0])
+        .whenComplete(() => print('Museums loaded'));
+
+    // // Si le musée source est non-null, mettre le musée source de la page précédente,
+    // // sinon mettre le premier musée de la liste
+    // widget.sourceMuseum != null ? _selectedMuseum = widget.sourceMuseum! : _selectedMuseum = museumsList[0];
+
+    // TODO : Selectionner le musée de la page précedente
+    // Todo : Soit récuperer en paramètre du widget, soit regarder depuis la DB
 
   }
 
@@ -53,17 +68,56 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     _nameController.dispose();
     _museumNameController.dispose();
     _descriptionController.dispose();
+    _museumsSubscription?.cancel();
     super.dispose();
   }
 
-  void loadMuseumList() async{
-    // Get the list of museums
-    DataSnapshot dataSnapshot = (await widget.database.ref().child('museums').once()) as DataSnapshot;
-    Map<dynamic, dynamic> values = dataSnapshot.value as Map<dynamic, dynamic>;
-    values.forEach((key, values) {
-      Museum museum = Museum.fromSnapshot(values);
-      museumsList.add(museum);
+  Future<void> _loadMuseumsFromFirebaseAndListen() async
+  {
+    DatabaseReference museumsRef = widget.database.ref().child('museums');
+
+    // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
+    _museumsSubscription = museumsRef.onValue.listen((DatabaseEvent event)
+    {
+      if (event.snapshot.value != null)
+      {
+        List<Museum> updatedMuseums = [];
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
+
+        museumsData.forEach((key, value)
+        {
+          // M U S E U M S
+          // 1) Récupérer les musées et y ajouter les objets de l'étape 1
+          Museum museum = Museum(
+            id: key,
+            name: value['name'] as String,
+            address: LatLng(
+              // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+              (value['address']['latitude'] as num).toDouble(),
+              (value['address']['longitude'] as num).toDouble(),
+            ),
+            website: value['website'] as String,
+          );
+
+          // 2) Ajouter le musée à la liste des musées
+          updatedMuseums.add(museum);
+
+
+          // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+          if (mounted)
+          {
+            setState(() {
+              museumsList = updatedMuseums;
+              _selectedMuseum = museumsList[0];
+              // Si le musée source est non-null, mettre le musée source de la page précédente,
+              // sinon mettre le premier musée de la liste
+              // widget.sourceMuseum != null ? _selectedMuseum = widget.sourceMuseum! : _selectedMuseum = museumsList[0];
+            });
+          }
+        });
+      }
     });
+
   }
 
 
@@ -153,6 +207,29 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     ),
                     validator: _validateDescription),
                 const SizedBox(height: 16),
+
+                // DropdownButtonFormField pour sélectionner un musée
+                DropdownButtonFormField<Museum>(
+                  value: _selectedMuseum ?? null,
+                  onChanged: (Museum? newValue)
+                  {
+                    setState(() {
+                      _selectedMuseum = newValue!; // TODO : Source de BUG ?
+                      _museumNameController.text = newValue?.name ?? 'No museum selected';
+                    });
+                  },
+                  items: museumsList.map((Museum museum)
+                  {
+                    return DropdownMenuItem<Museum>(
+                      value: museum,
+                      child: Text(museum.name),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(
+                    labelText: 'Sélectionner un musée auquel attribuer l\'objet',
+                  ),
+                ),
+
 
                 ElevatedButton(
                     child: const Text('Selectionner l\'adresse'),
