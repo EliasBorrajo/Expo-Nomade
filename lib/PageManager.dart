@@ -88,8 +88,8 @@ class _PageManagerState extends State<PageManager> {
             onPressed: () {
               Navigator.push(
                 context,
-                // MaterialPageRoute(builder: (context) => SignInPage()),
-                MaterialPageRoute(builder: (context) => const AdminForms()),
+                 MaterialPageRoute(builder: (context) => SignInPage()),
+                // MaterialPageRoute(builder: (context) => const AdminForms()),
               );
             },
             label: const Text('Admin'),
