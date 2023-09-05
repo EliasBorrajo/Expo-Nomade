@@ -8,9 +8,9 @@ import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
 import '../map_point_picker.dart';
 
-// TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
 // TODO : Ajouter images
 // TODO : Ajouter tags
+// TODO : Voir si je peux supprimer certains appel à _loadAllObjectsFromAMuseum() qui sont inutiles
 
 class ObjectAddPage extends StatefulWidget{
 
@@ -248,14 +248,6 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   }
 
   // V A L I D A T I O N S
-  // TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
-  String? _validateName(String? name) {
-    if (name == null || name.isEmpty) {
-      return 'Veuillez entrer un nom';
-    }
-    return null;
-  }
-
   // Validation : Vérifier que le nom de l'objet n'existe pas déjà pour ce musée
   String? _validateObjectName(String? name) {
     if (name == null || name.isEmpty) {
@@ -288,8 +280,6 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
     return null;
   }
-
-  // Verification que le nom de l'objet n'existe pas déja pour ce musée
 
 
   // R E N D E R I N G

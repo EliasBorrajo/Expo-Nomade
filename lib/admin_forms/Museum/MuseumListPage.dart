@@ -10,6 +10,10 @@ import 'MuseumAddPage.dart';
 import 'MuseumDetailPage.dart';
 import 'MuseumEditPage.dart';
 
+// TODO : Changer DATA MODEL de MuseumObject pour ajouter un champ "museumId" et faire le lien avec le musée, au lieu de "museumName"
+// TODO : Dans la methode _deleteMuseum, le equalsTo utilise le "NAME" du musée, pas son ID. Donc modifier avec ID, car si on renomme musée, on perd la réference des objets / musée
+// TODO : Si je change le equalsTo, changer la "RULE" dans firebase
+
 
 /// Displays a list of museums.
 /// When a museum is tapped, the [MuseumDetailPage] is displayed.
