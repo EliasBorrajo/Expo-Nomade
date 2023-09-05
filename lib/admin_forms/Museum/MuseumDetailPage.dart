@@ -100,11 +100,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       await widget.database.ref().child('museumObjects').child(object.id).remove()
                   .whenComplete(() => print("DELETE OBJECT SUCCESS"))
                   .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
-
-        // // Re-Load la liste d'objets du musée
-        // await _loadObjectsAndListen()
-        //     .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
-        //     .catchError((e) => print('Objects Load Error $e'));
       }
       catch(e){
         print("DELETE OBJECT ERROR: $e");
@@ -134,9 +129,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       if (event.snapshot.value != null)
       {
         Map<dynamic, dynamic> museumData = event.snapshot.value as Map<dynamic,dynamic>;
-        // value : valeur de l'instantané, ici les musées
-        // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
-        // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
+
         Museum updatedMuseum = Museum(
           id: museum.id,
           name: museumData['name'] as String,
