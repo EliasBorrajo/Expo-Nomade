@@ -14,50 +14,76 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password'),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              child: const Text('Sign in'),
-              onPressed: () async {
-                User? user = await authService.signInWithEmailPassword(
-                  emailController.text,
-                  passwordController.text,
-                );
-                if (user != null) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AdminForms(),
+      body: Center(
+        child: SingleChildScrollView( // Utilisez un SingleChildScrollView
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            width: 400,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.verified_user, size: 50),
+                const SizedBox(height: 32),
+                const Text('Connexion Administrateur', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                const SizedBox(height: 32),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Mot de passe',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 32,
                     ),
-                  );
-                } else {
-                  print('Failed to sign in with Email & Password');
-                }
-              },
+                  ),
+                  child: const Text(
+                      'Se connecter',
+                      style: TextStyle(fontSize: 16)
+                  ),
+                  onPressed: () async {
+                    User? user = await authService.signInWithEmailPassword(
+                      emailController.text,
+                      passwordController.text,
+                    );
+                    if (user != null) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminForms(),
+                        ),
+                      );
+                    } else {
+                      print('Failed to sign in with Email & Password');
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                        'Retour',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                    )
+                )
+              ],
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text('Return to Map'),
-              onPressed: () {
-                // Navigate back to the map
-                Navigator.pop(context);
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -83,16 +83,18 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Quiz terminé !'),
-        const SizedBox(height: 16),
-        Text('Votre score: ${widget.score}/${widget.totalQuestions}'),
-        const SizedBox(height: 16),
-        Column(
-          children: [
-            const Text('Entrez votre e-mail et tentez votre chance pour gagner un cadeau !'),
-            Container (
+    return SingleChildScrollView( // Ajoutez un SingleChildScrollView ici
+      child: Column(
+        children: [
+          const Icon(Icons.stars, size: 50),
+          const Text('Quiz terminé !', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+          const SizedBox(height: 32),
+          Text('Votre score: ${widget.score}/${widget.totalQuestions}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+          const SizedBox(height: 32),
+          Column(
+            children: [
+              const Text('Entrez votre e-mail et tentez votre chance pour gagner un cadeau !', style: TextStyle(fontSize: 20)),
+              Container(
                 width: 410.0,
                 child: TextField(
                   controller: emailController,
@@ -107,44 +109,54 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                     errorText: isValidEmail ? null : 'E-mail invalide',
                   ),
                   enabled: !isEmailSent,
-                )
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: isEmailSent ? null : () {
-                if (isValidEmail) {
-                  _addEmailToDatabase();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Veuillez entrer une adresse e-mail valide.'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
-              child: const Text('Soumettre l\'e-mail'),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: isEmailSent ? null : () {
+                  if (isValidEmail) {
+                    _addEmailToDatabase();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Veuillez entrer une adresse e-mail valide.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  minimumSize: const Size(200, 60),
+                ),
+                child: const Text(
+                  'Soumettre l\'e-mail',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              widget.redoQuiz();
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              minimumSize: const Size(200, 60),
             ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () {
-            widget.redoQuiz();
-          },
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+            child: const Text(
+              'Refaire le test',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
             ),
           ),
-          child: const Text('Refaire le test'),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

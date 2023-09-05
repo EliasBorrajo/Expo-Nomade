@@ -78,7 +78,7 @@ class _PageManagerState extends State<PageManager> {
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
             elevation: 8, // Add a slight elevation
-            label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
+            label: Text(_showMap ? 'Quiz' : 'Map', style: const TextStyle(fontSize: 25)), // Utilisation de label pour le texte
             icon: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
           ),
           const SizedBox(height: 16),
@@ -90,7 +90,7 @@ class _PageManagerState extends State<PageManager> {
                 MaterialPageRoute(builder: (context) => SignInPage()),
               );
             },
-            label: const Text('Admin'),
+            label: const Text('Admin', style: TextStyle(fontSize: 15)),
             icon: const Icon(Icons.admin_panel_settings),
           ),
         ],

@@ -78,7 +78,7 @@ class _FiltersWindowState extends State<FiltersWindow> {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 300, maxHeight: 500),
-      child: Scrollbar( // Ajoutez un Scrollbar autour de votre ListView
+      child: Scrollbar(
         child: ListView(
           children: <Widget>[
             ElevatedButton(
@@ -92,13 +92,13 @@ class _FiltersWindowState extends State<FiltersWindow> {
                     children: [
                       _buildSelectedIcon(filter.typeName),
                       Text(filter.typeName),
-                      const SizedBox(width: 10), // Espacement
                     ],
-                  ),                  trailing: Icon(
-                  isExpanded
-                      ? Icons.arrow_drop_down_circle
-                      : Icons.arrow_drop_down,
-                ),
+                  ),
+                  trailing: Icon(
+                    isExpanded
+                        ? Icons.arrow_drop_down_circle
+                        : Icons.arrow_drop_down,
+                  ),
                   children: [
                     for (var i = 0; i < filter.options.length; i++)
                       CheckboxListTile(
