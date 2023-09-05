@@ -93,6 +93,8 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
           // 2) Ajouter le musée à la liste des musées
           updatedMuseums.add(museum);
 
+          museumsList.sort((a, b) => a.name.compareTo(b.name));
+
 
           // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
           if (mounted)
@@ -192,7 +194,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   Widget build(BuildContext context) {
 
     // Triez la liste des musées par ordre alphabétique en utilisant le nom du musée
-    museumsList.sort((a, b) => a.name.compareTo(b.name));
+    // museumsList.sort((a, b) => a.name.compareTo(b.name));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ajouter un objet')),
