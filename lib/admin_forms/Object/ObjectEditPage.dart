@@ -2,6 +2,11 @@ import 'package:expo_nomade/dataModels/MuseumObject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+// TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
+// TODO : Editer images
+// TODO : Editer tags
+// TODO : PICKER LOCATION
+
 class ObjectEditPage extends StatefulWidget{
   final MuseumObject object;
   final FirebaseDatabase database;
