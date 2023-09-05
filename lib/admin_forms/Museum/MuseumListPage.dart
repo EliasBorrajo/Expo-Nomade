@@ -50,10 +50,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
     }
   }
 
-  /// Loads the museums from Firebase and listens for updates.
-  /// Updates the local list of museums when the data changes.
-  /// All museums are loaded at once.
-  /// All objects for each museum are loaded at once.
+
   void _loadMuseumsFromFirebaseAndListen() async
   {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
@@ -70,28 +67,24 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
         museumsData.forEach((key, value)
         {
-          // M U S E U M S  O B J E C T S
-          // 1) Récupérer les objets du musée
-
-           // Ajouter les objets du musée à la liste d'objets
-           print('LOADING OBJECTS');
-           List<MuseumObject>? objects = [];
-           objects = _getObjectsData(value, objects);
-
-           //List<MuseumObject> objects = _getObjectsData(value['objects'] as Map<dynamic, dynamic>);
-
-
-
           // M U S E U M S
-          // 2) Récupérer les musées et y ajouter les objets de l'étape 1
-          Museum museum = _getMuseumAndAddObjects(key, value, objects);
+          // 1) Récupérer les musées et y ajouter les objets de l'étape 1
+          Museum museum = Museum(
+            id: key,
+            name: value['name'] as String,
+            address: LatLng(
+              // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+              (value['address']['latitude'] as num).toDouble(),
+              (value['address']['longitude'] as num).toDouble(),
+            ),
+            website: value['website'] as String,
+          );
 
-
-          // 3) Ajouter le musée à la liste des musées
+          // 2) Ajouter le musée à la liste des musées
           updatedMuseums.add(museum);
 
 
-          // 4) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+          // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
           if (mounted)
           {
             setState(() {
@@ -102,213 +95,8 @@ class _MuseumListPageState extends State<MuseumListPage> {
       }
     });
 
-    // Display the museums data in the console TODO : Remove
-    _printMuseumsData(museums);
   }
 
-  // List<MuseumObject> _getObjectsData(Map<dynamic, dynamic> objectsData) {
-  //   List<MuseumObject> objects = [];
-  //
-  //   print('Objects Data: $objectsData');
-  //
-  //   if (objectsData != null)
-  //   {
-  //     objectsData.forEach((key, objValue)
-  //     {
-  //       if (objValue is Map<String, dynamic>)
-  //       {
-  //         print('VALUE IS MAP');
-  //
-  //         MuseumObject object = MuseumObject(
-  //           id: key,
-  //           name: objValue['name'] as String,
-  //           description: objValue['description'] as String,
-  //           point: LatLng(
-  //             (objValue['point']['latitude'] as num).toDouble(),
-  //             (objValue['point']['longitude'] as num).toDouble(),
-  //           ),
-  //         );
-  //         objects.add(object);
-  //         print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
-  //       } else
-  //       {
-  //         print('Invalid Object Data: $objValue');
-  //       }
-  //     });
-  //   }
-  //
-  //   return objects;
-  // }
-
-
-
-  List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects) {
-    // Print the value of objects
-    print('Objects Value: $value'); // Ajoutez cette ligne pour afficher les données des objets dans la console
-
-    if (value['objects'] != null)
-    {
-      final objectsData = value['objects'];
-      print('Objects Data: $objectsData');
-
-      if (objectsData is Map<String, dynamic>)
-      {
-        print('VALUE IS MAP');
-        // Le cas où objectsData est une carte (Map)
-        objectsData.forEach((keyObj, objValue) {
-          MuseumObject object = MuseumObject(
-            id: keyObj,
-            name: objValue['name'] as String,
-            description: objValue['description'] as String,
-            point: LatLng(
-              (objValue['point']['latitude'] as num).toDouble(),
-              (objValue['point']['longitude'] as num).toDouble(),
-            ),
-          );
-
-          objects.add(object);
-          print('TEST SEE ID OBJECT : ${object.id}');
-          print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
-        });
-      }
-      else if (objectsData is List<dynamic>)
-      {
-        print('VALUE IS LIST');
-        // Le cas où objectsData est une liste (List)
-        for (var objValue in objectsData) {
-          MuseumObject object = MuseumObject(
-            // Vous devrez utiliser une logique pour générer un ID unique ici
-            id: objValue['id'] as String,//objectId, // Utilisez une logique appropriée
-            name: objValue['name'] as String,
-            description: objValue['description'] as String,
-            point: LatLng(
-              (objValue['point']['latitude'] as num).toDouble(),
-              (objValue['point']['longitude'] as num).toDouble(),
-            ),
-          );
-
-          objects.add(object);
-          print('TEST SEE ID OBJECT : ${object.id}');
-          print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
-        }
-      }
-      else{
-        print('VALUE IS SOMETHING ELSE');
-        // Le cas où objectsData est autre chose
-        print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
-      }
-    }
-
-    return objects;
-  }
-
-
-
-  // List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
-  // {
-  //
-  //   // print the value of objects
-  //   print('Objects Value: $value'); // Ajoutez cette ligne pour afficher les données des objets dans la console
-  //
-  //   if (value['objects'] != null)
-  //   {
-  //     List<dynamic> objectsData = value['objects'] as List<dynamic>;
-  //     print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
-  //
-  //
-  //     for (var objValue in objectsData)
-  //     {
-  //       // 1) Create a new MuseumObject from the data
-  //       MuseumObject object = MuseumObject(
-  //         id: objValue['id'] as String,
-  //         name: objValue['name'] as String,
-  //         description: objValue['description'] as String,
-  //         point: LatLng(
-  //           (objValue['point']['latitude'] as num).toDouble(),
-  //           (objValue['point']['longitude'] as num).toDouble(),
-  //         ),
-  //       );
-  //
-  //       // 2) Add the new MuseumObject to the list
-  //       objects.add(object);
-  //       print('TEST SEE ID OBJECT : ${object.id}');
-  //       print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
-  //
-  //     };
-  //
-  //     return objects;
-  //   }
-  //
-  //   return [];
-  // }
-
-
-
-  // List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects)
-  // {
-  //   // print the value of objects
-  //   print('Objects Value: $value'); // Ajoutez cette ligne pour afficher les données des objets dans la console
-  //
-  //
-  //   if (value['objects'] != null
-  //   /*&& value['objects'] is Map<String, dynamic>*/)
-  //   {
-  //     Map<String, dynamic> objectsData = value['objects'] as Map<String, dynamic>;
-  //     print('Objects Data: $objectsData'); // Ajoutez cette ligne pour afficher les données des objets dans la console
-  //
-  //
-  //     objectsData.forEach((keyObj, valueObj)
-  //     {
-  //       MuseumObject object = MuseumObject(
-  //         id: keyObj,
-  //         name: valueObj['name'] as String,
-  //         description: valueObj['description'] as String,
-  //         point: LatLng(
-  //           // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-  //           (valueObj['point']['latitude'] as num).toDouble(),
-  //           (valueObj['point']['longitude'] as num).toDouble(),
-  //         ),
-  //       );
-  //
-  //       objects.add(object);
-  //       print('TEST SEE ID OBJECT : ${object.id}');
-  //       print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
-  //
-  //     });
-  //
-  //     return objects;
-  //   }
-  //
-  //   return [];
-  // }
-
-  Museum _getMuseumAndAddObjects(key, value, List<MuseumObject> objects)
-  {
-    return Museum(
-      id: key,
-      name: value['name'] as String,
-      address: LatLng(
-        // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-        (value['address']['latitude'] as num).toDouble(),
-        (value['address']['longitude'] as num).toDouble(),
-      ),
-      website: value['website'] as String,
-      objects: objects.isEmpty
-          ? null
-          : objects, // Ajouter les objets du dessus au musée // TODO: METTRE EN TO LIST ???
-    );
-  }
-
-  int _countObjects(Museum museum) {
-    // Compter le nombre d'objets dans le musée (si il y en a)
-    List<MuseumObject>? objectsData = museum.objects;
-    if (objectsData == null) {
-      return 0;
-    }
-    print('SUBTITLE : le musée ${museum.name} contient ${objectsData.length} objets !');
-
-    return objectsData.length;
-  }
 
   /// Displays the museums data in the console.
   void _printMuseumsData(List<Museum> museums) {
@@ -332,66 +120,56 @@ class _MuseumListPageState extends State<MuseumListPage> {
     DatabaseReference databaseReference = widget.database.ref();
 
     try {
-      for (var museum in dummyMuseums) {
-        // Convert the museum object to a Map<String, dynamic> object that can be stored in the database
-        Map<String, dynamic> museumData =
-        {
-          'name': museum.name,
-          'address': {
-            'latitude': museum.address.latitude.toDouble(),
-            'longitude': museum.address.longitude.toDouble(),
-          },
-          'website': museum.website,
-        };
+      await seedMuseums(databaseReference);
 
-        if (museum.objects != null) {
-          Map<String, dynamic> objectsData = {}; // Crée un Map vide pour les objets du musée
-          // museumData['objects'] = []; // Crée une liste vide d'objets pour le musée dans la firebase (sinon erreur)
-          int objectCounter = 0; // Pour générer un identifiant unique pour chaque objet
+      // SEED OBJECTS
+      await seedMuseumObjects(databaseReference);
 
-
-          for (var object in museum.objects!) {
-            // Génère un ID unique pour chaque objet
-            String objectId = '${museum.id}-obj${objectCounter.toString().padLeft(3, '0')}';
-
-            // Ajoute chaque objet du musée dans la Firebase en utilisant son ID unique
-            objectsData[objectId] = {
-              'name': object.name,
-              'id': objectId,
-              'description': object.description,
-              'point': {
-                'latitude': object.point.latitude.toDouble(),
-                'longitude': object.point.longitude.toDouble(),
-              },
-            };
-
-            objectCounter++;
-          }
-
-          // Ajoute le Map des objets au musée
-          museumData['objects'] = objectsData;
-
-          // for (var object in museum.objects!) {
-          //   // Ajoute chaque objet du musée dans la firebase (dans la liste d'objets du musée)
-          //   museumData['objects'].add(
-          //       {
-          //         'name': object.name,
-          //         'description': object.description,
-          //         'point': {
-          //           'latitude': object.point.latitude.toDouble(),
-          //           'longitude': object.point.longitude.toDouble(),
-          //         },
-          //       });
-          // }
-        }
-
-        await databaseReference.child('museums').push().set(museumData);
-        print('Museum seeded successfully: ${museum.name}');
-      }
       print('Database seeding completed.');
     }
     catch (error) {
       print('Error seeding database: $error');
+    }
+  }
+
+  Future<void> seedMuseumObjects(DatabaseReference databaseReference) async {
+
+    for(var object in dummyObjects)
+    {
+      // Convert the object to a Map<String, dynamic> object that can be stored in the database
+      Map<String, dynamic> objectData =
+      {
+        'name': object.name,
+        'museumName': object.museumName,
+        'description': object.description,
+        'point': {
+          'latitude': object.point.latitude.toDouble(),
+          'longitude': object.point.longitude.toDouble(),
+        },
+      };
+
+      await databaseReference.child('museumbjects').push().set(objectData);
+      print('Object seeded successfully: ${object.name}');
+    }
+  }
+
+  Future<void> seedMuseums(DatabaseReference databaseReference) async {
+    for (var museum in dummyMuseums)
+    {
+      // Convert the museum object to a Map<String, dynamic> object that can be stored in the database
+      Map<String, dynamic> museumData =
+      {
+        'name': museum.name,
+        'address': {
+          'latitude': museum.address.latitude.toDouble(),
+          'longitude': museum.address.longitude.toDouble(),
+        },
+        'website': museum.website,
+      };
+
+
+      await databaseReference.child('museums').push().set(museumData);
+      print('Museum seeded successfully: ${museum.name}');
     }
   }
 
@@ -465,10 +243,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
                 children: [
                   ListTile(
                     title: Text(museum.name),
-                    // TODO : REPARER çA
                      subtitle: museum == null
                          ? Text('Objects : Aucun objet')
-                         : Text('Objects : ${_countObjects(museum).toString() ?? 'Aucun objet'}'),
+                         : Text('Objects : ${/*_countObjects(museum).toString()*/false ?? 'Aucun objet'}'), // TODO : REPARER çA
                     onTap: ()
                     {
                       // NAV MUSEUM DETAIL PAGE

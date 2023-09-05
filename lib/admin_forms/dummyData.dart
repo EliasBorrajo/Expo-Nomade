@@ -7,54 +7,56 @@ import '../dataModels/Migration.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
 
+final dummyObjects = {
+  MuseumObject(
+    id: '1',
+    museumName: 'Museum 1',
+    name: 'Object 1',
+    description: 'Description of Object 1',
+    point: const LatLng( 0.2, 0.2),
+  ),
+  MuseumObject(
+    id: '2',
+    museumName: 'Museum 1',
+    name: 'Object 2',
+    description: 'Description of Object 2',
+    point: const LatLng( 0.2, 0.2),
+  ),
+  MuseumObject(
+    id: '3',
+    museumName: 'Museum 2',
+    name: 'Object 3',
+    description: 'Description of Object 3',
+    point: const LatLng( 0.2, 0.2),
+  )
+
+};
+
 final dummyMuseums = [
   Museum(
     id: '1',
     name: 'Museum 1',
     address: const LatLng(-12.34, 110.89),
     website: 'Website 1',
-    objects: [
-      MuseumObject(
-        id: 'obj000',
-        name: 'Object 1',
-        description: 'Description of Object 1',
-        point: const LatLng( 0.2, 0.2),
-      ),
-      MuseumObject(
-        id: 'obj001',
-        name: 'Object 2',
-        description: 'Description of Object 2',
-        point: const LatLng( 0.2, 0.2),
-      ),
-    ],
   ),
   Museum(
     id: '2',
     name: 'Museum 2',
     address:  const LatLng( 89,  100.89),
     website: 'Website 2',
-    objects: [
-      MuseumObject(
-        id: 'obj001',
-        name: 'Object 2',
-        description: 'Description of Object 2',
-        point: const LatLng( 0.2, 0.2),
-      ),
-    ],
+
   ),
   Museum(
     id: '3',
     name: 'Museum 3',
     address: const LatLng( -89,  170.89),
     website: 'Website 3',
-    objects: null, // No objects for this museum
   ),
   Museum(
     id: '4',
     name: 'Museum 4',
     address: const LatLng( 77.2,  160.89),
     website: 'Website 4',
-    objects: const <MuseumObject>[], // Empty list of objects for this museum // TODO : supprimer ? Ne peut pas arriver je crois
   ),
 ];
 

@@ -39,11 +39,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
     // // Récupère le musée passé en paramètre
      museum = widget.museum;
-    // if(widget.museum.objects != null)
-    //   {
-    //     // Recupere la liste des objets du musée
-    //     objects = widget.museum.objects!;
-    //   }
 
     // Load the objects of the museum from firebase & override the local objects list
     _loadDataAndListen()
@@ -52,22 +47,10 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
   }
 
-  // List all life cycle methods here for reference
-  // https://api.flutter.dev/flutter/widgets/State-class.html
-  // void initState() { super.initState(); }
-  // void didChangeDependencies() { super.didChangeDependencies(); }
-  // void didUpdateWidget(covariant MuseumDetailPage oldWidget) { super.didUpdateWidget(oldWidget); }
-  // void deactivate() { super.deactivate(); }
-  // void dispose() { super.dispose(); }
-  // void reassemble() { super.reassemble(); }
-  // void setState(VoidCallback fn) { super.setState(fn); }
-  // void didChangeAccessibilityFeatures() { super.didChangeAccessibilityFeatures(); }
-
   @override
   void dispose() {
     _museumSubscription?.cancel();
     _objectsSubscription?.cancel();
-    museum.objects?.clear();
     objects?.clear();
     super.dispose();
 
@@ -99,7 +82,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                   // Réactivez cette partie pour mettre à jour l'interface utilisateur après la suppression de l'objet
                   setState(() {
                     // Mettez à jour la liste des objets dans l'état du widget
-                    museum.objects?.remove(object);
+                    objects?.remove(object);
                   });
 
 
@@ -121,7 +104,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       print('Museum ref:  ${museumRef.key}');
       print('Museum id:   ${museum.id}');
       print('Museum name: ${museum.name}');
-      print('Museum objects: ${museum.objects.toString()}');
+      print('Museum objects: ${objects.toString()}');
 
       // stocker la ref de l'objet voulu dans une variable
       // final objectRef = museumRef.child('objects').child(object.id);
@@ -152,7 +135,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
             .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
 
         // Re-Load la liste d'objets du musée
-        await _loadObjectsAndListen()
+        await _loadObjectsAndListen_V2()
             .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
             .catchError((e) => print('Objects Load Error $e'));
       }
@@ -176,7 +159,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
             .catchError((e) => print('Museum Load Error $e'));
 
     // 2) Récupérer de la DB les objets du musée passé en paramètre, et écouter les changements
-    await _loadObjectsAndListen()
+    await _loadObjectsAndListen_V2()
             .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
             .catchError((e) => print('Objects Load Error $e'));
 
@@ -219,9 +202,9 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
     });
   }
 
-  Future<void> _loadObjectsAndListen() async
+  Future<void> _loadObjectsAndListen_V2() async
   {
-    DatabaseReference objectsRef = widget.database.ref().child('museums').child(museum.id).child('objects');
+    DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
 
     // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
     _objectsSubscription = objectsRef.onValue.listen((DatabaseEvent event)
@@ -229,49 +212,96 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
       if (event.snapshot.value != null)
       {
 
-        print ('SNAPSHOT : ${event.snapshot.value.toString()}');
-
-
         List<MuseumObject> updatedObjects = [];
-        List<dynamic> objectsData = event.snapshot.value as List<dynamic>;
-        // value : valeur de l'instantané, ici les musées
-        // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
-        // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
+        Map<dynamic, dynamic> objectsData = event.snapshot.value as Map<dynamic,dynamic>;
 
-        // For each object in the DB
-        for (var objValue in objectsData)
+        objectsData.forEach((key, value)
         {
-          // 1) Create a new MuseumObject from the data
-          MuseumObject object = MuseumObject(
-            id: objectsRef.key!,
-            name: objValue['name'] as String,
-            description: objValue['description'] as String,
-            point: LatLng(
-              (objValue['point']['latitude'] as num).toDouble(),
-              (objValue['point']['longitude'] as num).toDouble(),
-            ),
+          MuseumObject updatedObject = MuseumObject(
+              id: key,
+              museumName: value['museumName'] as String,
+              name: value['name'] as String,
+              description: value['description'] as String,
+              point: LatLng(
+                // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+                (value['address']['latitude'] as num).toDouble(),
+                (value['address']['longitude'] as num).toDouble(),
+              ),
           );
 
-          // 2) Add the new MuseumObject to the list
-          updatedObjects.add(object);
-        }
+          updatedObjects.add(updatedObject);
 
+
+        });
 
         // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
         if (mounted)
         {
-          print("UPDATE OBJECTS LIST ${updatedObjects.toString()}");
+          print("UPDATE OBJECTS ${updatedObjects.toString()}");
           setState(() {
             objects = updatedObjects;
           });
         }
-
       }
-
     });
   }
 
+  // Future<void> _loadObjectsAndListen() async
+  // {
+  //   DatabaseReference objectsRef = widget.database.ref().child('objects');
+  //
+  //   // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
+  //   _objectsSubscription = objectsRef.onValue.listen((DatabaseEvent event)
+  //   {
+  //     if (event.snapshot.value != null)
+  //     {
+  //
+  //       print ('SNAPSHOT : ${event.snapshot.value.toString()}');
+  //
+  //
+  //       List<MuseumObject> updatedObjects = [];
+  //       List<dynamic> objectsData = event.snapshot.value as List<dynamic>;
+  //       // value : valeur de l'instantané, ici les musées
+  //       // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
+  //       // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
+  //
+  //       // For each object in the DB
+  //       for (var objValue in objectsData)
+  //       {
+  //         // 1) Create a new MuseumObject from the data
+  //         MuseumObject object = MuseumObject(
+  //           id: objectsRef.key!,
+  //           museumName: objValue['museumName'] as String,
+  //           name: objValue['name'] as String,
+  //           description: objValue['description'] as String,
+  //           point: LatLng(
+  //             (objValue['point']['latitude'] as num).toDouble(),
+  //             (objValue['point']['longitude'] as num).toDouble(),
+  //           ),
+  //         );
+  //
+  //         // 2) Add the new MuseumObject to the list
+  //         updatedObjects.add(object);
+  //       }
+  //
+  //
+  //       // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+  //       if (mounted)
+  //       {
+  //         print("UPDATE OBJECTS LIST ${updatedObjects.toString()}");
+  //         setState(() {
+  //           objects = updatedObjects;
+  //         });
+  //       }
+  //
+  //     }
+  //
+  //   });
+  // }
+
   // R E N D E R I N G
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
