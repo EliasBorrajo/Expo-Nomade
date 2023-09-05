@@ -2,12 +2,11 @@
 // Utiliser le fichier firebase_crud.dart pour faire le lien avec la firebase.
 
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
-import 'package:expo_nomade/admin_forms/Objetcs/MuseumListPage.dart';
+import 'package:expo_nomade/admin_forms/Museum/MuseumListPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_players.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'dummyData.dart';
 
 class AdminForms extends StatelessWidget
 {
