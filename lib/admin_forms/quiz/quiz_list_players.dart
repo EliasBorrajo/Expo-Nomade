@@ -234,7 +234,9 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
                           Row(
                             children: [
                               const Icon(Icons.info),
-                              Text('Joueur: ${player.id}'),
+                              Expanded(
+                                child: Text('Joueur: ${player.id}'),
+                              )
                             ],
                           ),
                           const SizedBox(height: 8),

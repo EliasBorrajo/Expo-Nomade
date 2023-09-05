@@ -88,6 +88,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           if (isFiltersWindowOpen)
             Positioned(
+              top: 50.0,
               child: FiltersWindow(database: widget.database),
             ),
         ],
@@ -96,7 +97,7 @@ class _MapScreenState extends State<MapScreen> {
         onPressed: () {
           _toggleFiltersWindow();
         },
-        label: const Text('Filtres'),
+        label: const Text('Filtres', style: TextStyle(fontSize: 25)),
         icon: const Icon(Icons.filter_list_alt),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
