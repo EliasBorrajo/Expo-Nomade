@@ -72,12 +72,13 @@ class _MuseumListPageState extends State<MuseumListPage> {
         {
           // M U S E U M S  O B J E C T S
           // 1) Récupérer les objets du musée
-           List<MuseumObject>? objects = [];
 
            // Ajouter les objets du musée à la liste d'objets
            print('LOADING OBJECTS');
+           List<MuseumObject>? objects = [];
            objects = _getObjectsData(value, objects);
-           // display the objects data in the console TODO : Remove
+
+           //List<MuseumObject> objects = _getObjectsData(value['objects'] as Map<dynamic, dynamic>);
 
 
 
@@ -104,6 +105,41 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // Display the museums data in the console TODO : Remove
     _printMuseumsData(museums);
   }
+
+  // List<MuseumObject> _getObjectsData(Map<dynamic, dynamic> objectsData) {
+  //   List<MuseumObject> objects = [];
+  //
+  //   print('Objects Data: $objectsData');
+  //
+  //   if (objectsData != null)
+  //   {
+  //     objectsData.forEach((key, objValue)
+  //     {
+  //       if (objValue is Map<String, dynamic>)
+  //       {
+  //         print('VALUE IS MAP');
+  //
+  //         MuseumObject object = MuseumObject(
+  //           id: key,
+  //           name: objValue['name'] as String,
+  //           description: objValue['description'] as String,
+  //           point: LatLng(
+  //             (objValue['point']['latitude'] as num).toDouble(),
+  //             (objValue['point']['longitude'] as num).toDouble(),
+  //           ),
+  //         );
+  //         objects.add(object);
+  //         print('Loaded Object - ID: ${object.id}, Name: ${object.name}');
+  //       } else
+  //       {
+  //         print('Invalid Object Data: $objValue');
+  //       }
+  //     });
+  //   }
+  //
+  //   return objects;
+  // }
+
 
 
   List<MuseumObject> _getObjectsData(value, List<MuseumObject> objects) {
