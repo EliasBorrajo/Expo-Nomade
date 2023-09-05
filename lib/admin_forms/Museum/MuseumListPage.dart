@@ -60,8 +60,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
     {
       if (event.snapshot.value != null)
       {
-        print ('SNAPSHOT : ${event.snapshot.value.toString()}');
-
         List<Museum> updatedMuseums = [];
         Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
 
@@ -98,21 +96,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
   }
 
 
-  /// Displays the museums data in the console.
-  void _printMuseumsData(List<Museum> museums) {
-
-    print('Museums data:');
-    for (Museum museum in museums) {
-      print('Museum ID: ${museum.id}');
-      print('Name: ${museum.name}');
-      print('Address:');
-      print('  Latitude: ${museum.address.latitude}');
-      print('  Longitude: ${museum.address.longitude}');
-      print('Website: ${museum.website}');
-      print('---');
-    }
-  }
-
   void _seedDatabase() async {
     print("Seed database");
 
@@ -148,7 +131,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
         },
       };
 
-      await databaseReference.child('museumbjects').push().set(objectData);
+      await databaseReference.child('museumObjects').push().set(objectData);
       print('Object seeded successfully: ${object.name}');
     }
   }
@@ -170,30 +153,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
 
       await databaseReference.child('museums').push().set(museumData);
       print('Museum seeded successfully: ${museum.name}');
-    }
-  }
-
-  void _readDatabase() async {
-    DatabaseReference databaseReference = widget.database.ref().child(
-        'museums');
-
-    DataSnapshot snapshot = await databaseReference.get();
-
-    if (snapshot.value != null) {
-      print('Museum data:');
-      Map<dynamic, dynamic> museumsData = snapshot.value as Map<dynamic,
-          dynamic>;
-      museumsData.forEach((key, value) {
-        print('Museum ID: $key');
-        print('Name: ${value['name']}');
-        print('Address:');
-        print('  Latitude: ${value['address']['latitude']}');
-        print('  Longitude: ${value['address']['longitude']}');
-        print('Website: ${value['website']}');
-        print('---');
-      });
-    } else {
-      print('No museums found in the database.');
     }
   }
 
@@ -225,9 +184,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
+
     // Sort the museums list alphabetically by name
     museums.sort((a, b) => a.name.compareTo(b.name));
 
@@ -243,9 +202,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
                 children: [
                   ListTile(
                     title: Text(museum.name),
-                     subtitle: museum == null
-                         ? Text('Objects : Aucun objet')
-                         : Text('Objects : ${/*_countObjects(museum).toString()*/false ?? 'Aucun objet'}'), // TODO : REPARER çA
+                    subtitle: Text(museum.website),
                     onTap: ()
                     {
                       // NAV MUSEUM DETAIL PAGE
@@ -309,12 +266,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
               heroTag: 'seed_database',
             ),
             SizedBox(height: 10),
-            FloatingActionButton.extended(
-              onPressed: _readDatabase, // Utilise la méthode de lecture
-              label: Text('Read Database'), // Libellé du bouton
-              icon: Icon(Icons.cloud_download), // Icône du bouton
-              heroTag: 'read_database', // Tag héros unique
-            ),
+
           ],
         ),
       ),

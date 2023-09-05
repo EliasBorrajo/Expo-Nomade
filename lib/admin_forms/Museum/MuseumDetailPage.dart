@@ -44,7 +44,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
     _loadDataAndListen()
         .whenComplete(() => 'Data loaded successfully')
         .catchError((e) => print('Data load error $e'));
-
   }
 
   @override
@@ -135,7 +134,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
             .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
 
         // Re-Load la liste d'objets du musée
-        await _loadObjectsAndListen_V2()
+        await _loadObjectsAndListen()
             .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
             .catchError((e) => print('Objects Load Error $e'));
       }
@@ -159,7 +158,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
             .catchError((e) => print('Museum Load Error $e'));
 
     // 2) Récupérer de la DB les objets du musée passé en paramètre, et écouter les changements
-    await _loadObjectsAndListen_V2()
+    await _loadObjectsAndListen()
             .whenComplete(() => print('Objects Loaded successfully : ${objects.toString()}'))
             .catchError((e) => print('Objects Load Error $e'));
 
@@ -202,7 +201,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
     });
   }
 
-  Future<void> _loadObjectsAndListen_V2() async
+  Future<void> _loadObjectsAndListen() async
   {
     DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
 
@@ -223,9 +222,8 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
               name: value['name'] as String,
               description: value['description'] as String,
               point: LatLng(
-                // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-                (value['address']['latitude'] as num).toDouble(),
-                (value['address']['longitude'] as num).toDouble(),
+                (value['point']['latitude'] as num).toDouble(),
+                (value['point']['longitude'] as num).toDouble(),
               ),
           );
 
@@ -246,64 +244,17 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
     });
   }
 
-  // Future<void> _loadObjectsAndListen() async
-  // {
-  //   DatabaseReference objectsRef = widget.database.ref().child('objects');
-  //
-  //   // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
-  //   _objectsSubscription = objectsRef.onValue.listen((DatabaseEvent event)
-  //   {
-  //     if (event.snapshot.value != null)
-  //     {
-  //
-  //       print ('SNAPSHOT : ${event.snapshot.value.toString()}');
-  //
-  //
-  //       List<MuseumObject> updatedObjects = [];
-  //       List<dynamic> objectsData = event.snapshot.value as List<dynamic>;
-  //       // value : valeur de l'instantané, ici les musées
-  //       // snapshot.value est de type dynamic, donc on doit le caster en Map<dynamic, dynamic> pour pouvoir utiliser la méthode forEach dessus
-  //       // Map<dynamic, dynamic> : Map<clé, valeur> où clé et valeur sont de type dynamic (donc on peut mettre n'importe quel type)
-  //
-  //       // For each object in the DB
-  //       for (var objValue in objectsData)
-  //       {
-  //         // 1) Create a new MuseumObject from the data
-  //         MuseumObject object = MuseumObject(
-  //           id: objectsRef.key!,
-  //           museumName: objValue['museumName'] as String,
-  //           name: objValue['name'] as String,
-  //           description: objValue['description'] as String,
-  //           point: LatLng(
-  //             (objValue['point']['latitude'] as num).toDouble(),
-  //             (objValue['point']['longitude'] as num).toDouble(),
-  //           ),
-  //         );
-  //
-  //         // 2) Add the new MuseumObject to the list
-  //         updatedObjects.add(object);
-  //       }
-  //
-  //
-  //       // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
-  //       if (mounted)
-  //       {
-  //         print("UPDATE OBJECTS LIST ${updatedObjects.toString()}");
-  //         setState(() {
-  //           objects = updatedObjects;
-  //         });
-  //       }
-  //
-  //     }
-  //
-  //   });
-  // }
 
   // R E N D E R I N G
-
-
   @override
   Widget build(BuildContext context) {
+
+    // Filtrer les objets en fonction du nom du musée
+    final filteredObjects = objects.where((object) => object.museumName == museum.name).toList();
+
+    // Trier les objets par ordre alphabétique du nom d'objet
+    filteredObjects.sort((a, b) => a.name.compareTo(b.name));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.museum.name),
@@ -316,14 +267,14 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
               Text('Site web: ${museum.website}'),
               Text('Objets:'),
 
-            // Display the list of objects
-            objects != null
+              // Display the list of objects
+              filteredObjects.isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,
-                    itemCount: objects?.length ?? 0,
+                    itemCount: filteredObjects.length,
                     // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
                     itemBuilder: (context, index) {
-                      final object = objects?[index];
+                      final object = filteredObjects?[index];
                       return Column(
                         children: [
                           ListTile(
