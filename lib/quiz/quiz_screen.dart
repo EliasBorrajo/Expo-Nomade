@@ -1,8 +1,9 @@
 import 'dart:math';
 
+import 'package:expo_nomade/quiz/quiz_instruction.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../../dataModels/question_models.dart';
+import '../../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -84,18 +85,26 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
     }
   }
 
+  void _redoQuiz() {
+    questions = [];
+    currentQuestionIndex = 0;
+    score = 0;
+    quizEnded = false;
+    fetchQuestions();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text('Quiz')),
-        body: Center(child: CircularProgressIndicator()), // Display a loading indicator
+        appBar: AppBar(title: const Text('Quiz')),
+        body: const Center(child: CircularProgressIndicator()), // Display a loading indicator
       );
     }
 
     if(quizEnded) {
       return Scaffold(
-        appBar: AppBar(title: Text('Quiz')),
+        appBar: AppBar(title: const Text('Quiz')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -106,10 +115,29 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         ),
       );
     }
-
+    
+    void _showInstructionsDialog(BuildContext context) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const QuizInstructionsPopup();
+          }
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Quiz')),
+      appBar: AppBar(
+          title: const Text('Quiz'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.help), // Utilisez l'icône d'aide (point d'interrogation)
+            onPressed: () {
+              // À faire : Afficher les informations lorsque l'utilisateur appuie sur le point d'interrogation
+              _showInstructionsDialog(context);
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -136,13 +164,5 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         ),
       ),
     );
-  }
-
-  void _redoQuiz() {
-    questions = [];
-    currentQuestionIndex = 0;
-    score = 0;
-    quizEnded = false;
-    fetchQuestions();
   }
 }

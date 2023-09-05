@@ -29,6 +29,44 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
     correctAnswer = widget.question.correctAnswer;
   }
 
+  void _updateQuestionInDatabase() async {
+    try {
+      DatabaseReference questionsRef = widget.database.ref().child('quiz').child(widget.question.id);
+
+      Map<String, dynamic> updatedQuestion =
+      {
+        'questionText': questionTextController.text,
+        'answers': {
+          '0': answer1Controller.text,
+          '1': answer2Controller.text,
+          '2': answer3Controller.text,
+        },
+        'correctAnswer': correctAnswer,
+      };
+
+      await questionsRef.update(updatedQuestion);
+
+      if (!context.mounted) return;
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La question a été éditée avec succès.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (error) {
+      print('Error updating question: $error');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Échec de l\'édition de la question.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,43 +115,5 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
         ),
       ),
     );
-  }
-
-  void _updateQuestionInDatabase() async {
-    try {
-      DatabaseReference questionsRef = widget.database.ref().child('quiz').child(widget.question.id);
-
-      Map<String, dynamic> updatedQuestion =
-      {
-        'questionText': questionTextController.text,
-        'answers': {
-          '0': answer1Controller.text,
-          '1': answer2Controller.text,
-          '2': answer3Controller.text,
-        },
-        'correctAnswer': correctAnswer,
-      };
-
-      await questionsRef.update(updatedQuestion);
-
-      if (!context.mounted) return;
-      Navigator.pop(context);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('La question a été éditée avec succès.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } catch (error) {
-      print('Error updating question: $error');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Échec de l\'édition de la question.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
   }
 }

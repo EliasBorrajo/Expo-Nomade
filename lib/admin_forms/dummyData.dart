@@ -6,6 +6,8 @@ import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
 import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
+import '../dataModels/filters_tags.dart';
+import '../dataModels/question_models.dart';
 
 final dummyMuseums = [
   Museum(
@@ -55,14 +57,88 @@ final dummyMuseums = [
   ),
 ];
 
-/*final dummyQuiz = [
+final dummyFilters = [
+  FilterTag(
+    id: 1,
+    typeName: "Chronologie",
+    options: [
+      "Préhistoire",
+      "Antiquité",
+      "Moyen Age",
+      "Temps modernes",
+      "Epoque contemporaine"
+    ]
+  ),
+  FilterTag(
+      id: 2,
+      typeName: "Raison de migration",
+      options: [
+        "Recherche de meilleures terres",
+        "Fuite",
+        "Travail",
+        "Établissement",
+        "Influence",
+        "Conquête",
+        "Domination",
+        "Refuge",
+        "Art"
+      ]
+  ),
+  FilterTag(
+      id: 3,
+      typeName: "Musées",
+      options: [
+        "Liste des musées"
+      ]
+  ),
+  FilterTag(
+      id: 4,
+      typeName: "Population",
+      options: [
+        "Francs",
+        "Allemands",
+        "Italiens",
+        "Belges",
+        "Ottomans"
+      ]
+  ),
+  FilterTag(
+      id: 5,
+      typeName: "Oeuvres d'art",
+      options: [
+        "Peinture",
+        "Sculptures",
+        "Dessins",
+        "Gravures",
+        "Photographie"
+      ]
+  ),
+  FilterTag(
+      id: 6,
+      typeName: "Antiquités",
+      options: [
+        "Poterie",
+        "Céramiques",
+        "Objets en bronze"
+      ]
+  ),
+  FilterTag(
+      id: 7,
+      typeName: "Artisanat",
+      options: [
+        "Tapisserie",
+        "Bijoux",
+        "Poterie décorative"
+      ]
+  ),
+];
+
+final dummyQuiz = [
   Question(
     id: '1',
     questionText: 'Quelle planète est connue comme la "planète rouge" ?',
     answers: [
-      Answer(answerText: 'Vénus'),
-      Answer(answerText: 'Mars'),
-      Answer(answerText: 'Saturne'),
+      'Vénus', 'Mars', 'Saturne',
     ],
     correctAnswer: 1,
   ),
@@ -70,9 +146,7 @@ final dummyMuseums = [
     id: '2',
     questionText: 'Quel est l\'élément chimique symbolisé par "H" ?',
     answers: [
-      Answer(answerText: 'Hélium'),
-      Answer(answerText: 'Hydrogène'),
-      Answer(answerText: 'Carbone'),
+      'Hélium', 'Hydrogène','Carbone',
     ],
     correctAnswer: 1,
   ),
@@ -80,9 +154,7 @@ final dummyMuseums = [
     id: '3',
     questionText: 'Combien de continents y a-t-il sur Terre ?',
     answers: [
-      Answer(answerText: '4'),
-      Answer(answerText: '6'),
-      Answer(answerText: '7'),
+      '4', '6', '7',
     ],
     correctAnswer: 2,
   ),
@@ -90,9 +162,7 @@ final dummyMuseums = [
     id: '4',
     questionText: 'Quelle est la capitale de la France ?',
     answers: [
-      Answer(answerText: 'Berlin'),
-      Answer(answerText: 'Madrid'),
-      Answer(answerText: 'Paris'),
+      'Berlin', 'Madrid', 'Paris',
     ],
     correctAnswer: 2,
   ),
@@ -100,9 +170,7 @@ final dummyMuseums = [
     id: '5',
     questionText: 'Quel est le plus grand animal terrestre ?',
     answers: [
-      Answer(answerText: 'Éléphant'),
-      Answer(answerText: 'Girafe'),
-      Answer(answerText: 'Lion'),
+      'Éléphant', 'Girafe', 'Lion',
     ],
     correctAnswer: 0,
   ),
@@ -110,9 +178,7 @@ final dummyMuseums = [
     id: '6',
     questionText: 'Quel est le plus petit État du monde ?',
     answers: [
-      Answer(answerText: 'Vatican'),
-      Answer(answerText: 'Andorre'),
-      Answer(answerText: 'Malte'),
+      'Vatican', 'Andorre', 'Malte',
     ],
     correctAnswer: 0,
   ),
@@ -120,9 +186,7 @@ final dummyMuseums = [
     id: '7',
     questionText: 'Quelle est la distance approximative de la Terre à la Lune ?',
     answers: [
-      Answer(answerText: '100 000 km'),
-      Answer(answerText: '384 400 km'),
-      Answer(answerText: '500 000 km'),
+      '100 000 km', '384 400 km', '500 000 km',
     ],
     correctAnswer: 1,
   ),
@@ -130,9 +194,7 @@ final dummyMuseums = [
     id: '8',
     questionText: 'Qui a peint la Joconde ?',
     answers: [
-      Answer(answerText: 'Vincent van Gogh'),
-      Answer(answerText: 'Leonardo da Vinci'),
-      Answer(answerText: 'Michel-Ange'),
+      'Vincent van Gogh', 'Leonardo da Vinci', 'Michel-Ange',
     ],
     correctAnswer: 1,
   ),
@@ -140,9 +202,7 @@ final dummyMuseums = [
     id: '9',
     questionText: 'Quel est le symbole chimique de l\'or ?',
     answers: [
-      Answer(answerText: 'Ag'),
-      Answer(answerText: 'Au'),
-      Answer(answerText: 'Cu'),
+      'Ag', 'Au', 'Cu',
     ],
     correctAnswer: 1,
   ),
@@ -150,9 +210,7 @@ final dummyMuseums = [
     id: '10',
     questionText: 'Quel est le plus grand océan sur Terre ?',
     answers: [
-      Answer(answerText: 'Océan Atlantique'),
-      Answer(answerText: 'Océan Indien'),
-      Answer(answerText: 'Océan Pacifique'),
+      'Océan Atlantique', 'Océan Indien', 'Océan Pacifique',
     ],
     correctAnswer: 2,
   ),
@@ -160,9 +218,7 @@ final dummyMuseums = [
     id: '11',
     questionText: 'Quel est le plus grand désert du monde ?',
     answers: [
-      Answer(answerText: 'Désert du Sahara'),
-      Answer(answerText: 'Désert de Mojave'),
-      Answer(answerText: 'Désert du Kalahari'),
+      'Désert du Sahara', 'Désert de Mojave', 'Désert du Kalahari',
     ],
     correctAnswer: 0,
   ),
@@ -170,9 +226,7 @@ final dummyMuseums = [
     id: '12',
     questionText: 'Quel est le plus haut sommet du monde ?',
     answers: [
-      Answer(answerText: 'Mont Kilimandjaro'),
-      Answer(answerText: 'Mont Everest'),
-      Answer(answerText: 'Mont McKinley'),
+      'Mont Kilimandjaro', 'Mont Everest', 'Mont McKinley',
     ],
     correctAnswer: 1,
   ),
@@ -180,9 +234,7 @@ final dummyMuseums = [
     id: '13',
     questionText: 'Quel est le plus grand fleuve du monde ?',
     answers: [
-      Answer(answerText: 'Fleuve Amazone'),
-      Answer(answerText: 'Fleuve Nil'),
-      Answer(answerText: 'Fleuve Yangtsé'),
+      'Fleuve Amazone', 'Fleuve Nil', 'Fleuve Yangtsé',
     ],
     correctAnswer: 0,
   ),
@@ -190,9 +242,7 @@ final dummyMuseums = [
     id: '14',
     questionText: 'Quel est l\'instrument de musique à cordes le plus grand ?',
     answers: [
-      Answer(answerText: 'Violon'),
-      Answer(answerText: 'Contrebasse'),
-      Answer(answerText: 'Guitare'),
+      'Violon','Contrebasse','Guitare',
     ],
     correctAnswer: 1,
   ),
@@ -200,13 +250,11 @@ final dummyMuseums = [
     id: '15',
     questionText: 'Quelle est la plus grande mer du monde ?',
     answers: [
-      Answer(answerText: 'Mer Méditerranée'),
-      Answer(answerText: 'Mer Rouge'),
-      Answer(answerText: 'Mer Caspienne'),
+      'Mer Méditerranée', 'Mer Rouge', 'Mer Caspienne',
     ],
     correctAnswer: 2,
   ),
-];*/
+];
 
 final dummyMigrations = [
   Migration(

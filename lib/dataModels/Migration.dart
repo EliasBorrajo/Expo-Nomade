@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:latlong2/latlong.dart';
-import 'Tag.dart';
+import 'filters_tags.dart';
 
 // OBJETS
 class Migration {
@@ -9,7 +9,7 @@ class Migration {
   String description;
   String arrival;
   late List<MigrationSource>? polygons;
-  late List<Tag>? tags;                  // optional & initialized later
+  late List<FilterTag>? tags;                  // optional & initialized later
   List<String>? images;                  // optional
 
   Migration({

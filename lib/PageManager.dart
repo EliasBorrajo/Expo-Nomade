@@ -1,3 +1,4 @@
+import 'package:expo_nomade/quiz/quiz_screen.dart';
 import 'package:expo_nomade/quiz_screen.dart';
 import 'package:expo_nomade/sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -74,33 +75,25 @@ class _PageManagerState extends State<PageManager> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FloatingActionButton(
+          FloatingActionButton.extended(
+            heroTag: 'switchPage',
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
-            child: Icon(_showMap ? Icons.question_answer : Icons.map),
             elevation: 8, // Add a slight elevation
-            backgroundColor: Colors.blue, // Change button color
+            label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
+            icon: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
           ),
-          SizedBox(height: 16),
-          ElevatedButton(
+          const SizedBox(height: 16),
+          FloatingActionButton.extended(
+            heroTag: 'adminForms',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SignInPage()),
               );
             },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              elevation: 8, // Add a slight elevation
-            ),
-            child: Text(
-              'Admin Login',
-              style: TextStyle(fontSize: 16),
-            ),
+            label: const Text('Admin'),
+            icon: const Icon(Icons.admin_panel_settings),
           ),
         ],
       ),
