@@ -49,6 +49,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
 
+    print('MUSEUM SOURCE IS : ${widget.sourceMuseum?.name}');
     _loadMuseumsFromFirebaseAndListen()
         .whenComplete(() => print('Museums loaded'));
 
@@ -95,39 +96,67 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
           museumsList.sort((a, b) => a.name.compareTo(b.name));
 
-
-          // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
-          if (mounted)
-          {
-            setState(()
-            {
-              // 1) Affection de la liste des musées à la liste des musées de la page en local
-              museumsList = updatedMuseums;
-
-              // 2) Si le musée source est non-null, mettre le musée source dans la dropdown list comme musée sélectionné
-              if(widget.sourceMuseum != null)
-              {
-                // Verifier si un des musées de la liste est le musée source
-                // Si oui, mettre ce musée de la liste comme musée sélectionné
-                // Sinon, mettre le premier musée de la liste comme musée sélectionné
-                museumsList.forEach((museum)
-                {
-                  if (museum.id == widget.sourceMuseum?.id)
-                    _selectedMuseum = museum;           // specific museum from list
-                  else
-                    _selectedMuseum = museumsList[0];   // first museum from list by default
-                });
-              }
-              else
-              {
-                _selectedMuseum = museumsList[0];
-              }
-
-              print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
-
-            });
-          }
         });
+
+        // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+        if (mounted)
+        {
+          setState(()
+          {
+            // 1) Affection de la liste des musées à la liste des musées de la page en local
+            museumsList = updatedMuseums;
+
+            // 2) Si le musée source est non-null, mettre le musée source dans la dropdown list comme musée sélectionné
+            if(widget.sourceMuseum != null)
+            {
+              print('Museum source is not null');
+              // Verifier si un des musées de la liste est le musée source
+              // Si oui, mettre ce musée de la liste comme musée sélectionné
+              // Sinon, mettre le premier musée de la liste comme musée sélectionné
+              bool museumFound = false;
+
+              for (var museum in museumsList)
+              {
+                if (museum.id == widget.sourceMuseum?.id)
+                {
+                  print('Museum source found in list');
+                  _selectedMuseum = museum;
+                  museumFound = true;
+                  break;
+                }
+              }
+
+              if (!museumFound) {
+                print('Museum source not found in list');
+                _selectedMuseum = museumsList[0]; // first museum from list by default
+              }
+
+
+            //   museumsList.forEach((museum)
+            //   {
+            //     if (museum.id == widget.sourceMuseum?.id) {
+            //       print('Museum source found in list');
+            //       _selectedMuseum = museum;           // specific museum from list
+            //       break;
+            //     } else {
+            //       print('Museum source not found in list');
+            //       _selectedMuseum = museumsList[0];   // first museum from list by default
+            //     }
+            //   });
+            // }
+            // else
+            // {
+            //   print('Museum source is null');
+            //   _selectedMuseum = museumsList[0];
+            // }
+
+            print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
+
+          }
+          });
+        }
+
+
       }
     });
 
