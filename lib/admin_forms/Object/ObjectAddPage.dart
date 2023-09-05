@@ -73,93 +73,92 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     {
       if (event.snapshot.value != null)
       {
+        // 1) Get museums from firebase and add them to the list
         List<Museum> updatedMuseums = [];
         Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
 
-        museumsData.forEach((key, value)
-        {
-          // M U S E U M S
-          // 1) Récupérer les musées et y ajouter les objets de l'étape 1
-          Museum museum = Museum(
-            id: key,
-            name: value['name'] as String,
-            address: LatLng(
-              // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
-              (value['address']['latitude'] as num).toDouble(),
-              (value['address']['longitude'] as num).toDouble(),
-            ),
-            website: value['website'] as String,
-          );
+        // 2) Create a sorted list of museums and fill it with the museums from firebase
+        readDataMuseumToSortedList(museumsData, updatedMuseums);
 
-          // 2) Ajouter le musée à la liste des musées
-          updatedMuseums.add(museum);
-
-          museumsList.sort((a, b) => a.name.compareTo(b.name));
-
-        });
-
-        // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
-        if (mounted)
-        {
-          setState(()
-          {
-            // 1) Affection de la liste des musées à la liste des musées de la page en local
-            museumsList = updatedMuseums;
-
-            // 2) Si le musée source est non-null, mettre le musée source dans la dropdown list comme musée sélectionné
-            if(widget.sourceMuseum != null)
-            {
-              print('Museum source is not null');
-              // Verifier si un des musées de la liste est le musée source
-              // Si oui, mettre ce musée de la liste comme musée sélectionné
-              // Sinon, mettre le premier musée de la liste comme musée sélectionné
-              bool museumFound = false;
-
-              for (var museum in museumsList)
-              {
-                if (museum.id == widget.sourceMuseum?.id)
-                {
-                  print('Museum source found in list');
-                  _selectedMuseum = museum;
-                  museumFound = true;
-                  break;
-                }
-              }
-
-              if (!museumFound) {
-                print('Museum source not found in list');
-                _selectedMuseum = museumsList[0]; // first museum from list by default
-              }
-
-
-            //   museumsList.forEach((museum)
-            //   {
-            //     if (museum.id == widget.sourceMuseum?.id) {
-            //       print('Museum source found in list');
-            //       _selectedMuseum = museum;           // specific museum from list
-            //       break;
-            //     } else {
-            //       print('Museum source not found in list');
-            //       _selectedMuseum = museumsList[0];   // first museum from list by default
-            //     }
-            //   });
-            // }
-            // else
-            // {
-            //   print('Museum source is null');
-            //   _selectedMuseum = museumsList[0];
-            // }
-
-            print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
-
-          }
-          });
-        }
-
+        // 3) Update the museums list in the widget tree, and autmaticaly update the dropdown list of museums with the precedent museum if it exists
+        // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
+        setStateAndDropDownList(updatedMuseums);
 
       }
     });
 
+  }
+
+  void readDataMuseumToSortedList(Map<dynamic, dynamic> museumsData, List<Museum> updatedMuseums) {
+    museumsData.forEach((key, value)
+    {
+      // M U S E U M S
+      // 1) Récupérer les musées et y ajouter les objets de l'étape 1
+      Museum museum = Museum(
+        id: key,
+        name: value['name'] as String,
+        address: LatLng(
+          // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+          (value['address']['latitude'] as num).toDouble(),
+          (value['address']['longitude'] as num).toDouble(),
+        ),
+        website: value['website'] as String,
+      );
+
+      // 2) Ajouter le musée à la liste des musées
+      updatedMuseums.add(museum);
+
+
+    });
+
+    museumsList.sort((a, b) => a.name.compareTo(b.name));
+
+  }
+
+  void setStateAndDropDownList(List<Museum> updatedMuseums) {
+     if (mounted)
+    {
+      setState(()
+      {
+        // 1) Affection de la liste des musées à la liste des musées de la page en local
+        museumsList = updatedMuseums;
+
+        // 2) Si le musée source est non-null, mettre le musée source dans la dropdown list comme musée sélectionné
+        if(widget.sourceMuseum != null)
+        {
+          print('Museum source is not null');
+          // Verifier si un des musées de la liste est le musée source
+          // Si oui, mettre ce musée de la liste comme musée sélectionné
+          // Sinon, mettre le premier musée de la liste comme musée sélectionné
+          bool museumFound = false;
+
+          for (var museum in museumsList)
+          {
+            if (museum.id == widget.sourceMuseum?.id)
+            {
+              print('Museum source found in list');
+              _selectedMuseum = museum;
+              museumFound = true;
+              break;
+            }
+          }
+
+          if (!museumFound) {
+            print('Museum source not found in list');
+            _selectedMuseum = museumsList[0]; // first museum from list by default
+          }
+
+        print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
+
+      }
+      else
+      {
+          print('Museum source is null');
+          _selectedMuseum = museumsList[0]; // first museum from list by default
+      }
+
+      });
+    }
   }
 
 
