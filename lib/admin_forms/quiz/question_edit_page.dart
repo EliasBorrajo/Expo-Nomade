@@ -30,6 +30,22 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
   }
 
   void _updateQuestionInDatabase() async {
+
+    final questionText = questionTextController.text.trim();
+    final answer1 = answer1Controller.text.trim();
+    final answer2 = answer2Controller.text.trim();
+    final answer3 = answer3Controller.text.trim();
+
+    if (questionText.isEmpty || answer1.isEmpty || answer2.isEmpty || answer3.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erreur lors de l\'ajout, un ou plusieurs champs invalides.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     try {
       DatabaseReference questionsRef = widget.database.ref().child('quiz').child(widget.question.id);
 
