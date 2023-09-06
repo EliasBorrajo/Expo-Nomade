@@ -1,37 +1,60 @@
 import 'package:expo_nomade/quiz/quiz_screen.dart';
+import 'package:expo_nomade/sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
-import 'admin_forms/forms.dart';
+import 'dataModels/Museum.dart';
 import 'map/map_screen.dart';
 
-
 class PageManager extends StatefulWidget {
-
   final FirebaseDatabase database;
 
-  const PageManager({super.key, required this.database});
+  const PageManager({Key? key, required this.database}) : super(key: key);
+
   @override
   _PageManagerState createState() => _PageManagerState();
 }
 
 class _PageManagerState extends State<PageManager> {
-
-  static const List<LatLng> test = [
-    LatLng(46.23133558251062, 7.275204265601556),
-    LatLng(46.23954129676883, 7.287402512905699),
-    LatLng(46.216446100834, 7.295343971067559),
-    LatLng(46.2152203011698, 7.279190562209763)
-  ];
-
   Timer? _inactivityTimer;
   bool _showMap = true;
+
+  List<Museum> museums = [];
 
   @override
   void initState() {
     super.initState();
+    _loadMuseumsFromFirebaseAndListen();
     _startInactivityTimer();
+  }
+
+  void _loadMuseumsFromFirebaseAndListen() {
+    DatabaseReference museumsRef = widget.database.reference().child('museums');
+    museumsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        List<Museum> updatedMuseums = [];
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic, dynamic>;
+        museumsData.forEach((key, value) {
+          // Check if the values are non-zero
+          double latitude = (value['address']['latitude'] as num).toDouble();
+          double longitude = (value['address']['longitude'] as num).toDouble();
+          if (latitude != 0.0 && longitude != 0.0) {
+            Museum museum = Museum(
+              id: key,
+              name: value['name'] as String,
+              address: LatLng(latitude, longitude),
+              website: value['website'] as String,
+            );
+            updatedMuseums.add(museum);
+          }
+        });
+
+        setState(() {
+          museums = updatedMuseums;
+        });
+      }
+    });
   }
 
   void _startInactivityTimer() {
@@ -68,7 +91,9 @@ class _PageManagerState extends State<PageManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _showMap ? MapScreen(points: test, database: widget.database) : QuizScreen(database: widget.database),
+      body: _showMap
+          ? MapScreen(points: _getLatLngPoints(), database: widget.database)
+          : QuizScreen(database: widget.database),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -77,9 +102,9 @@ class _PageManagerState extends State<PageManager> {
             heroTag: 'switchPage',
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
-            elevation: 8, // Add a slight elevation
-            label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
-            icon: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
+            elevation: 8,
+            label: Text(_showMap ? 'Quiz' : 'Map', style: const TextStyle(fontSize: 25)),
+            icon: Icon(_showMap ? Icons.question_answer : Icons.map),
           ),
           const SizedBox(height: 16),
           FloatingActionButton.extended(
@@ -87,15 +112,24 @@ class _PageManagerState extends State<PageManager> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AdminForms()),
+                MaterialPageRoute(builder: (context) => SignInPage()),
               );
             },
-            label: const Text('Admin'),
+            label: const Text('Admin', style: TextStyle(fontSize: 15)),
             icon: const Icon(Icons.admin_panel_settings),
           ),
         ],
       ),
     );
+  }
+
+  List<LatLng> _getLatLngPoints() {
+    return museums
+        .map((museum) => LatLng(
+      museum.address.latitude,
+      museum.address.longitude,
+    ))
+        .toList();
   }
 
   @override

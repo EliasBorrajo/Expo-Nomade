@@ -15,6 +15,8 @@ class FiltersWindow extends StatefulWidget {
 class _FiltersWindowState extends State<FiltersWindow> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref().child('filters');
   List<FilterTag> filters = [];
+  Map<String, List<bool>> selectedOptionsMap = {};
+  bool isExpanded = false;
 
   @override
   void initState() {
@@ -25,112 +27,105 @@ class _FiltersWindowState extends State<FiltersWindow> {
   void fetchFilters() async {
     try {
       DatabaseEvent event = await _database.once();
-      Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic, dynamic>?;
+      Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic,
+          dynamic>?;
 
-          if (data != null) {
-            List<FilterTag> fetchedFilters = data.entries
-                .map((entry) {
-              String filterId = entry.key;
-              Map<String, dynamic> filterData = Map<String, dynamic>.from(entry.value);
-              return FilterTag(
-                id: filterId,
-                typeName: filterData['typeName'] ?? '',
-                options: List<String>.from(filterData['options'] ?? []),
-              );
-            })
-                .toList();
+      if (data != null) {
+        List<FilterTag> fetchedFilters = data.entries
+            .map((entry) {
+          String filterId = entry.key;
+          Map<String, dynamic> filterData = Map<String, dynamic>.from(
+              entry.value);
+          return FilterTag(
+            id: filterId,
+            typeName: filterData['typeName'] ?? '',
+            options: List<String>.from(filterData['options'] ?? []),
+          );
+        })
+            .toList();
 
-            setState(() {
-              filters = fetchedFilters;
-            });
-          }
+        for (var filter in fetchedFilters) {
+          selectedOptionsMap[filter.typeName] = List.filled(filter.options.length, false);
+        }
+
+        setState(() {
+          filters = fetchedFilters;
+        });
+      }
     } catch (error) {
       print('Error fetching questions: $error');
     }
   }
 
+  Widget _buildSelectedIcon(String typeName) {
+    final isSelected = selectedOptionsMap[typeName]?.any((selected) => selected) ?? false;
+
+    return isSelected
+        ? const Icon(Icons.check_circle, color: Colors.green)
+        : const Icon(Icons.radio_button_unchecked, color: Colors.grey);
+  }
+
+  void resetFilters() {
+    for (var typeName in selectedOptionsMap.keys) {
+      selectedOptionsMap[typeName]?.fillRange(0, selectedOptionsMap[typeName]?.length ?? 0, false);
+    }
+    setState(() {
+
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomLeft, // Alignement en bas à gauche
-      child: AlertDialog(
-        title: const Text('Filtres'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              for (var filter in filters)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 300, maxHeight: 500),
+      child: Scrollbar(
+        child: ListView(
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: resetFilters,
+              child: const Icon(Icons.restart_alt),
+            ),
+            for (var filter in filters)
+              Card(
+                child: ExpansionTile(
+                  title: Row(
+                    children: [
+                      _buildSelectedIcon(filter.typeName),
+                      Text(filter.typeName),
+                    ],
+                  ),
+                  trailing: Icon(
+                    isExpanded
+                        ? Icons.arrow_drop_down_circle
+                        : Icons.arrow_drop_down,
+                  ),
                   children: [
-                    Text('${filter.typeName}'),
-                    for (var option in filter.options)
+                    for (var i = 0; i < filter.options.length; i++)
                       CheckboxListTile(
-                        title: Text(option),
-                        value: true, // Remplacez par la logique de sélection appropriée
-                        onChanged: (value) {
+                        title: Text(filter.options[i]),
+                        value: selectedOptionsMap[filter.typeName]?[i],
+                        onChanged: (bool? value) {
                           setState(() {
-                            // Mettez à jour la sélection ici
+                            selectedOptionsMap[filter.typeName]?[i] = value ?? true;
                           });
                         },
                       ),
-                    Divider(), // Ajoutez un séparateur entre les filtres
                   ],
+                  onExpansionChanged: (bool expanded) {
+                    setState(() {
+                      isExpanded = expanded;
+                    });
+                  },
                 ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Fermer la fenêtre de filtre
-            },
-            child: const Text('Fermer'),
-          ),
-          TextButton(onPressed: _seedDatabase, child: const Text('Seed'))
-        ],
-      ),
-    );
-  }
-
-/*  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Filtres'),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            for (var filter in filters)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('${filter.typeName}'),
-                  for (var option in filter.options)
-                    CheckboxListTile(
-                      title: Text(option),
-                      value: true, // Remplacez par la logique de sélection appropriée
-                      onChanged: (value) {
-                        setState(() {
-                          // Mettez à jour la sélection ici
-                        });
-                      },
-                    ),
-                  Divider(), // Ajoutez un séparateur entre les filtres
-                ],
               ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(); // Fermer la fenêtre de filtre
-          },
-          child: const Text('Fermer'),
-        ),
-        TextButton(onPressed: _seedDatabase, child: const Text('Seed'))
-      ],
     );
-  }*/
+  }
+}
 
-  void _seedDatabase() async {
+/*  void _seedDatabase() async {
     DatabaseReference databaseReference = widget.database.ref();
 
     // Loop through the dummyFilters and add them to the database
@@ -140,5 +135,4 @@ class _FiltersWindowState extends State<FiltersWindow> {
         'options': filter.options.map((option) => option).toList(),
       });
     }
-  }
-}
+  }*/
