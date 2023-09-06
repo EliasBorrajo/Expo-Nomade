@@ -1,6 +1,9 @@
 import 'package:expo_nomade/dataModels/MuseumObject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+
+import '../map_point_picker.dart';
 
 // TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
 // TODO : Editer images
@@ -21,6 +24,8 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   // A T T R I B U T E S
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
+  late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
+  late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
   late DatabaseReference _objectsRef;
 
   // form Key allows to validate the form and save the data in the form fields
@@ -49,12 +54,16 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       // MAJ LOCAL - Mettre à jour les propriétés du musée avec les nouvelles valeurs en local
       widget.object.name        = _nameController.text;
       widget.object.description = _descriptionController.text;
-
+      widget.object.point = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
 
       // MAJ FIREBASE
       await _objectsRef.child(widget.object.id).update({
         'name': widget.object.name,
         'description': widget.object.description,
+        'point':{
+          'latitude': widget.object.point.latitude.toDouble(),
+          'longitude': widget.object.point.longitude.toDouble(),
+        }
       }
       ).whenComplete(() => print('Object updated : ${widget.object.name}'));
 
@@ -67,6 +76,12 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       Navigator.pop(context);
     }
 
+  }
+
+  void updatePoint(){
+    setState(() {
+      displayAddressPoint = selectedAddressPoint; // Change this to your updated value
+    });
   }
 
   // V A L I D A T I O N S
@@ -103,8 +118,22 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
               const SizedBox(height: 16),
               const Text('Description'),
               TextFormField(controller: _descriptionController, validator: _validateDescription),
-
-              SizedBox(height: 32),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                  onPressed: () async {
+                    selectedAddressPoint = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
+                    );
+                    updatePoint();
+                    print(selectedAddressPoint);
+                  },
+                  child: const Text('Modifier l\'adresse')
+              ),
+              selectedAddressPoint == const LatLng(0.0, 0.0) ?
+              Text('Point selectionné: ${widget.object.point.latitude.toStringAsFixed(2)}, ${widget.object.point.longitude.toStringAsFixed(2)}') :
+              Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveChanges,
                 child: Text('Enregistrer'),
