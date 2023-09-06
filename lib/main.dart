@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'firebase/firebase_options.dart';
+import 'dart:math' as math;
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,50 +23,59 @@ class MyApp extends StatelessWidget {
   static FirebaseDatabase database = FirebaseDatabase.instance; // Récupère l'instance de la firebase realtime database
   // TODO : Donner cet attribut à CRUD_FICHIER et toutes les methodes la bas dedans
 
+  double calculateFontSize(BuildContext context, double baseFontSize) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double scaleFactor = math.min(1.5, screenWidth / 400); // Ajustez 400 à la largeur souhaitée.
+
+    return baseFontSize * scaleFactor;
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    double largeFontSize = 20;
+    double baseFontSize = 15;
+    double dynamicLargeFontSize = calculateFontSize(context, largeFontSize);
+    double dynamicBaseFontSize = calculateFontSize(context, baseFontSize);
+
     return MaterialApp(
       title: 'ExpoNomade',
       theme: ThemeData(
         useMaterial3: true,
-        // Define the default brightness and colors.
-        colorScheme: ColorScheme.fromSeed(
+          colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.teal,
         ),
-        // Define the default `TextTheme`. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
           titleLarge: GoogleFonts.oswald( // Appbar Text
-            fontSize: 30,
+            fontSize: dynamicLargeFontSize,
             fontStyle: FontStyle.italic,
           ),
           bodyMedium: GoogleFonts.cabin( // Body Text
-            fontSize: 30,
+            fontSize: dynamicLargeFontSize,
           ),
         ),
         listTileTheme: ListTileThemeData(
             titleTextStyle: GoogleFonts.cabin(
-                fontSize: 25
+                fontSize: dynamicBaseFontSize
             ),
             textColor: Colors.black
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
                 textStyle: GoogleFonts.jost(
-                  fontSize: 25,
+                  fontSize: dynamicBaseFontSize,
                 )
             )
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
             extendedTextStyle:  GoogleFonts.cabin(
-              fontSize: 30
+              fontSize: dynamicLargeFontSize
             )
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             textStyle: GoogleFonts.cabin(
-              fontSize: 25,
+              fontSize: dynamicBaseFontSize,
             )
           )
         )

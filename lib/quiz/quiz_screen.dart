@@ -9,7 +9,9 @@ import 'quiz_result.dart';
 class QuizScreen extends StatefulWidget {
   final FirebaseDatabase database;
 
-  const QuizScreen({super.key, required this.database});
+  final VoidCallback resetInactivityTimer;
+
+  const QuizScreen({super.key, required this.database, required this.resetInactivityTimer});
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -50,7 +52,6 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         })
             .toList();
 
-        // Shuffle the questions and take the first 10 (or less if there are fewer than 10 questions)
         allQuestions.shuffle();
         int numberOfQuestionsToTake = 10;
         questions =
@@ -63,7 +64,6 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       }
     } catch (error) {
       print('Error fetching questions: $error');
-      // Handle the error appropriately, e.g., show an error message to the user.
     }
   }
 
@@ -74,6 +74,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       });
     }
     moveToNextQuestion();
+    widget.resetInactivityTimer();
   }
 
   void moveToNextQuestion() {
@@ -125,7 +126,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       );
     }
 
-    void _showInstructionsDialog(BuildContext context) {
+    void showInstructionsDialog(BuildContext context) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -141,7 +142,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
           IconButton(
             icon: const Icon(Icons.help_rounded),
             onPressed: () {
-              _showInstructionsDialog(context);
+              showInstructionsDialog(context);
             },
           ),
         ],
