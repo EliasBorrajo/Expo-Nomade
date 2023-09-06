@@ -18,8 +18,8 @@ class CustomPolygonLayer extends StatelessWidget {
               for(var polygon in migration.polygons!)
                 Polygon(
                   points: polygon.points!,
-                  color: Colors.blue.withOpacity(0.3),
-                  borderColor: Colors.blue,
+                  color: Colors.green.withOpacity(0.3) /*!= null ? polygon.color!.withOpacity(0.3) :Colors.green.withOpacity(0.3)*/,
+                  borderColor: /*Colors.blue*//*polygon.color != null ? polygon.color! :*/ Colors.green,
                   borderStrokeWidth: 2.0,
                   isFilled: true,
                 ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +60,7 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
       // Créez un objet Museum à partir des données du formulaire
       Map<String, dynamic> museumData =
       {
+        'id': Random.secure().nextDouble(),
         'name': _nameController.text,
         'website': _websiteController.text,
         'address': {

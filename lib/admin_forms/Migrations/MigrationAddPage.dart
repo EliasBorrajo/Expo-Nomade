@@ -88,7 +88,7 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
         migrationToUpload['polygons'] = [];
         for (var source in migrationSources){
           Map<String, dynamic> polygonData = {
-            'color': source.color,
+            //'color': source.color.toString(),
             'name': source.name,
             'id': source.id
           };

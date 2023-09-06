@@ -9,9 +9,9 @@ class FirebaseUtils {
 
   Future<void> loadMigrationsAndListen(Function(List<Migration>) onDataReceived) async {
     DatabaseReference migrationsRef = database.ref().child('migrations');
+    List<Migration> updatedMigrations = [];
     migrationsRef.onValue.listen((DatabaseEvent event) {
       if (event.snapshot.value != null) {
-        List<Migration> updatedMigrations = [];
         Map<dynamic, dynamic> migrationsData =
         event.snapshot.value as Map<dynamic, dynamic>;
         migrationsData.forEach((key, value) {
@@ -48,6 +48,16 @@ class FirebaseUtils {
           updatedMigrations.add(migration);
         });
         onDataReceived(updatedMigrations);
+      }
+      else if(event.snapshot.value == null){
+        //updatedMigrations.remoall();
+        print('before: $updatedMigrations');
+        if(updatedMigrations.isNotEmpty){
+          updatedMigrations.removeLast();
+        }
+        print('after: $updatedMigrations');
+        onDataReceived(updatedMigrations);
+        print('test');
       }
     });
   }

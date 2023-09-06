@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'filters_tags.dart';
 
@@ -27,14 +28,14 @@ class Migration {
 class MigrationSource {
   final String id;
   late List<LatLng>? points;
-  late Color? color;
+  //late Color? color;
   late String? name;
   late VoidCallback? onTap;
 
   MigrationSource({
     required this.id,
     this.points,
-    this.color,
+    //this.color,
     this.name,
     this.onTap,
   });
