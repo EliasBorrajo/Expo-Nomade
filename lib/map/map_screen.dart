@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
+import '../dataModels/Museum.dart';
+import '../dataModels/MuseumObject.dart';
 import '../firebase/firebase_crud.dart';
 import 'map_filters.dart';
 
@@ -20,10 +22,41 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+
+
   bool isPopupOpen = false;
   String popupTitle = '';
   late List<Migration> migrations = [];
   bool isFiltersWindowOpen = false;
+  late List<Museum> museums = [];
+
+
+  void _loadMuseumsFromFirebaseAndListen() {
+    DatabaseReference museumsRef = widget.database.ref().child('museums');
+    museumsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        List<Museum> updatedMuseums = [];
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic, dynamic>;
+        museumsData.forEach((key, value) {
+          double latitude = (value['address']['latitude'] as num).toDouble();
+          double longitude = (value['address']['longitude'] as num).toDouble();
+          if (latitude != 0.0 && longitude != 0.0) {
+            Museum museum = Museum(
+              id: key,
+              name: value['name'] as String,
+              address: LatLng(latitude, longitude),
+              website: value['website'] as String,
+            );
+            updatedMuseums.add(museum);
+          }
+        });
+
+        setState(() {
+          museums = updatedMuseums;
+        });
+      }
+    });
+  }
 
   void _toggleFiltersWindow() {
     setState(() {
@@ -45,9 +78,42 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  late List<MuseumObject> museumObjects = [];
+
+  void _loadMuseumObjectsFromFirebaseAndListen() {
+    DatabaseReference museumObjectsRef = widget.database.ref().child('museumObjects');
+    museumObjectsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        List<MuseumObject> updatedMuseumObjects = [];
+        Map<dynamic, dynamic> objectsData = event.snapshot.value as Map<dynamic, dynamic>;
+        objectsData.forEach((key, value) {
+          MuseumObject museumObject = MuseumObject(
+            id: key,
+            name: value['name'] as String,
+            description: value['description'] as String,
+            museumName: value['museumName'] as String,
+            point: LatLng(
+              (value['point']['latitude'] as num).toDouble(),
+              (value['point']['longitude'] as num).toDouble(),
+            ),
+          );
+          updatedMuseumObjects.add(museumObject);
+        });
+
+        if (mounted) {
+          setState(() {
+            museumObjects = updatedMuseumObjects;
+          });
+        }
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadMuseumObjectsFromFirebaseAndListen();
+    _loadMuseumsFromFirebaseAndListen();
     final firebaseUtils = FirebaseUtils(widget.database);
     firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
       setState(() {
@@ -73,16 +139,36 @@ class _MapScreenState extends State<MapScreen> {
               CustomPolygonLayer(migrations: migrations),
               MarkerLayer(
                 key: const Key('Object marker'),
-                markers: [
-                  for (var point in widget.points)
+                markers: museumObjects.isNotEmpty
+                    ? [
+                  for (var museumObject in museumObjects)
                     MapMarker(
-                      position: point,
+                      position: museumObject.point,
                       markerPopupData: [
-                        const MapEntry('Name', 'John Doe'),
-                        const MapEntry('Age', '25'),
+                        MapEntry('Name', museumObject.name),
+                        MapEntry('Description', museumObject.description),
+                        MapEntry('Museum Name', museumObject.museumName),
                       ],
                     ).createMarker(context),
-                ],
+                ]
+                    : [],
+              ),
+
+              // Markers for Museums
+              MarkerLayer(
+                key: const Key('Museum marker'),
+                markers: museums.isNotEmpty
+                    ? [
+                  for (var museum in museums)
+                    MapMarker(
+                      position: museum.address,
+                      markerPopupData: [
+                        MapEntry('Name', museum.name),
+                        MapEntry('Website', museum.website),
+                      ],
+                    ).createMarker(context),
+                ]
+                    : [],
               ),
             ],
           ),
@@ -103,6 +189,7 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
+
 
   LatLng _calculateCentroid(List<LatLng> points) {
     // Calculate the centroid of the polygon
