@@ -28,16 +28,16 @@ class AdminForms extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () => Navigator.pop(context),
             ),
             bottom: const TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.accessible_forward)),
-                Tab(icon: Icon(Icons.ac_unit)),
-                Tab(icon: Icon(Icons.question_answer)),
-                Tab(icon: Icon(Icons.accessibility)),
+                Tab(icon: Icon(Icons.home_rounded)),
+                Tab(icon: Icon(Icons.accessible_forward_rounded)),
+                Tab(icon: Icon(Icons.ac_unit_rounded)),
+                Tab(icon: Icon(Icons.question_answer_rounded)),
+                Tab(icon: Icon(Icons.accessibility_rounded)),
               ],
             ),
             title: const Text('Admin data management'),
@@ -45,7 +45,7 @@ class AdminForms extends StatelessWidget
           body: TabBarView(
             children: [
               MuseumListPage(database: database),
-              const Icon(Icons.accessible_forward), // TODO : TAGS PAGE
+              const Icon(Icons.accessible_forward_rounded), // TODO : TAGS PAGE
               MigrationListPage(
                   //migrations: dummyMigrations,
                   database: database),

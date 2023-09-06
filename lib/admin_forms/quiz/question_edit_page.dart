@@ -76,21 +76,15 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Texte de la question:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Texte de la question:'),
             TextField(controller: questionTextController),
             const SizedBox(height: 16),
-            const Text(
-              'Réponses:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Réponses:'),
             TextField(controller: answer1Controller),
             TextField(controller: answer2Controller),
             TextField(controller: answer3Controller),
             const SizedBox(height: 8),
-            const Text('Réponse correcte:', style: TextStyle(fontSize: 16)),
+            const Text('Réponse correcte:'),
             DropdownButton<int>(
               value: correctAnswer,
               onChanged: (value) {

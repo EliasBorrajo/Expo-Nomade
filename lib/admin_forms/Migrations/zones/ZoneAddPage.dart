@@ -26,16 +26,10 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          const Text(
-            'Nom de la zone:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          const Text('Nom de la zone:'),
           TextField(controller: zoneNameTextController),
           const SizedBox(height: 16),
-          const Text(
-            'Couleur de la zone:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          const Text('Couleur de la zone:'),
           TextField(controller: zoneColorTextController),
           const SizedBox(height: 16),
           Center(

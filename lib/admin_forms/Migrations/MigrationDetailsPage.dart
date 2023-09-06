@@ -50,7 +50,7 @@ class MigrationDetailsPage extends StatelessWidget {
         onPressed: () {
           // Naviguer vers la page d'ajout d'objet
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add_rounded),
       ),
     );
   }

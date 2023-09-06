@@ -97,7 +97,7 @@ class _MapScreenState extends State<MapScreen> {
         onPressed: () {
           _toggleFiltersWindow();
         },
-        label: const Text('Filtres', style: TextStyle(fontSize: 25)),
+        label: const Text('Filtres'),
         icon: const Icon(Icons.filter_list_alt),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

@@ -85,21 +85,15 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Texte de la question:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Texte de la question:'),
             TextField(controller: questionTextController),
             const SizedBox(height: 16),
-            const Text(
-              'Réponses:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Réponses:'),
             TextField(controller: answer1Controller),
             TextField(controller: answer2Controller),
             TextField(controller: answer3Controller),
             const SizedBox(height: 8),
-            const Text('Réponse Correcte:', style: TextStyle(fontSize: 16)),
+            const Text('Réponse Correcte:'),
             DropdownButton<int>(
               value: correctAnswer,
               onChanged: (value) {

@@ -108,7 +108,7 @@ class _MapPointPickerState extends State<MapPointPicker> {
                 widget.pickerType == 1 ? Navigator.pop(context, validatedPolygon) : Navigator.pop(context, currentPoint);
               },
               backgroundColor: Colors.blue,
-              child: const Icon(Icons.save),
+              child: const Icon(Icons.save_rounded),
             ),
             const SizedBox(height: 10),
             FloatingActionButton(
@@ -118,7 +118,7 @@ class _MapPointPickerState extends State<MapPointPicker> {
                 widget.pickerType == 1 ? validatedPolygon.clear() : validatedPoint = const LatLng(0.0, 0.0);
               },
               backgroundColor: Colors.blue,
-              child: const Icon(Icons.delete),
+              child: const Icon(Icons.delete_rounded),
             ),
           ],
         )

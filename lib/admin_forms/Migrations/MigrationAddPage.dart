@@ -35,22 +35,13 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
       body: ListView( // Use ListView to make content scrollable
         padding: const EdgeInsets.all(16.0),
         children: [
-          const Text(
-            'Nom:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          const Text('Nom:'),
           TextField(controller: nameTextController),
           const SizedBox(height: 16),
-          const Text(
-            'Description:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          const Text('Description:'),
           TextField(controller: descriptionTextController),
           const SizedBox(height: 16),
-          const Text(
-            'Arrivée:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          const Text('Arrivée:'),
           TextField(controller: arrivalTextController),
           const SizedBox(height: 16),
           Center(

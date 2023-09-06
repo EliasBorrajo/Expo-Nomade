@@ -4,7 +4,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
-import 'admin_forms/forms.dart';
 import 'map/map_screen.dart';
 
 
@@ -79,8 +78,8 @@ class _PageManagerState extends State<PageManager> {
             onPressed: _switchPages,
             tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
             elevation: 8, // Add a slight elevation
-            label: Text(_showMap ? 'Quiz' : 'Map', style: const TextStyle(fontSize: 25)), // Utilisation de label pour le texte
-            icon: Icon(_showMap ? Icons.question_answer : Icons.map), // Change button color
+            label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
+            icon: Icon(_showMap ? Icons.question_answer_rounded : Icons.map_rounded), // Change button color
           ),
           const SizedBox(height: 16),
           FloatingActionButton.extended(
@@ -92,8 +91,8 @@ class _PageManagerState extends State<PageManager> {
                 // MaterialPageRoute(builder: (context) => const AdminForms()),
               );
             },
-            label: const Text('Admin', style: TextStyle(fontSize: 15)),
-            icon: const Icon(Icons.admin_panel_settings),
+            label: const Text('Admin'),
+            icon: const Icon(Icons.admin_panel_settings_rounded),
           ),
         ],
       ),

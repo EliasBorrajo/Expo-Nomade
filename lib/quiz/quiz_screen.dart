@@ -108,18 +108,20 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
 
     if (quizEnded) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Quiz')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              QuizResultScreen(database: widget.database,
-                  score: score,
-                  totalQuestions: questions.length,
-                  redoQuiz: _redoQuiz),
-            ],
-          ),
-        ),
+          appBar: AppBar(title: const Text('Quiz')),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  QuizResultScreen(database: widget.database,
+                      score: score,
+                      totalQuestions: questions.length,
+                      redoQuiz: _redoQuiz),
+                ],
+              ),
+            ),
+          )
       );
     }
 
@@ -137,7 +139,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         title: const Text('Quiz'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help),
+            icon: const Icon(Icons.help_rounded),
             onPressed: () {
               _showInstructionsDialog(context);
             },
@@ -145,13 +147,12 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         ],
       ),
       body: Center(
-        child: SingleChildScrollView( // Ajoutez un SingleChildScrollView ici
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Question ${currentQuestionIndex + 1}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
               ),
               const SizedBox(height: 16),
               LinearProgressIndicator(
@@ -160,34 +161,56 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
                 valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
               ),
               const SizedBox(height: 40),
-              Text(
-                questions[currentQuestionIndex].questionText,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-              const SizedBox(height: 40),
-              Column(
-                children: [
-                  for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
-                    Column(
+              Container(
+                  width: MediaQuery.of(context).size.width >= 400 ? 900 : MediaQuery.of(context).size.width,
+                  //height: MediaQuery.of(context).size.height >= 500 ? 500 : MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Couleur de fond du carré
+                    borderRadius: BorderRadius.circular(12.0), // Bords arrondis
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5), // Ombre légère autour du carré
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3), // Ajustez le décalage pour contrôler la direction de l'ombre
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16.0), // Espacement intérieur du carré
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                          onPressed: () => checkAnswer(i),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            minimumSize: const Size(200, 60),
-                          ),
-                          child: Text(
-                            questions[currentQuestionIndex].answers[i],
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                          ),
+                        Text(
+                          questions[currentQuestionIndex].questionText,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 40),
+                        Column(
+                          children: [
+                            for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
+                              Column(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => checkAnswer(i),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                      minimumSize: const Size(200, 60),
+                                    ),
+                                    child: Text(
+                                      questions[currentQuestionIndex].answers[i],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                              ),
+                          ],
+                        ),
                       ],
                     ),
-                ],
-              ),
+                  )
+              )
             ],
           ),
         ),

@@ -131,13 +131,13 @@ class _MigrationListPageState extends State<MigrationListPage>{
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => MigrationEditpage(migration: migration, database: widget.database)),
                           );                          },
-                        icon: const Icon(Icons.edit),
+                        icon: const Icon(Icons.edit_rounded),
                       ),
                       IconButton(
                         onPressed: () {
                           _showDeleteConfirmationDialog(context, migration!);
                         },
-                        icon: const Icon(Icons.delete),
+                        icon: const Icon(Icons.delete_rounded),
                       ),
                     ],
                   ),
@@ -161,14 +161,14 @@ class _MigrationListPageState extends State<MigrationListPage>{
                 );
               },
               label: Text('Add migration'),
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add_rounded),
               heroTag: 'add_migration',
             ),
             const SizedBox(height: 10),
             FloatingActionButton.extended(
               onPressed: _seedDatabase,
               label: Text('Seed Database'),
-              icon: Icon(Icons.cloud_upload),
+              icon: Icon(Icons.cloud_upload_rounded),
               heroTag: 'seed_database_migration',
             ),
           ],

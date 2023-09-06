@@ -163,7 +163,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                                 MaterialPageRoute(builder: (context) => ZoneEditPage(migration: widget.migration, index: index, database: widget.database)),
                               );
                             },
-                            icon: const Icon(Icons.edit),
+                            icon: const Icon(Icons.edit_rounded),
                           ),
                           IconButton(
                             // DELETE MUSEUM
@@ -171,7 +171,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                               //_showDeleteConfirmationDialog(context);
                               _showDeleteConfirmationDialog(context, widget.migration.polygons![index]!.id);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
                             },
-                            icon: const Icon(Icons.delete),
+                            icon: const Icon(Icons.delete_rounded),
                           ),
                         ],
                       ),

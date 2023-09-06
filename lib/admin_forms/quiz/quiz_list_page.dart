@@ -137,7 +137,7 @@ class _QuizListPageState extends State<QuizListPage> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Rechercher...',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? ElevatedButton(
                   onPressed: _clearSearch,
@@ -145,7 +145,7 @@ class _QuizListPageState extends State<QuizListPage> {
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                   ),
-                  child: const Icon(Icons.clear),
+                  child: const Icon(Icons.clear_rounded),
                 )
                     : null,
               ),
@@ -187,7 +187,7 @@ class _QuizListPageState extends State<QuizListPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _navigateToAddQuestionPage,
         label: const Text('Ajouter une question'),
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded),
       ),
     );
   }

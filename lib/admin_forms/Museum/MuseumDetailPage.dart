@@ -256,7 +256,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                                               database: widget.database)),
                                     );
                                   },
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit_rounded),
                                 ),
                                 IconButton(
                                   // DELETE MUSEUM
@@ -265,7 +265,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                                         context,
                                         object!);
                                   },
-                                  icon: const Icon(Icons.delete),
+                                  icon: const Icon(Icons.delete_rounded),
                                 ),
                               ],
                             ),
@@ -295,7 +295,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                           ObjectAddPage(database: widget.database)));
             },
             label: Text('Ajouter objet'),
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.add_rounded),
             heroTag: 'add_obect',
           ),
         ],
