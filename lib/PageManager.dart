@@ -68,10 +68,12 @@ class _PageManagerState extends State<PageManager> {
   void _resetInactivityTimer() {
 
     if (inactivityTimer != null || _showMap == true) {
+      print("TIMER CANCEL _________________________________");
       inactivityTimer!.cancel();
     }
 
     if(!_showMap) {
+      print("TIMER START ///////////////////////////////////////////////");
       inactivityTimer = Timer(Duration(seconds: inactivityDuration), () {
         _switchPages();
       });

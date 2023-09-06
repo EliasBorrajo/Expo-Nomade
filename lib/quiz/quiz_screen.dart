@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:expo_nomade/quiz/quiz_instruction.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/services.dart';
 import '../../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
@@ -29,6 +30,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
   void initState() {
     super.initState();
     fetchQuestions();
+    RawKeyboard.instance.addListener(_handleKeyEvents);
   }
 
   void fetchQuestions() async {
@@ -94,7 +96,18 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
     currentQuestionIndex = 0;
     score = 0;
     quizEnded = false;
+    widget.resetInactivityTimer();
     fetchQuestions();
+  }
+
+  void _handleKeyEvents(RawKeyEvent event) {
+    widget.resetInactivityTimer();
+  }
+
+  @override
+  void dispose() {
+    RawKeyboard.instance.removeListener(_handleKeyEvents);
+    super.dispose();
   }
 
   @override
