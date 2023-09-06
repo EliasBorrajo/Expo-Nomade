@@ -85,8 +85,6 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

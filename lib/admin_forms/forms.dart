@@ -3,6 +3,7 @@
 
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Museum/MuseumListPage.dart';
+import 'package:expo_nomade/admin_forms/Object/ObjectAddPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_players.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -24,7 +25,7 @@ class AdminForms extends StatelessWidget
     return MaterialApp(
       title: appTitle,
       home: DefaultTabController(                             // 1. Create a TabController
-        length: 5,
+        length: 6,
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -38,6 +39,7 @@ class AdminForms extends StatelessWidget
                 Tab(icon: Icon(Icons.ac_unit_rounded)),
                 Tab(icon: Icon(Icons.question_answer_rounded)),
                 Tab(icon: Icon(Icons.accessibility_rounded)),
+                Tab(icon: Icon(Icons.account_balance_rounded)),
               ],
             ),
             title: const Text('Admin data management'),
@@ -50,7 +52,8 @@ class AdminForms extends StatelessWidget
                   //migrations: dummyMigrations,
                   database: database),
               QuizListPage(database: database),
-              QuizListPlayers(database: database)
+              QuizListPlayers(database: database),
+              ObjectAddPage(database: database),
             ],
           ),
         ),

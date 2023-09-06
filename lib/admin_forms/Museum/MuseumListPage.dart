@@ -10,6 +10,10 @@ import 'MuseumAddPage.dart';
 import 'MuseumDetailPage.dart';
 import 'MuseumEditPage.dart';
 
+// TODO : Changer DATA MODEL de MuseumObject pour ajouter un champ "museumId" et faire le lien avec le musée, au lieu de "museumName"
+// TODO : Dans la methode _deleteMuseum, le equalsTo utilise le "NAME" du musée, pas son ID. Donc modifier avec ID, car si on renomme musée, on perd la réference des objets / musée
+// TODO : Si je change le equalsTo, changer la "RULE" dans firebase
+
 
 /// Displays a list of museums.
 /// When a museum is tapped, the [MuseumDetailPage] is displayed.
@@ -172,11 +176,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
               ),
               TextButton(
                 onPressed: () async {
-                  // widget.database.ref().child('museumObjects').child(museum.name).remove();
-                  // widget.database.ref().child('museums').child(museum.id).remove();
-                  // Navigator.pop(context); // Ferme la boîte de dialogue
 
-                  await _deleteMuseum(museum).whenComplete(() => print('Museum deleted successfully'));
+                  await _deleteMuseum(museum)
+                            .whenComplete(() => print('Museum deleted successfully'));
 
                   //mettre à jour l'interface utilisateur après la suppression du musée
                   setState(() {

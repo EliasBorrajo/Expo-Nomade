@@ -292,7 +292,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          ObjectAddPage(database: widget.database)));
+                          ObjectAddPage(database: widget.database, sourceMuseum: museum)));
             },
             label: Text('Ajouter objet'),
             icon: Icon(Icons.add_rounded),

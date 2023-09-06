@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
+import 'dataModels/Museum.dart';
 import 'map/map_screen.dart';
 
 
@@ -17,21 +18,44 @@ class PageManager extends StatefulWidget {
 }
 
 class _PageManagerState extends State<PageManager> {
-
-  static const List<LatLng> test = [
-    LatLng(46.23133558251062, 7.275204265601556),
-    LatLng(46.23954129676883, 7.287402512905699),
-    LatLng(46.216446100834, 7.295343971067559),
-    LatLng(46.2152203011698, 7.279190562209763)
-  ];
-
   Timer? _inactivityTimer;
   bool _showMap = true;
+
+  List<Museum> museums = [];
 
   @override
   void initState() {
     super.initState();
+    _loadMuseumsFromFirebaseAndListen();
     _startInactivityTimer();
+  }
+
+  void _loadMuseumsFromFirebaseAndListen() {
+    DatabaseReference museumsRef = widget.database.reference().child('museums');
+    museumsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        List<Museum> updatedMuseums = [];
+        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic, dynamic>;
+        museumsData.forEach((key, value) {
+          // Check if the values are non-zero
+          double latitude = (value['address']['latitude'] as num).toDouble();
+          double longitude = (value['address']['longitude'] as num).toDouble();
+          if (latitude != 0.0 && longitude != 0.0) {
+            Museum museum = Museum(
+              id: key,
+              name: value['name'] as String,
+              address: LatLng(latitude, longitude),
+              website: value['website'] as String,
+            );
+            updatedMuseums.add(museum);
+          }
+        });
+
+        setState(() {
+          museums = updatedMuseums;
+        });
+      }
+    });
   }
 
   void _startInactivityTimer() {
@@ -68,7 +92,9 @@ class _PageManagerState extends State<PageManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _showMap ? MapScreen(points: test, database: widget.database) : QuizScreen(database: widget.database),
+      body: _showMap
+          ? MapScreen(points: _getLatLngPoints(), database: widget.database)
+          : QuizScreen(database: widget.database),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -87,8 +113,7 @@ class _PageManagerState extends State<PageManager> {
             onPressed: () {
               Navigator.push(
                 context,
-                 MaterialPageRoute(builder: (context) => SignInPage()),
-                // MaterialPageRoute(builder: (context) => const AdminForms()),
+                MaterialPageRoute(builder: (context) => SignInPage()),
               );
             },
             label: const Text('Admin'),
@@ -97,6 +122,15 @@ class _PageManagerState extends State<PageManager> {
         ],
       ),
     );
+  }
+
+  List<LatLng> _getLatLngPoints() {
+    return museums
+        .map((museum) => LatLng(
+      museum.address.latitude,
+      museum.address.longitude,
+    ))
+        .toList();
   }
 
   @override
