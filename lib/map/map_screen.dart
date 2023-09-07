@@ -49,7 +49,8 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     final firebaseUtils = FirebaseUtils(widget.database);
-    firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
+    firebaseUtils.loadMigrationsAndListen((updatedMigrations)
+    {
       setState(() {
         migrations = updatedMigrations;
       });
