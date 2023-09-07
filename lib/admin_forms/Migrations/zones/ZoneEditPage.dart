@@ -49,14 +49,7 @@ class _ZoneEditPageState extends State<ZoneEditPage>{
     // Firebase update
     await _migrationsRef.child(widget.migration.id).child('polygons').child(widget.index.toString()).update({
       'name': widget.migration.polygons?[widget.index].name,
-      //'color': widget.migrationSource.color,
     });
-
-    /*_migrationsRef.child('migrations').child(widget.migration.id).child('polygons')
-        .child(widget.index.toString())
-        .update({
-      'name': widget.migration.polygons?[widget.index].name
-    });*/
 
     Navigator.pop(context);
   }

@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../firebase/firebase_crud.dart';
 import '../map_point_picker.dart';
 
 class MigrationEditpage extends StatefulWidget {
@@ -23,6 +24,8 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
   late TextEditingController _descriptionController;
   late TextEditingController _arrivalController;
   late DatabaseReference _migrationsRef;
+
+  late MigrationSource removedMigrationSource;
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -82,7 +85,6 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, int migrationIndex) {
-    //source.points = null;
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -98,9 +100,8 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
               ),
               TextButton(
                 onPressed: () {
-                 widget.database.ref().child('polygons').child(migrationIndex.toString()).remove();
-
-                  //source.points = null;
+                  _migrationsRef.child(widget.migration.id).child('polygons').child(migrationIndex.toString()).remove();
+                  widget.migration.polygons?.remove(widget.migration.polygons?[migrationIndex]);
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
                 child: Text('Supprimer'),
@@ -168,8 +169,16 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                           IconButton(
                             // DELETE MUSEUM
                             onPressed: () {
-                              //_showDeleteConfirmationDialog(context);
-                              _showDeleteConfirmationDialog(context, index);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+
+                              if(widget.migration.polygons?.length == 1){
+                                const snackBar = SnackBar(
+                                  content: Text('Impossible de supprimer la zone.'),
+                                  backgroundColor: Colors.red,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              }else{
+                                _showDeleteConfirmationDialog(context, index);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                              }
                             },
                             icon: const Icon(Icons.delete_rounded),
                           ),
