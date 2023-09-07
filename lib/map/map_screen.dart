@@ -22,12 +22,11 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-
-
   bool isPopupOpen = false;
   String popupTitle = '';
   late List<Migration> migrations = [];
   bool isFiltersWindowOpen = false;
+  Map<String, List<bool>> selectedFilterState = {};
   late List<Museum> museums = [];
 
 
@@ -178,7 +177,7 @@ class _MapScreenState extends State<MapScreen> {
           if (isFiltersWindowOpen)
             Positioned(
               top: 50.0,
-              child: FiltersWindow(database: widget.database),
+              child: FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
             ),
         ],
       ),

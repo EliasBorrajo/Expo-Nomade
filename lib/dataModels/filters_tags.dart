@@ -11,6 +11,3 @@ class FilterTag {
     this.isSelected = false,
   });
 }
-
-
-
