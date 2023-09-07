@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
+import 'marker_popup.dart';
 
 class CustomPolygonLayer extends StatelessWidget {
   late List<Migration> migrations = [];
@@ -34,8 +35,18 @@ class CustomPolygonLayer extends StatelessWidget {
                 point: _calculateCentroid(polygon.points!),
                 builder: (ctx) => GestureDetector(
                   onTap: (){
-                    //TODO: Here call the screen for the popup of the polygon
-                    print('tapped on polygon.');
+                    // Call the popup
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => MarkerPopup(
+                          data: [
+                            MapEntry("Name", migration.name),
+                            MapEntry("Description", migration.description),
+                            MapEntry("Arrival", migration.arrival),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   behavior: HitTestBehavior.translucent,
                   child: const Icon(
