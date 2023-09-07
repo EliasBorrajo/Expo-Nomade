@@ -18,8 +18,8 @@ class CustomPolygonLayer extends StatelessWidget {
               for(var polygon in migration.polygons!)
                 Polygon(
                   points: polygon.points!,
-                  color: Colors.blue.withOpacity(0.3),
-                  borderColor: Colors.blue,
+                  color: Colors.blueAccent.withOpacity(0.3),
+                  borderColor: Colors.blueAccent,
                   borderStrokeWidth: 2.0,
                   isFilled: true,
                 ),
@@ -39,9 +39,9 @@ class CustomPolygonLayer extends StatelessWidget {
                   },
                   behavior: HitTestBehavior.translucent,
                   child: const Icon(
-                    Icons.move_down,
-                    color: Colors.red,
-                    size: 30.0,
+                    Icons.touch_app_outlined,
+                    color: Colors.black,
+                    size: 35.0,
                   ),
                 ),
               ),

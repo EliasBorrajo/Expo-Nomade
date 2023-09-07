@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:expo_nomade/dataModels/MuseumObject.dart';
+import 'package:expo_nomade/firebase/firebase_crud.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -285,6 +286,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   // R E N D E R I N G
   @override
   Widget build(BuildContext context) {
+    final firebaseUtils = FirebaseUtils(widget.database);
 
     // Triez la liste des musées par ordre alphabétique en utilisant le nom du musée
     // museumsList.sort((a, b) => a.name.compareTo(b.name));

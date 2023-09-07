@@ -116,11 +116,14 @@ class _MapScreenState extends State<MapScreen> {
     _loadMuseumsFromFirebaseAndListen();
     final firebaseUtils = FirebaseUtils(widget.database);
     firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
-      setState(() {
-        migrations = updatedMigrations;
-      });
+      if(mounted){
+        setState(() {
+          migrations = updatedMigrations;
+        });
+      }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

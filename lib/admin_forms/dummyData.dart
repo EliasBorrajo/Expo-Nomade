@@ -269,9 +269,7 @@ final dummyMigrations = [
     arrival: 'Arrival 1',
     polygons: [
       MigrationSource(
-        id: '1',
         name: 'source 1',
-        color: Color(0xFF00FF00),
         points:
         [const LatLng(46.23, 7.30), const LatLng(46.25, 7.30), const LatLng(46.25, 7.32), const LatLng(46.25, 7.6)],
       ),
@@ -285,20 +283,11 @@ final dummyMigrations = [
     arrival: 'Arrival 2',
     polygons: [
       MigrationSource(
-        id: '2',
         name: 'source 2',
-        color: Color(0xFFFF0000),
         points:
         [const LatLng(46.23, 7.60), const LatLng(46.25, 7.60), const LatLng(46.25, 7.62), const LatLng(46.25, 7.90)],
 
       ),
-      /*MigrationSource(
-        [LatLng(40, 40), LatLng(40, 50), LatLng(50, 50)],
-        Color(0xFF0000FF), 'source 2.1',
-            () {
-
-        },
-      ),*/
     ],
   ),
 ];
