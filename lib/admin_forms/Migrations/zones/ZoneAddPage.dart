@@ -19,61 +19,83 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
   late List<LatLng> polygon = [];
   late int nbPolyPoints = 0;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    zoneNameTextController.dispose();
+  }
+
+
   void updatePolyPoints(){
-    setState(() {
-      nbPolyPoints = polygon.length;
-    });
+    if(mounted){
+      setState(() {
+        nbPolyPoints = polygon.length;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Ajouter une zone au flux')),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          const Text('Nom de la zone:'),
-          TextField(controller: zoneNameTextController),
-          const SizedBox(height: 16),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                polygon = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)),
-                );
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            const Text('Nom de la zone:'),
+            TextFormField(controller: zoneNameTextController, validator: validateName,),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  polygon = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)),
+                  );
 
-                updatePolyPoints();
-              },
-              child: const Text('Choisir les points de la zone'),
+                  updatePolyPoints();
+                },
+                child: const Text('Choisir les points de la zone'),
+              ),
             ),
-          ),
-          nbPolyPoints < 1 ? const Text('Aucune zone selectionnée.') : Text('Zone avec $nbPolyPoints points selectionnée.'),
-          const SizedBox(height: 16),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                if(polygon.isEmpty || zoneNameTextController.text.isEmpty){
-                  const snackBar = SnackBar(
-                    content: Text('Veuillez sasir les données (nom & zone)'),
-                    backgroundColor: Colors.red,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }else{
-                  MigrationSource source = MigrationSource(
-                    id: Random().nextInt(100).toString(),
-                    points: polygon,
-                    name:  zoneNameTextController.text,
-                  );
-                  Navigator.pop(context, source);
-                }
-              },
-              child: const Text('Ajouter la zone'),
+            nbPolyPoints < 1 ? const Text('Aucune zone selectionnée.') : Text('Zone avec $nbPolyPoints points selectionnée.'),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  if(_formKey.currentState!.validate()){
+                    if(polygon.isEmpty){
+                      const snackBar = SnackBar(
+                        content: Text('Veuillez choisir les points de la zone.'),
+                        backgroundColor: Colors.red,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }else{
+                      MigrationSource source = MigrationSource(
+                        id: Random().nextInt(100).toString(),
+                        points: polygon,
+                        name:  zoneNameTextController.text,
+                      );
+                      Navigator.pop(context, source);
+                    }
+                  }
+                },
+                child: const Text('Ajouter la zone'),
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-        ],
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
+  }
+
+  String? validateName(String? value){
+    if (value == null || value.isEmpty) {
+      return 'Le nom de la zone ne peut pas être vide';
+    }
+    return null;
   }
 }
