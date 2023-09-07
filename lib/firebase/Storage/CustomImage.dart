@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import '../../dataModels/MuseumObject.dart';
 import 'FirebaseStorageUtil.dart';
 
@@ -11,30 +11,57 @@ const String defaultImageFormat = 'jpg';
 
 // Taille par défaut des images en petit de 800x600
 const double defaultImageWidth = 800;
-const double defaultImageHeight = 600;
+const double defaultImageHeight = 400;
 
 // Taille des images sur le click en grand de 2560 x 1440
 const double defaultImageWidthLarge = 2560;
 const double defaultImageHeightLarge = 1440;
 
-
-
-
-class ImageGallery extends StatelessWidget {
+class ImageGallery2 extends StatelessWidget {
+  // A T T R I B U T E S
   final List<String> imageUrls;
-  // final List<Future<Uint8List>> imageBytes;
 
-  ImageGallery({required this.imageUrls});
+  // C O N S T R U C T O R
+  ImageGallery2({super.key, required this.imageUrls});
 
+
+  /// Displays a gallery of images.
+  /// FutureBuilder wraps the PageView to display a loading indicator while the images are being downloaded.
+  /// Once the images are downloaded, they are displayed in a PageView.
+  /// If an error occurs, an error message is displayed.
+  /// If no image is available, a message is displayed.
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      itemCount: imageUrls.length,
-      itemBuilder: (context, index) {
-        return CustomImage(
-          imageUrl: imageUrls[index],
-        );
-      },
+
+    return Container(
+      height: defaultImageHeight,
+      child: FutureBuilder<List<String>>(
+        // Utilisez Future.wait pour télécharger toutes les images en parallèle
+        future: Future.value(imageUrls),
+
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Affichez un indicateur de chargement pendant le téléchargement
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            // Gérez les erreurs ici
+            return Text('Erreur de chargement des images');
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            // Aucune image disponible
+            return Text('Aucune image à afficher');
+          } else {
+            // Affichez les images une fois qu'elles sont téléchargées
+            return PageView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return CustomImage(
+                  imageUrl: snapshot.data![index],
+                );
+              },
+            );
+          }
+        },
+      )
     );
   }
 }
@@ -76,23 +103,40 @@ class CustomImage extends StatelessWidget {
   }
 
 
+
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _showImageDialog(context); // Ouvre le dialogue avec l'image en grand
-      },
+    return AspectRatio(
+      aspectRatio: width / height, // Ajustez le ratio largeur/hauteur selon vos besoins
       child: Image.network(
         imageUrl,
         width: width,
-        height: height,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return const Icon(Icons.error, color: Colors.red);
-        },
+        height: height, // Définissez également la hauteur ici
+        fit: BoxFit.contain, // Ajuste l'image à la taille du conteneur
       ),
     );
   }
+
+
+// @override
+// Widget build(BuildContext context) {
+//   return GestureDetector(
+//     onTap: () {
+//       _showImageDialog(context); // Ouvre le dialogue avec l'image en grand
+//     },
+//     child: Image.network(
+//       imageUrl,
+//       width: width,
+//       height: height,
+//       fit: BoxFit.cover,
+//       errorBuilder: (context, error, stackTrace) {
+//         return const Icon(Icons.error, color: Colors.red);
+//       },
+//     ),
+//   );
+// }
+
 }
 
 
@@ -165,51 +209,51 @@ class CustomImage extends StatelessWidget {
 
 
 
-
-// MERGIN ABOVE EXAMPLES TOGETHER
-class MyScreen2 extends StatelessWidget {
-  final List<String> imageUrls = [
-    'url_image_1.jpg',
-    'url_image_2.jpg',
-    'url_image_3.jpg',
-    // Ajoutez d'autres URL d'images ici
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-
-    final firebaseStorageUtil = FirebaseStorageUtil(); // Créez une instance de la classe FirebaseStorageUtil
-
-
-    return Scaffold(
-      appBar: AppBar(title: Text('Galerie d\'images')),
-      body: FutureBuilder<List<String>>(
-        // Utilisez Future.wait pour télécharger toutes les images en parallèle
-        future: Future.wait(imageUrls.map((url) => firebaseStorageUtil.downloadImage(url))),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Affichez un indicateur de chargement pendant le téléchargement
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            // Gérez les erreurs ici
-            return Text('Erreur de chargement des images');
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            // Aucune image disponible
-            return Text('Aucune image à afficher');
-          } else {
-            // Affichez les images une fois qu'elles sont téléchargées
-            return ListView.builder( // TODO :Remplacer par ImageGalry ICI, OU PageView.builder
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return CustomImage(imageUrl: snapshot.data![index]);
-              },
-            );
-          }
-        },
-      ),
-    );
-  }
-}
+//
+// // MERGIN ABOVE EXAMPLES TOGETHER
+// class MyScreen2 extends StatelessWidget {
+//   final List<String> imageUrls = [
+//     'url_image_1.jpg',
+//     'url_image_2.jpg',
+//     'url_image_3.jpg',
+//     // Ajoutez d'autres URL d'images ici
+//   ];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//
+//     final firebaseStorageUtil = FirebaseStorageUtil(); // Créez une instance de la classe FirebaseStorageUtil
+//
+//
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Galerie d\'images')),
+//       body: FutureBuilder<List<String>>(
+//         // Utilisez Future.wait pour télécharger toutes les images en parallèle
+//         future: Future.wait(imageUrls.map((url) => firebaseStorageUtil.downloadImage(url))),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             // Affichez un indicateur de chargement pendant le téléchargement
+//             return CircularProgressIndicator();
+//           } else if (snapshot.hasError) {
+//             // Gérez les erreurs ici
+//             return Text('Erreur de chargement des images');
+//           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//             // Aucune image disponible
+//             return Text('Aucune image à afficher');
+//           } else {
+//             // Affichez les images une fois qu'elles sont téléchargées
+//             return ListView.builder( // TODO :Remplacer par ImageGalry ICI, OU PageView.builder
+//               itemCount: snapshot.data!.length,
+//               itemBuilder: (context, index) {
+//                 return CustomImage(imageUrl: snapshot.data![index]);
+//               },
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
 
 
 

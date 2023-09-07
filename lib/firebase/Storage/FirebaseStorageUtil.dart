@@ -15,6 +15,7 @@ enum FirebaseStorageFolder {
   migrations,
   museums,
   objects,
+  root
 }
 
 class FirebaseStorageUtil {
@@ -95,6 +96,8 @@ class FirebaseStorageUtil {
         return 'museums';
       case FirebaseStorageFolder.objects:
         return 'objects';
+      case FirebaseStorageFolder.root:
+        return '';
       default:
         throw ArgumentError('Dossier invalide');
     }
