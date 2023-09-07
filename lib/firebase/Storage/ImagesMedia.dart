@@ -161,36 +161,7 @@ class ImageDialog extends StatelessWidget {
   }
 }
 
-class ImageDetailPage extends StatelessWidget {
-  final String imageUrl;
 
-  ImageDetailPage({required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // Ajoutez un bouton de retour pour fermer l'image agrandie
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: Center(
-        child: Hero(
-          tag: 'image', // Utilisez la même balise que dans ImageGallery2
-          child: CustomImage(
-            imageUrl: imageUrl,
-            width: defaultImageWidthLarge,
-            height: defaultImageHeightLarge,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class CustomCarousel extends StatelessWidget {
   // A T T R I B U T E S

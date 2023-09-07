@@ -1,5 +1,5 @@
 import 'package:expo_nomade/admin_forms/Object/ObjectAddPage.dart';
-import 'package:expo_nomade/firebase/Storage/CustomImage.dart';
+import 'package:expo_nomade/firebase/Storage/ImagesMedia.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +103,22 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
             Text('Description: ${widget.object.description}'),
             // Expanded( // Utilisez Expanded pour que le PageView occupe tout l'espace disponible en hauteur
             //   child: ImageGallery2(imageUrls: URLS)),
-            ImageGallery2(imageUrls: URLS)
+            ImageGallery2(imageUrls: URLS),
+
+            FloatingActionButton.extended(
+              onPressed: () async {
+                var urlNewImage = await firebaseStorageUtil.uploadImageFromGallery(FirebaseStorageFolder.museums);
+
+                if(urlNewImage != null)
+                {
+                  setState(() {
+                    URLS.add(urlNewImage);
+                  });
+                }},
+              label: Text('Add Image'),
+              icon: Icon(Icons.add_rounded),
+              heroTag: 'add_museum',
+            )
           ],
         )
     );
