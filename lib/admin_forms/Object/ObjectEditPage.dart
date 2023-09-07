@@ -292,61 +292,63 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       appBar: AppBar(title: Text('Editer l\'objet ${widget.object.name}')),
       body: Form(
         key: _formKey,
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Nom du de l\'objet'),
-              TextFormField(controller: _nameController, validator: _validateObjectName),
-              const SizedBox(height: 16),
-              const Text('Description'),
-              TextFormField(controller: _descriptionController, validator: _validateDescription),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Museum>(
-                value: _selectedMuseum ?? null,
-                onChanged: (Museum? newValue)
-                {
-                  setState(() {
-                    _selectedMuseum = newValue!;
-                    _museumNameController.text = newValue?.name ?? 'No museum selected';
-                    _loadAllObjectsFromAMuseum(newValue); // Chaque fois que on change de musée, on recharge la liste des objets du musée
-                  });
-                },
-                items: museumsList.map((Museum museum)
-                {
-                  return DropdownMenuItem<Museum>(
-                    value: museum,
-                    child: Text(museum.name),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Sélectionner un musée auquel attribuer l\'objet',
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                  onPressed: () async {
-                    selectedAddressPoint = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
-                    );
-                    updatePoint();
-                    print(selectedAddressPoint);
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Nom du de l\'objet'),
+                TextFormField(controller: _nameController, validator: _validateObjectName),
+                const SizedBox(height: 16),
+                const Text('Description'),
+                TextFormField(controller: _descriptionController, validator: _validateDescription),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<Museum>(
+                  value: _selectedMuseum ?? null,
+                  onChanged: (Museum? newValue)
+                  {
+                    setState(() {
+                      _selectedMuseum = newValue!;
+                      _museumNameController.text = newValue?.name ?? 'No museum selected';
+                      _loadAllObjectsFromAMuseum(newValue); // Chaque fois que on change de musée, on recharge la liste des objets du musée
+                    });
                   },
-                  child: const Text('Modifier l\'adresse')
-              ),
-              selectedAddressPoint == const LatLng(0.0, 0.0) ?
-              Text('Point selectionné: ${widget.object.point.latitude.toStringAsFixed(2)}, ${widget.object.point.longitude.toStringAsFixed(2)}') :
-              Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _saveChanges,
-                child: Text('Enregistrer'),
-              ),
-            ],
-          ),
-        ),
+                  items: museumsList.map((Museum museum)
+                  {
+                    return DropdownMenuItem<Museum>(
+                      value: museum,
+                      child: Text(museum.name),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(
+                    labelText: 'Sélectionner un musée auquel attribuer l\'objet',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                    onPressed: () async {
+                      selectedAddressPoint = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
+                      );
+                      updatePoint();
+                      print(selectedAddressPoint);
+                    },
+                    child: const Text('Modifier l\'adresse')
+                ),
+                selectedAddressPoint == const LatLng(0.0, 0.0) ?
+                Text('Point selectionné: ${widget.object.point.latitude.toStringAsFixed(2)}, ${widget.object.point.longitude.toStringAsFixed(2)}') :
+                Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _saveChanges,
+                  child: Text('Enregistrer'),
+                ),
+              ],
+            ),
+          ],
+        )
       ),
     );
   }
