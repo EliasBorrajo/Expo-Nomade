@@ -76,10 +76,6 @@ class _ZoneEditPageState extends State<ZoneEditPage>{
             children: [
               const Text('Nom de la zone'),
               TextFormField(controller: _nameController, validator: _validateName),
-              const SizedBox(height: 16),
-              /*Text('Couleur de la zone'),
-              TextFormField(controller: _colorController, validator: colo),
-              SizedBox(height: 16),*/
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveChanges,
