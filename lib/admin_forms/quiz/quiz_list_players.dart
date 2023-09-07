@@ -223,7 +223,7 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
                     const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.person, size: 40),
+                        Icon(Icons.person_rounded, size: 40),
                       ],
                     ),
                     const SizedBox(width: 30),
@@ -233,7 +233,7 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.info),
+                              const Icon(Icons.info_rounded),
                               Expanded(
                                 child: Text('Joueur: ${player.id}'),
                               )
@@ -242,21 +242,21 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.email),
+                              const Icon(Icons.email_rounded),
                               Text(player.userEmail),
                             ],
                           ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.calendar_today),
+                              const Icon(Icons.calendar_today_rounded),
                               Text('Date et heure: ${player.dateTime}'),
                             ],
                           ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.star),
+                              const Icon(Icons.star_rounded),
                               Text(' Score: ${player.score}'),
                             ],
                           ),
@@ -267,7 +267,7 @@ class _QuizListPlayersState extends State<QuizListPlayers> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(Icons.delete_rounded),
                           onPressed: () {
                             _showDeleteConfirmationDialog(context, player.id);
                           },

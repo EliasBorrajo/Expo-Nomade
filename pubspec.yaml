@@ -39,6 +39,7 @@ dependencies:
   firebase_database: ^10.2.5
   intl: ^0.18.1
   firebase_storage: ^11.2.6
+  google_fonts: ^5.1.0
 
 
 dependency_overrides:

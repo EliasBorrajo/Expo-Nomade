@@ -15,16 +15,15 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: SingleChildScrollView( // Utilisez un SingleChildScrollView
+        child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(16.0),
             width: 400,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.verified_user, size: 50),
+                const Icon(Icons.verified_user_rounded, size: 50),
                 const SizedBox(height: 32),
-                const Text('Connexion Administrateur', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                const Text('Connexion Administrateur'),
                 const SizedBox(height: 32),
                 TextField(
                   controller: emailController,
@@ -52,7 +51,6 @@ class SignInPage extends StatelessWidget {
                   ),
                   child: const Text(
                       'Se connecter',
-                      style: TextStyle(fontSize: 16)
                   ),
                   onPressed: () async {
                     User? user = await authService.signInWithEmailPassword(
@@ -67,7 +65,12 @@ class SignInPage extends StatelessWidget {
                         ),
                       );
                     } else {
-                      print('Failed to sign in with Email & Password');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Erreur lors de la connexion. Email ou mot de passe incorrect.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     }
                   },
                 ),
@@ -78,7 +81,6 @@ class SignInPage extends StatelessWidget {
                     },
                     child: const Text(
                         'Retour',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
                     )
                 )
               ],

@@ -30,16 +30,6 @@ class MigrationDetailsPage extends StatelessWidget {
               final flowMigration = migration.polygons?[index];
               return ListTile(
                 title: Text(flowMigration?.name ?? ''),
-                onTap: () async {
-                  final polygonPoints = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)), // Here redirect to the map
-                  );
-                  print(polygonPoints);
-                },
-                onLongPress: () {
-                  _showDeleteConfirmationDialog(context, flowMigration!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-                },
               );
             },
           )
@@ -50,7 +40,7 @@ class MigrationDetailsPage extends StatelessWidget {
         onPressed: () {
           // Naviguer vers la page d'ajout d'objet
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add_rounded),
       ),
     );
   }

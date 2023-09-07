@@ -65,7 +65,7 @@ class _QuestionListItemState extends State<QuestionListItem> {
           const Column(
             mainAxisAlignment:  MainAxisAlignment.center,
             children: [
-              Icon(Icons.question_mark, size: 40),
+              Icon(Icons.question_mark_rounded, size: 40),
             ],
           ),
           const SizedBox(width: 30), // Espace entre les colonnes
@@ -76,20 +76,13 @@ class _QuestionListItemState extends State<QuestionListItem> {
                 Title(
                   color: Colors.black,
                   child:
-                  Text(
-                    'Question ${widget.question.id}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  Text('Question ${widget.question.id}'),
                 ),
                 Text(
                   widget.question.questionText,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Answers:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                const Text('Answers:'),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -100,8 +93,8 @@ class _QuestionListItemState extends State<QuestionListItem> {
                           children: [
                             Icon(
                               i == widget.question.correctAnswer
-                                  ? Icons.check_circle
-                                  : Icons.circle,
+                                  ? Icons.check_circle_rounded
+                                  : Icons.circle_rounded,
                               color: i == widget.question.correctAnswer
                                   ? Colors.green
                                   : Colors.grey,
@@ -125,13 +118,13 @@ class _QuestionListItemState extends State<QuestionListItem> {
                     onPressed: () {
                       widget.onEditPressed(widget.question);
                     },
-                    icon: const Icon(Icons.edit),
+                    icon: const Icon(Icons.edit_rounded),
                   ),
                   IconButton(
                     onPressed: () async {
                       _showDeleteConfirmationDialog(context);
                     },
-                    icon: const Icon(Icons.delete),
+                    icon: const Icon(Icons.delete_rounded),
                   ),
                 ],
               ),

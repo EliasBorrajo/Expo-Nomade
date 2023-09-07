@@ -3,13 +3,16 @@ import 'dart:math';
 import 'package:expo_nomade/quiz/quiz_instruction.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/services.dart';
 import '../../../dataModels/question_models.dart';
 import 'quiz_result.dart';
 
 class QuizScreen extends StatefulWidget {
   final FirebaseDatabase database;
 
-  const QuizScreen({super.key, required this.database});
+  final VoidCallback resetInactivityTimer;
+
+  const QuizScreen({super.key, required this.database, required this.resetInactivityTimer});
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -27,6 +30,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
   void initState() {
     super.initState();
     fetchQuestions();
+    RawKeyboard.instance.addListener(_handleKeyEvents);
   }
 
   void fetchQuestions() async {
@@ -50,7 +54,6 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         })
             .toList();
 
-        // Shuffle the questions and take the first 10 (or less if there are fewer than 10 questions)
         allQuestions.shuffle();
         int numberOfQuestionsToTake = 10;
         questions =
@@ -63,7 +66,6 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       }
     } catch (error) {
       print('Error fetching questions: $error');
-      // Handle the error appropriately, e.g., show an error message to the user.
     }
   }
 
@@ -74,6 +76,7 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
       });
     }
     moveToNextQuestion();
+    widget.resetInactivityTimer();
   }
 
   void moveToNextQuestion() {
@@ -93,7 +96,18 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
     currentQuestionIndex = 0;
     score = 0;
     quizEnded = false;
+    widget.resetInactivityTimer();
     fetchQuestions();
+  }
+
+  void _handleKeyEvents(RawKeyEvent event) {
+    widget.resetInactivityTimer();
+  }
+
+  @override
+  void dispose() {
+    RawKeyboard.instance.removeListener(_handleKeyEvents);
+    super.dispose();
   }
 
   @override
@@ -108,22 +122,24 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
 
     if (quizEnded) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Quiz')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              QuizResultScreen(database: widget.database,
-                  score: score,
-                  totalQuestions: questions.length,
-                  redoQuiz: _redoQuiz),
-            ],
-          ),
-        ),
+          appBar: AppBar(title: const Text('Quiz')),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  QuizResultScreen(database: widget.database,
+                      score: score,
+                      totalQuestions: questions.length,
+                      redoQuiz: _redoQuiz),
+                ],
+              ),
+            ),
+          )
       );
     }
 
-    void _showInstructionsDialog(BuildContext context) {
+    void showInstructionsDialog(BuildContext context) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -137,21 +153,20 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
         title: const Text('Quiz'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help),
+            icon: const Icon(Icons.help_rounded),
             onPressed: () {
-              _showInstructionsDialog(context);
+              showInstructionsDialog(context);
             },
           ),
         ],
       ),
       body: Center(
-        child: SingleChildScrollView( // Ajoutez un SingleChildScrollView ici
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Question ${currentQuestionIndex + 1}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
               ),
               const SizedBox(height: 16),
               LinearProgressIndicator(
@@ -160,34 +175,56 @@ class _QuizPageState extends State<QuizScreen> with SingleTickerProviderStateMix
                 valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
               ),
               const SizedBox(height: 40),
-              Text(
-                questions[currentQuestionIndex].questionText,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-              const SizedBox(height: 40),
-              Column(
-                children: [
-                  for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
-                    Column(
+              Container(
+                  width: MediaQuery.of(context).size.width >= 400 ? 900 : MediaQuery.of(context).size.width,
+                  //height: MediaQuery.of(context).size.height >= 500 ? 500 : MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Couleur de fond du carré
+                    borderRadius: BorderRadius.circular(12.0), // Bords arrondis
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5), // Ombre légère autour du carré
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3), // Ajustez le décalage pour contrôler la direction de l'ombre
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16.0), // Espacement intérieur du carré
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                          onPressed: () => checkAnswer(i),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            minimumSize: const Size(200, 60),
-                          ),
-                          child: Text(
-                            questions[currentQuestionIndex].answers[i],
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                          ),
+                        Text(
+                          questions[currentQuestionIndex].questionText,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 40),
+                        Column(
+                          children: [
+                            for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++)
+                              Column(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => checkAnswer(i),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                      minimumSize: const Size(200, 60),
+                                    ),
+                                    child: Text(
+                                      questions[currentQuestionIndex].answers[i],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                              ),
+                          ],
+                        ),
                       ],
                     ),
-                ],
-              ),
+                  )
+              )
             ],
           ),
         ),

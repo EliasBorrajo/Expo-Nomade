@@ -127,7 +127,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
       Map<String, dynamic> objectData =
       {
         'name': object.name,
-        'museumName': object.museumName,
+        'museumId': object.museumId,
         'description': object.description,
         'point': {
           'latitude': object.point.latitude.toDouble(),
@@ -199,7 +199,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
     final DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
 
     // Utilisez une requête pour obtenir les objets du musée ayant le même nom que museum.name
-    final Query query = objectsRef.orderByChild('museumName').equalTo(museum.name);
+    final Query query = objectsRef.orderByChild('museumId').equalTo(museum.id);
     final DataSnapshot snapshot = await query.get();
 
     print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
@@ -255,7 +255,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
                             Navigator.of(context).push(
                               MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum, database: widget.database)),
                             );                          },
-                          icon: const Icon(Icons.edit),
+                          icon: const Icon(Icons.edit_rounded),
                         ),
                         IconButton(
                           // DELETE MUSEUM
@@ -263,7 +263,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
                             //_showDeleteConfirmationDialog(context);
                             _showDeleteConfirmationDialog(context, museum!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
                           },
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(Icons.delete_rounded),
                         ),
                       ],
                     ),
@@ -290,14 +290,14 @@ class _MuseumListPageState extends State<MuseumListPage> {
                 );
               },
               label: Text('Add museum'),
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add_rounded),
               heroTag: 'add_museum',
             ),
             SizedBox(height: 10), // Add some spacing between the FABs
             FloatingActionButton.extended(
               onPressed: _seedDatabase,
               label: Text('Seed Database'),
-              icon: Icon(Icons.cloud_upload),
+              icon: Icon(Icons.cloud_upload_rounded),
               heroTag: 'seed_database',
             ),
             SizedBox(height: 10),

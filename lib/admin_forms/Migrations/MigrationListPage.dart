@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:expo_nomade/admin_forms/Migrations/MigrationEditPage.dart';
 import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
@@ -25,9 +27,11 @@ class _MigrationListPageState extends State<MigrationListPage>{
     super.initState();
     final firebaseUtils = FirebaseUtils(widget.database);
     firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
-      setState(() {
-        migrations = updatedMigrations;
-      });
+      if(mounted){
+        setState(() {
+          migrations = updatedMigrations;
+        });
+      }
     });
   }
 
@@ -48,7 +52,7 @@ class _MigrationListPageState extends State<MigrationListPage>{
           migrationData['polygons'] = [];
           for (var polygon in migration.polygons!) {
             Map<String, dynamic> polygonData = {
-              'color': polygon.color.toString(),
+              //'color': polygon.color.toString(),
               'name': polygon.name,
               //'id': polygon.id,
             };
@@ -92,6 +96,9 @@ class _MigrationListPageState extends State<MigrationListPage>{
               TextButton(
                 onPressed: () {
                   widget.database.ref().child('migrations').child(migration.id).remove();
+                  setState(() {
+                    migrations?.remove(migration);
+                  });
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
                 child: const Text('Supprimer'),
@@ -131,13 +138,13 @@ class _MigrationListPageState extends State<MigrationListPage>{
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => MigrationEditpage(migration: migration, database: widget.database)),
                           );                          },
-                        icon: const Icon(Icons.edit),
+                        icon: const Icon(Icons.edit_rounded),
                       ),
                       IconButton(
                         onPressed: () {
                           _showDeleteConfirmationDialog(context, migration!);
                         },
-                        icon: const Icon(Icons.delete),
+                        icon: const Icon(Icons.delete_rounded),
                       ),
                     ],
                   ),
@@ -161,14 +168,14 @@ class _MigrationListPageState extends State<MigrationListPage>{
                 );
               },
               label: Text('Add migration'),
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add_rounded),
               heroTag: 'add_migration',
             ),
             const SizedBox(height: 10),
             FloatingActionButton.extended(
               onPressed: _seedDatabase,
               label: Text('Seed Database'),
-              icon: Icon(Icons.cloud_upload),
+              icon: Icon(Icons.cloud_upload_rounded),
               heroTag: 'seed_database_migration',
             ),
           ],

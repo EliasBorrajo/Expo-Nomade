@@ -14,7 +14,7 @@ class MarkerPopup extends StatelessWidget {
         children: [
           const Text('Nom de l\'objet'),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: const Icon(Icons.close_rounded),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -45,12 +45,10 @@ class MarkerPopup extends StatelessWidget {
                     item.key,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 35,
                     ),
                   ),
                   Text(
                     item.value,
-                    style: const TextStyle(fontSize: 30),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 10),
