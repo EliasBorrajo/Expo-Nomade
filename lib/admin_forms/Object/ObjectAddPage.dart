@@ -68,11 +68,16 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     });
   }
 
-  Map<dynamic, dynamic> getSelectedFilters() {
-    final Map<dynamic, dynamic> selectedFilters = {};
-    // TODO
+  // TODO
+  Map<String, List<bool>> getSelectedFilters() {
+    // Récupérer la liste de filtre de la db?
 
-    return selectedFilters;
+    // ou c'est mis a true dans notre liste selectedFilter
+
+    // Récupérer à l'index du true l'options dans filtres
+
+    // refaire la liste
+    return selectedFilterState;
   }
 
   Future<void> _saveChanges() async {
