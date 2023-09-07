@@ -273,7 +273,7 @@ class _StorageState extends State<Storage> {
     // 3) Get a Download URL for a file
     var imageGetDownload = await pathReference.getDownloadURL();
 
-    // 4) Download BUG FILES in memory
+    // 4) Download BIG FILES in memory
     // If you request a file larger than your app's available memory, your app will crash.
     // To protect against memory issues, getData() takes a maximum amount of bytes to download.
     // Set the maximum size to something you know your app can handle, or use another download method.
@@ -326,8 +326,7 @@ class _StorageState extends State<Storage> {
   Future<void> downloadFilesFullExample() async
   {
     final storageRef = FirebaseStorage.instance.ref();
-    final islandRef = storageRef.child(
-        "images/island.jpg"); // Source to download
+    final islandRef = storageRef.child("images/island.jpg"); // Source to download
 
     final appDocDir = await getApplicationDocumentsDirectory(); // Destination to download
     final filePath = "${appDocDir.absolute}/images/island.jpg";

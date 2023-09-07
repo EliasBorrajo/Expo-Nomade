@@ -30,7 +30,7 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
     super.initState();
     // Chargez l'URL de l'image depuis Firebase Storage
     imageUrl = _loadImage()
-                  .whenComplete(() => print('Image chargée'));
+        .whenComplete(() => print('Image chargée'));
   }
 
   Future<String> _loadImage() async {
@@ -41,6 +41,9 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
     try {
       print('Chargement de l\'image...');
       final String url = await storageReference.getDownloadURL();
+      print('Download URL : $url');
+
+      print('Reference : ${storageReference}');
       return url;
 
     } catch (e) {
@@ -54,27 +57,27 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.object.name)),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Description: ${widget.object.description}'),
-          FutureBuilder<String>(
-              future: imageUrl,
-              builder: (context, snapshot)
-              {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(); // Indication de chargement
-                } else if (snapshot.hasError || snapshot.data!.isEmpty) {
-                  return Text('Aucune image');
-                } else {
-                  return Image.network(snapshot.data!);
+        appBar: AppBar(title: Text(widget.object.name)),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Description: ${widget.object.description}'),
+            FutureBuilder<String>(
+                future: imageUrl,
+                builder: (context, snapshot)
+                {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Indication de chargement
+                  } else if (snapshot.hasError || snapshot.data!.isEmpty) {
+                    return Text('Aucune image');
+                  } else {
+                    return Image.network(snapshot.data!);
+                  }
                 }
-              }
-          )
+            )
 
-        ],
-      )
+          ],
+        )
     );
 
   }
