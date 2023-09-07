@@ -21,34 +21,34 @@ class MigrationDetailsPage extends StatelessWidget {
               children: [
                 const Text(
                   'Nom',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   migration.name,
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 22),
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   'Description',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   migration.description,
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 22),
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   'Arrivée',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   migration.arrival,
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 22),
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   'Sources de la migration:',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 if (migration.polygons != null)
                   ListView.builder(
@@ -59,7 +59,7 @@ class MigrationDetailsPage extends StatelessWidget {
                       return ListTile(
                           title: Text(
                             '${source.name}',
-                            style: const TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 16),
                           ),
                           subtitle: Text(
                             'Nombre de zones: ${source.points?.length}',
