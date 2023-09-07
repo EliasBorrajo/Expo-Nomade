@@ -21,20 +21,20 @@ class ZoneDetailsPage extends StatelessWidget{
             children: [
               const Text(
                 'Nom',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
                 migrationSource.name!,
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 22),
               ),
               const SizedBox(height: 16),
               const Text(
                 'Nombre de points',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
                 migrationSource.points!.length.toString(),
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 22),
               ),
               const SizedBox(height: 16),
             ],
