@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 
 import 'CustomImage.dart';
 
+// TODO : Constuire le FILE NAME pour eviter que 2 images ont le même nom
+// TODO : Ajouter une fonction pour supprimer une image
+// TODO : Ajouter une fonction pour chercher une image dans la gallery, et verifier la size de l'image
+
 // Énumération pour les dossiers possibles
 enum FirebaseStorageFolder {
   migrations,
@@ -19,7 +23,6 @@ class FirebaseStorageUtil {
 
 
   // M E T H O D S
-
   /// Uploads an image to Firebase Storage.
   /// Parameters:
   /// - folder: the folder in which the image will be uploaded
@@ -96,6 +99,15 @@ class FirebaseStorageUtil {
         throw ArgumentError('Dossier invalide');
     }
   }
+
+  // Build unique file name for image (to avoid having 2 images with the same name)
+  String _buildFileName(String fileName) {
+    // TODO : Build unique file name for image (to avoid having 2 images with the same name)
+
+
+    return fileName;
+  }
+
 }
 
 
