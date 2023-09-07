@@ -19,22 +19,24 @@ class FirebaseUtils {
           if (value['polygons'] != null) {
             List<dynamic> polygonsData = value['polygons'] as List<dynamic>;
             for (var polyValue in polygonsData) {
-              List<dynamic> pointsData = polyValue['points'] as List<dynamic>;
-              List<LatLng> points = [];
+              if(polyValue != null){
+                List<dynamic> pointsData = polyValue['points'] as List<dynamic>;
+                List<LatLng> points = [];
 
-              for (var point in pointsData) {
-                points.add(
-                  LatLng(
-                    point['latitude'] as double,
-                    point['longitude'] as double,
-                  ),
+                for (var point in pointsData) {
+                  points.add(
+                    LatLng(
+                      point['latitude'] as double,
+                      point['longitude'] as double,
+                    ),
+                  );
+                }
+                MigrationSource source = MigrationSource(
+                  points: points,
+                  name: polyValue['name']! as String,
                 );
+                polygons.add(source);
               }
-              MigrationSource source = MigrationSource(
-                points: points,
-                name: polyValue['name']! as String,
-              );
-              polygons.add(source);
             }
           }
           Migration migration = Migration(
