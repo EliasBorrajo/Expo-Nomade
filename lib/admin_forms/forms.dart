@@ -25,7 +25,7 @@ class AdminForms extends StatelessWidget
     return MaterialApp(
       title: appTitle,
       home: DefaultTabController(                             // 1. Create a TabController
-        length: 6,
+        length: 5,
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -34,15 +34,15 @@ class AdminForms extends StatelessWidget
             ),
             bottom: const TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.home_rounded)),
-                Tab(icon: Icon(Icons.accessible_forward_rounded)),
-                Tab(icon: Icon(Icons.ac_unit_rounded)),
-                Tab(icon: Icon(Icons.question_answer_rounded)),
-                Tab(icon: Icon(Icons.accessibility_rounded)),
-                Tab(icon: Icon(Icons.account_balance_rounded)),
+                Tab(icon: Icon(Icons.museum), text: 'Musées'),
+                Tab(icon: Icon(Icons.tag), text: 'Tags'),
+                Tab(icon: Icon(Icons.share_location), text: 'Migrations'),
+                Tab(icon: Icon(Icons.question_answer_rounded), text: 'Quizz'),
+                Tab(icon: Icon(Icons.accessibility_rounded), text: 'Joueurs'),
+                //Tab(icon: Icon(Icons.account_balance_rounded)),
               ],
             ),
-            title: const Text('Admin data management'),
+            title: const Text('Console d\'administration'),
           ),
           body: TabBarView(
             children: [
@@ -53,7 +53,7 @@ class AdminForms extends StatelessWidget
                   database: database),
               QuizListPage(database: database),
               QuizListPlayers(database: database),
-              ObjectAddPage(database: database),
+              //ObjectAddPage(database: database),
             ],
           ),
         ),
