@@ -30,6 +30,7 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
     nameTextController.dispose();
     descriptionTextController.dispose();
     arrivalTextController.dispose();
+    super.dispose();
   }
 
   void updateZones(){

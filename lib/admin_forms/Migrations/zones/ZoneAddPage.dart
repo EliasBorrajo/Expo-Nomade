@@ -24,6 +24,7 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
   @override
   void dispose() {
     zoneNameTextController.dispose();
+    super.dispose();
   }
 
 
