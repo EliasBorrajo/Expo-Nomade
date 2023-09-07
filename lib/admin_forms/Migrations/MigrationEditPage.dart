@@ -181,13 +181,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                     final flowMigration = widget.migration.polygons?[index];
                     return ListTile(
                       title: Text(flowMigration?.name ?? ''),
-                      onTap: () async {
-                        final polygonPoints = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)), // Here redirect to the map
-                        );
-                        print(polygonPoints);
-                      },
+                      subtitle: Text('Points: ${flowMigration?.points?.length}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
