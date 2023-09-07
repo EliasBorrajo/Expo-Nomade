@@ -23,7 +23,7 @@ class _MapPointPickerState extends State<MapPointPicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Create Polygons on Map')),
+        //appBar: AppBar(title: const Text('Create Polygons on Map')),
         body: FlutterMap(
           options: MapOptions(
             center: const LatLng(46.2228401, 7.2939617),
@@ -71,12 +71,8 @@ class _MapPointPickerState extends State<MapPointPicker> {
                   markers: [
                     Marker(
                       point: currentPoint,
-                      builder: (_) => const Icon(Icons.location_on, color: Colors.blue),
+                      builder: (_) => const Icon(Icons.location_on, color: Colors.blue, size: 50,),
                     ),
-                    Marker(
-                      point: validatedPoint,
-                      builder: (_) => const Icon(Icons.location_on, color: Colors.green),
-                    )
                   ],
                 )
               ],
@@ -86,21 +82,22 @@ class _MapPointPickerState extends State<MapPointPicker> {
         floatingActionButton: Column (
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            FloatingActionButton(
-              heroTag: 'fab1',
-              onPressed: () {
-                setState(() {
-                  if (isEditingPolygon) {
-                    validatedPolygon = currentPolygonPoints;
-                    validatedPoint = currentPoint;
-                  }
-                  isEditingPolygon = !isEditingPolygon;
-                });
-              },
-              backgroundColor: isEditingPolygon ? Colors.green : Colors.blue,
-              child: Icon(isEditingPolygon ? Icons.check : Icons.edit),
-            ),
-            const SizedBox(height: 10),
+            if(widget.pickerType == 1)
+              FloatingActionButton(
+                heroTag: 'fab1',
+                onPressed: () {
+                  setState(() {
+                    if (isEditingPolygon) {
+                      validatedPolygon = currentPolygonPoints;
+                      validatedPoint = currentPoint;
+                    }
+                    isEditingPolygon = !isEditingPolygon;
+                  });
+                },
+                backgroundColor: isEditingPolygon ? Colors.green : Colors.blue,
+                child: Icon(isEditingPolygon ? Icons.check : Icons.edit),
+              ),
+              const SizedBox(height: 10),
             FloatingActionButton(
               heroTag: 'fab2',
               onPressed: () {
@@ -111,15 +108,16 @@ class _MapPointPickerState extends State<MapPointPicker> {
               child: const Icon(Icons.save_rounded),
             ),
             const SizedBox(height: 10),
-            FloatingActionButton(
-              heroTag: 'fab3',
-              onPressed: () {
-                // Return the points or point
-                widget.pickerType == 1 ? validatedPolygon.clear() : validatedPoint = const LatLng(0.0, 0.0);
-              },
-              backgroundColor: Colors.blue,
-              child: const Icon(Icons.delete_rounded),
-            ),
+            if(widget.pickerType == 1)
+              FloatingActionButton(
+                heroTag: 'fab3',
+                onPressed: () {
+                  // Return the points or point
+                  widget.pickerType == 1 ? validatedPolygon.clear() : validatedPoint = const LatLng(0.0, 0.0);
+                },
+                backgroundColor: Colors.blue,
+                child: const Icon(Icons.delete_rounded),
+              ),
           ],
         )
     );

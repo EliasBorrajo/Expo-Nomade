@@ -172,7 +172,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
         {
           MuseumObject updatedObject = MuseumObject(
               id: key,
-              museumName: value['museumName'] as String,
+              museumId: value['museumId'] as String,
               name: value['name'] as String,
               description: value['description'] as String,
               point: LatLng(
@@ -204,7 +204,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   Widget build(BuildContext context) {
 
     // Filtrer les objets en fonction du nom du musée
-    final filteredObjects = objects.where((object) => object.museumName == museum.name).toList();
+    final filteredObjects = objects.where((object) => object.museumId == museum.id).toList();
 
     // Trier les objets par ordre alphabétique du nom d'objet
     filteredObjects.sort((a, b) => a.name.compareTo(b.name));
@@ -252,6 +252,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                           builder: (context) => ObjectEditPage(
+                                              sourceMuseum: museum,
                                               object: object!,
                                               database: widget.database)),
                                     );

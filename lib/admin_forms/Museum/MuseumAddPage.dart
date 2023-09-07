@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-
-import '../../dataModels/Museum.dart';
 import '../map_point_picker.dart';
 
 class MuseumAddPage extends StatefulWidget {
@@ -60,7 +56,6 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
       // Créez un objet Museum à partir des données du formulaire
       Map<String, dynamic> museumData =
       {
-        'id': Random.secure().nextDouble(),
         'name': _nameController.text,
         'website': _websiteController.text,
         'address': {
@@ -96,9 +91,10 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
       ),
       body: Form(
         key: _formKey,  // Permet de valider le formulaire et de sauvegarder les données dans les champs du formulaire
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Nom du musée'),
@@ -135,9 +131,8 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
                 ),
               ],
             )
-        ),
-
-
+          ],
+        )
       ),
     );
   }

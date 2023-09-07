@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
+import '../map_point_picker.dart';
 
 // Immutable state of the MuseumEditPage widget.
 class MuseumEditPage extends StatefulWidget {
@@ -24,6 +25,8 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
   late TextEditingController _longitudeController;
   late TextEditingController _websiteController;
   late DatabaseReference _museumsRef;
+  late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
+  late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -51,6 +54,14 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
     super.dispose();
   }
 
+  void updatePoint(){
+    if(mounted){
+      setState(() {
+        displayAddressPoint = selectedAddressPoint; // Change this to your updated value
+      });
+    }
+  }
+
   Future<void> _saveChanges() async{
     // Validation
     if (_formKey.currentState!.validate()) {
@@ -58,10 +69,8 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
       // MAJ LOCAL - Mettre à jour les propriétés du musée avec les nouvelles valeurs en local
       widget.museum.name    = _nameController.text;
       widget.museum.website = _websiteController.text;
-      widget.museum.address = LatLng(   // TODO : Remplacer par PICKER
-        double.parse(_latitudeController.text),
-        double.parse(_longitudeController.text),
-      );
+      widget.museum.address = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
+
 
       // MAJ FIREBASE
       await _museumsRef.child(widget.museum.id).update({
@@ -117,30 +126,42 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Nom du musée'),
-              TextFormField(controller: _nameController, validator: _validateName),
-              SizedBox(height: 16),
-              Text('Latitude'),
-              TextFormField(controller: _latitudeController, validator: _validateLatitude),
-              SizedBox(height: 16),
-              Text('Longitude'),
-              TextFormField(controller: _longitudeController, validator: _validateLongitude),
-              SizedBox(height: 16),
-              Text('Site web'),
-              TextFormField(controller: _websiteController),
-              SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _saveChanges,
-                child: Text('Enregistrer'),
-              ),
-            ],
-          ),
-        ),
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Nom du musée'),
+                TextFormField(controller: _nameController, validator: _validateName),
+                SizedBox(height: 16),
+                Text('Site web'),
+                TextFormField(controller: _websiteController),
+                SizedBox(height: 16),
+                ElevatedButton(
+                    onPressed: () async {
+                      selectedAddressPoint = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
+                      );
+                      updatePoint();
+                      print(selectedAddressPoint);
+                    },
+                    child: const Text('Modifier l\'adresse')
+                ),
+                selectedAddressPoint == const LatLng(0.0, 0.0) ?
+                Text('Point selectionné: ${widget.museum.address.latitude.toStringAsFixed(2)}, ${widget.museum.address.longitude.toStringAsFixed(2)}') :
+                Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+
+                SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _saveChanges,
+                  child: Text('Enregistrer'),
+                ),
+              ],
+            ),
+          ],
+        )
       ),
     );
   }

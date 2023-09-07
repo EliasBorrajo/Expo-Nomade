@@ -127,7 +127,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
       Map<String, dynamic> objectData =
       {
         'name': object.name,
-        'museumName': object.museumName,
+        'museumId': object.museumId,
         'description': object.description,
         'point': {
           'latitude': object.point.latitude.toDouble(),
@@ -199,7 +199,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
     final DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
 
     // Utilisez une requête pour obtenir les objets du musée ayant le même nom que museum.name
-    final Query query = objectsRef.orderByChild('museumName').equalTo(museum.name);
+    final Query query = objectsRef.orderByChild('museumId').equalTo(museum.id);
     final DataSnapshot snapshot = await query.get();
 
     print('SNAPOSHOT : $snapshot AND ${snapshot.value}');

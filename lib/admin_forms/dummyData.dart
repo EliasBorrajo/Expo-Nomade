@@ -12,21 +12,21 @@ import '../dataModels/question_models.dart';
 final dummyObjects = {
   MuseumObject(
     id: '1',
-    museumName: 'Museum 1',
+    museumId: 'Museum 1',
     name: 'Object 1',
     description: 'Description of Object 1',
     point: const LatLng( 0.2, 0.2),
   ),
   MuseumObject(
     id: '2',
-    museumName: 'Museum 1',
+    museumId: 'Museum 1',
     name: 'Object 2',
     description: 'Description of Object 2',
     point: const LatLng( 0.2, 0.2),
   ),
   MuseumObject(
     id: '3',
-    museumName: 'Museum 2',
+    museumId: 'Museum 2',
     name: 'Object 3',
     description: 'Description of Object 3',
     point: const LatLng( 0.2, 0.2),
