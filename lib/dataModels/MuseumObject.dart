@@ -5,7 +5,7 @@ import 'filters_tags.dart';
 // OBJETS
 class MuseumObject {
   final String id;
-  String museumName;
+  String museumId;
   String name;
   String description;
   LatLng point;
@@ -15,7 +15,7 @@ class MuseumObject {
 
   MuseumObject({
     required this.id,
-    required this.museumName,
+    required this.museumId,
     required this.name,
     required this.description,
     required this.point,

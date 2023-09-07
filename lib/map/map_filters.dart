@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 
 class FiltersWindow extends StatefulWidget {
   final FirebaseDatabase database;
+  final Map<String, List<bool>> selectedFilterState;
 
-  const FiltersWindow({super.key, required this.database});
+  const FiltersWindow({super.key, required this.database, required this.selectedFilterState});
 
   @override
   _FiltersWindowState createState() => _FiltersWindowState();
@@ -15,7 +16,6 @@ class FiltersWindow extends StatefulWidget {
 class _FiltersWindowState extends State<FiltersWindow> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref().child('filters');
   List<FilterTag> filters = [];
-  Map<String, List<bool>> selectedOptionsMap = {};
   bool isExpanded = false;
 
   @override
@@ -44,8 +44,11 @@ class _FiltersWindowState extends State<FiltersWindow> {
         })
             .toList();
 
-        for (var filter in fetchedFilters) {
-          selectedOptionsMap[filter.typeName] = List.filled(filter.options.length, false);
+
+        if(widget.selectedFilterState.isEmpty) {
+          for (var filter in fetchedFilters) {
+            widget.selectedFilterState[filter.typeName] = List.filled(filter.options.length, false);
+          }
         }
 
         setState(() {
@@ -58,16 +61,16 @@ class _FiltersWindowState extends State<FiltersWindow> {
   }
 
   Widget _buildSelectedIcon(String typeName) {
-    final isSelected = selectedOptionsMap[typeName]?.any((selected) => selected) ?? false;
+    final isSelected = widget.selectedFilterState[typeName]?.any((selected) => selected) ?? false;
 
     return isSelected
-        ? const Icon(Icons.check_circle, color: Colors.green)
-        : const Icon(Icons.radio_button_unchecked, color: Colors.grey);
+        ? const Icon(Icons.check_circle_rounded, color: Colors.green)
+        : const Icon(Icons.radio_button_unchecked_rounded, color: Colors.grey);
   }
 
   void resetFilters() {
-    for (var typeName in selectedOptionsMap.keys) {
-      selectedOptionsMap[typeName]?.fillRange(0, selectedOptionsMap[typeName]?.length ?? 0, false);
+    for (var typeName in widget.selectedFilterState.keys) {
+      widget.selectedFilterState[typeName]?.fillRange(0, widget.selectedFilterState[typeName]?.length ?? 0, false);
     }
     setState(() {
 
@@ -83,7 +86,7 @@ class _FiltersWindowState extends State<FiltersWindow> {
           children: <Widget>[
             ElevatedButton(
               onPressed: resetFilters,
-              child: const Icon(Icons.restart_alt),
+              child: const Icon(Icons.restart_alt_rounded),
             ),
             for (var filter in filters)
               Card(
@@ -91,22 +94,22 @@ class _FiltersWindowState extends State<FiltersWindow> {
                   title: Row(
                     children: [
                       _buildSelectedIcon(filter.typeName),
-                      Text(filter.typeName),
+                      Flexible(child: Text(filter.typeName))
                     ],
                   ),
                   trailing: Icon(
                     isExpanded
-                        ? Icons.arrow_drop_down_circle
-                        : Icons.arrow_drop_down,
+                        ? Icons.arrow_drop_down_circle_rounded
+                        : Icons.arrow_drop_down_rounded,
                   ),
                   children: [
                     for (var i = 0; i < filter.options.length; i++)
                       CheckboxListTile(
                         title: Text(filter.options[i]),
-                        value: selectedOptionsMap[filter.typeName]?[i],
+                        value: widget.selectedFilterState[filter.typeName]?[i],
                         onChanged: (bool? value) {
                           setState(() {
-                            selectedOptionsMap[filter.typeName]?[i] = value ?? true;
+                            widget.selectedFilterState[filter.typeName]?[i] = value ?? true;
                           });
                         },
                       ),

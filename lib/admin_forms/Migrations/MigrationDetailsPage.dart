@@ -1,9 +1,6 @@
-import 'package:expo_nomade/admin_forms/Migrations/MigrationEditPage.dart';
+import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneDetailsPage.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import '../map_point_picker.dart';
 
 class MigrationDetailsPage extends StatelessWidget {
   final Migration migration;
@@ -13,74 +10,97 @@ class MigrationDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(migration.name),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Desciption: ${migration.description}' ),
-
-          // Display the list of zones
-          migration.polygons != null
-              ? ListView.builder(
-            shrinkWrap: true,
-            itemCount: migration.polygons?.length ?? 0,   // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
-            itemBuilder: (context, index) {
-              final flowMigration = migration.polygons?[index];
-              return ListTile(
-                title: Text(flowMigration?.name ?? ''),
-                onTap: () async {
-                  final polygonPoints = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)), // Here redirect to the map
-                  );
-                  print(polygonPoints);
-                },
-                onLongPress: () {
-                  _showDeleteConfirmationDialog(context, flowMigration!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-                },
-              );
-            },
-          )
-              : const Text('Aucune zone'),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Naviguer vers la page d'ajout d'objet
-        },
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
-
-// M E T H O D E S
-  void _showDeleteConfirmationDialog(BuildContext context, MigrationSource migrationSource) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Confirmation'),
-            content: Text('Êtes-vous sûr de vouloir supprimer cet objet ?'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Ferme la boîte de dialogue
-                },
-                child: Text('Annuler'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // TODO: Supprimer l'objet et mettre à jour la liste d'objets
-                  Navigator.pop(context); // Ferme la boîte de dialogue
-                },
-                child: Text('Supprimer'),
-              ),
-            ],
-          );
-        }
-    );
+        appBar: AppBar(
+          title: Text('Détails de la migration: ${migration.name}'),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Nom',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  migration.name,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Description',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  migration.description,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Arrivée',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  migration.arrival,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Sources de la migration:',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                if (migration.polygons != null)
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: migration.polygons!.length,
+                    itemBuilder: (context, index) {
+                      final source = migration.polygons![index];
+                      return ListTile(
+                          title: Text(
+                            '${source.name}',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          subtitle: Text(
+                            'Nombre de zones: ${source.points?.length}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ZoneDetailsPage(
+                                    migrationSource: source,
+                                  ),
+                                ));
+                          });
+                    },
+                  ),
+                const SizedBox(height: 16),
+                // Text(
+                //   'Tags:',
+                //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                // ),
+                // DropdownButtonFormField(
+                //   value: migration.tags?.isNotEmpty ?? false ? migration.tags![0] : null,
+                //   items: migration.tags?.map<DropdownMenuItem<FilterTag>>(
+                //         (tag) => DropdownMenuItem(
+                //       value: tag,
+                //       child: Text(tag.name, style: TextStyle(fontSize: 16)),
+                //     ),
+                //   ).toList() ??
+                //       [],
+                //   onChanged: (FilterTag? value) {
+                //     // Handle tag selection
+                //   },
+                //   decoration: InputDecoration(
+                //     border: OutlineInputBorder(),
+                //     contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                //   ),
+                // ),
+              ],
+            ),
+          ],
+        ));
   }
 }

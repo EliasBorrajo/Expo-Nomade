@@ -26,35 +26,33 @@ class AdminForms extends StatelessWidget
     return MaterialApp(
       title: appTitle,
       home: DefaultTabController(                             // 1. Create a TabController
-        length: 6,
+        length: 5,
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () => Navigator.pop(context),
             ),
             bottom: const TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.filter_list)),
-                Tab(icon: Icon(Icons.ac_unit)),
-                Tab(icon: Icon(Icons.question_answer)),
-                Tab(icon: Icon(Icons.accessibility)),
-                Tab(icon: Icon(Icons.account_balance)),
+                Tab(icon: Icon(Icons.museum), text: 'Musées'),
+                Tab(icon: Icon(Icons.tag), text: 'Tags'),
+                Tab(icon: Icon(Icons.share_location), text: 'Migrations'),
+                Tab(icon: Icon(Icons.question_answer_rounded), text: 'Quizz'),
+                Tab(icon: Icon(Icons.accessibility_rounded), text: 'Joueurs'),
+                //Tab(icon: Icon(Icons.account_balance_rounded)),
               ],
             ),
-            title: const Text('Admin data management'),
+            title: const Text('Console d\'administration'),
           ),
           body: TabBarView(
             children: [
               MuseumListPage(database: database),
               FilterListPage(database: database), // TODO : TAGS PAGE
-              MigrationListPage(
-                  //migrations: dummyMigrations,
-                  database: database),
+              MigrationListPage(database: database),
               QuizListPage(database: database),
               QuizListPlayers(database: database),
-              ObjectAddPage(database: database),
+
             ],
           ),
         ),

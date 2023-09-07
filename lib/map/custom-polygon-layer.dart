@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
+import 'marker_popup.dart';
 
 class CustomPolygonLayer extends StatelessWidget {
   late List<Migration> migrations = [];
@@ -18,8 +19,8 @@ class CustomPolygonLayer extends StatelessWidget {
               for(var polygon in migration.polygons!)
                 Polygon(
                   points: polygon.points!,
-                  color: Colors.blue.withOpacity(0.3),
-                  borderColor: Colors.blue,
+                  color: Colors.blueAccent.withOpacity(0.3),
+                  borderColor: Colors.blueAccent,
                   borderStrokeWidth: 2.0,
                   isFilled: true,
                 ),
@@ -30,21 +31,36 @@ class CustomPolygonLayer extends StatelessWidget {
           markers: [
             for (var migration in migrations)
               for(var polygon in migration.polygons!)
-              Marker(
-                point: _calculateCentroid(polygon.points!),
-                builder: (ctx) => GestureDetector(
-                  onTap: (){
-                    //TODO: Here call the screen for the popup of the polygon
-                    print('tapped on polygon.');
-                  },
-                  behavior: HitTestBehavior.translucent,
-                  child: const Icon(
-                    Icons.move_down,
-                    color: Colors.red,
-                    size: 30.0,
+                Marker(
+                  point: _calculateCentroid(polygon.points!),
+                  builder: (ctx) => GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.transparent,
+                        builder: (context) => Align(
+                          alignment: Alignment.centerRight,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.5,
+                            child: MarkerPopup(
+                              data: [
+                                MapEntry("Name", migration.name),
+                                MapEntry("Description", migration.description),
+                                MapEntry("Arrival", migration.arrival),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: const Icon(
+                      Icons.touch_app_outlined,
+                      color: Colors.black,
+                      size: 35.0,
+                    ),
                   ),
                 ),
-              ),
           ],
         ),
       ],

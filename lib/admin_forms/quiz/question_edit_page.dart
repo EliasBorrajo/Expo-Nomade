@@ -30,6 +30,22 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
   }
 
   void _updateQuestionInDatabase() async {
+
+    final questionText = questionTextController.text.trim();
+    final answer1 = answer1Controller.text.trim();
+    final answer2 = answer2Controller.text.trim();
+    final answer3 = answer3Controller.text.trim();
+
+    if (questionText.isEmpty || answer1.isEmpty || answer2.isEmpty || answer3.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erreur lors de l\'ajout, un ou plusieurs champs invalides.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     try {
       DatabaseReference questionsRef = widget.database.ref().child('quiz').child(widget.question.id);
 
@@ -76,21 +92,15 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Texte de la question:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Texte de la question:'),
             TextField(controller: questionTextController),
             const SizedBox(height: 16),
-            const Text(
-              'Réponses:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            const Text('Réponses:'),
             TextField(controller: answer1Controller),
             TextField(controller: answer2Controller),
             TextField(controller: answer3Controller),
             const SizedBox(height: 8),
-            const Text('Réponse correcte:', style: TextStyle(fontSize: 16)),
+            const Text('Réponse correcte:'),
             DropdownButton<int>(
               value: correctAnswer,
               onChanged: (value) {

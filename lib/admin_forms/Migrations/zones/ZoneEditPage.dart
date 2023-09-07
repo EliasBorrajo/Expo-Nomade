@@ -39,24 +39,17 @@ class _ZoneEditPageState extends State<ZoneEditPage>{
   }
 
   Future<void> _saveChanges() async {
+    //print(widget.migration.polygons?[widget.index].index);
+
     // Local update
     if (_formKey.currentState!.validate()) {
       widget.migration.polygons?[widget.index].name = _nameController.text;
       //widget.migrationSource.color = _colorController.text;
     }
     // Firebase update
-    /*await _migrationsRef.child('migrations').child(widget.migration.id).child('polygons').child(widget.migration.polygons![widget.index].id).update({
+    await _migrationsRef.child(widget.migration.id).child('polygons').child(widget.index.toString()).update({
       'name': widget.migration.polygons?[widget.index].name,
-      //'color': widget.migrationSource.color,
-    });*/
-
-    /*_migrationsRef.child('migrations').child(widget.migration.id).child('polygons')
-        .child(widget.index.toString())
-        .update({
-      'name': widget.migration.polygons?[widget.index].name
-    });*/
-    final path = 'migrations/-NdK3csOcISjZbmybSCh/polygons/68/name';
-    _migrationsRef.child(path).set('newname');
+    });
 
     Navigator.pop(context);
   }
@@ -83,10 +76,6 @@ class _ZoneEditPageState extends State<ZoneEditPage>{
             children: [
               const Text('Nom de la zone'),
               TextFormField(controller: _nameController, validator: _validateName),
-              const SizedBox(height: 16),
-              /*Text('Couleur de la zone'),
-              TextFormField(controller: _colorController, validator: colo),
-              SizedBox(height: 16),*/
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveChanges,

@@ -1,3 +1,4 @@
+import 'package:expo_nomade/admin_forms/forms.dart';
 import 'package:expo_nomade/quiz/quiz_screen.dart';
 import 'package:expo_nomade/sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,17 +8,19 @@ import 'dart:async';
 import 'dataModels/Museum.dart';
 import 'map/map_screen.dart';
 
+
 class PageManager extends StatefulWidget {
+
   final FirebaseDatabase database;
 
-  const PageManager({Key? key, required this.database}) : super(key: key);
-
+  const PageManager({super.key, required this.database});
   @override
   _PageManagerState createState() => _PageManagerState();
 }
 
 class _PageManagerState extends State<PageManager> {
-  Timer? _inactivityTimer;
+  Timer? inactivityTimer;
+  int inactivityDuration = 60;
   bool _showMap = true;
 
   List<Museum> museums = [];
@@ -26,11 +29,10 @@ class _PageManagerState extends State<PageManager> {
   void initState() {
     super.initState();
     _loadMuseumsFromFirebaseAndListen();
-    _startInactivityTimer();
   }
 
   void _loadMuseumsFromFirebaseAndListen() {
-    DatabaseReference museumsRef = widget.database.reference().child('museums');
+    DatabaseReference museumsRef = widget.database.ref().child('museums');
     museumsRef.onValue.listen((DatabaseEvent event) {
       if (event.snapshot.value != null) {
         List<Museum> updatedMuseums = [];
@@ -57,25 +59,6 @@ class _PageManagerState extends State<PageManager> {
     });
   }
 
-  void _startInactivityTimer() {
-    const inactivityDuration = Duration(minutes: 1);
-
-    // Cancel any existing timer before starting a new one
-    _cancelInactivityTimer();
-
-    _inactivityTimer = Timer(inactivityDuration, () {
-      if (!_showMap) {
-        setState(() {
-          _showMap = true;
-        });
-      }
-    });
-  }
-
-  void _cancelInactivityTimer() {
-    _inactivityTimer?.cancel();
-  }
-
   void _switchPages() {
     setState(() {
       _showMap = !_showMap;
@@ -84,42 +67,52 @@ class _PageManagerState extends State<PageManager> {
   }
 
   void _resetInactivityTimer() {
-    _cancelInactivityTimer();
-    _startInactivityTimer();
+
+    if (inactivityTimer != null || _showMap == true) {
+      print("TIMER CANCEL _________________________________");
+      inactivityTimer!.cancel();
+    }
+
+    if(!_showMap) {
+      print("TIMER START ///////////////////////////////////////////////");
+      inactivityTimer = Timer(Duration(seconds: inactivityDuration), () {
+        _switchPages();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _showMap
-          ? MapScreen(points: _getLatLngPoints(), database: widget.database)
-          : QuizScreen(database: widget.database),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton.extended(
-            heroTag: 'switchPage',
-            onPressed: _switchPages,
-            tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
-            elevation: 8,
-            label: Text(_showMap ? 'Quiz' : 'Map', style: const TextStyle(fontSize: 25)),
-            icon: Icon(_showMap ? Icons.question_answer : Icons.map),
+          body: _showMap
+              ? MapScreen(points: _getLatLngPoints(), database: widget.database)
+              : QuizScreen(database: widget.database, resetInactivityTimer: _resetInactivityTimer),
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              FloatingActionButton.extended(
+                heroTag: 'switchPage',
+                onPressed: _switchPages,
+                tooltip: _showMap ? 'Go to Questionnaire' : 'Go to Map',
+                elevation: 8, // Add a slight elevation
+                label: Text(_showMap ? 'Quiz' : 'Map'), // Utilisation de label pour le texte
+                icon: Icon(_showMap ? Icons.question_answer_rounded : Icons.map_rounded), // Change button color
+              ),
+              const SizedBox(height: 16),
+              FloatingActionButton.extended(
+                heroTag: 'adminForms',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => /*SignInPage()*/const AdminForms()),
+                  );
+                },
+                label: const Text('Admin'),
+                icon: const Icon(Icons.admin_panel_settings_rounded),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          FloatingActionButton.extended(
-            heroTag: 'adminForms',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SignInPage()),
-              );
-            },
-            label: const Text('Admin', style: TextStyle(fontSize: 15)),
-            icon: const Icon(Icons.admin_panel_settings),
-          ),
-        ],
-      ),
     );
   }
 
@@ -134,7 +127,6 @@ class _PageManagerState extends State<PageManager> {
 
   @override
   void dispose() {
-    _cancelInactivityTimer();
     super.dispose();
   }
 }
