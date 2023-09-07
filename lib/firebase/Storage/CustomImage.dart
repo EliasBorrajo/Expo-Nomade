@@ -54,34 +54,22 @@ class ImageGallery2 extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return ImageDetailPage(imageUrl: snapshot.data![index],
-                            );
-                          },
-                        ),
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return ImageDialog(
+                            imageUrl: snapshot.data![index],
+                          );
+                        },
                       );
                     },
-                    child: Hero(
-                      tag: 'image$index',
-                      // Utilisez une balise unique pour chaque image
-                      child: CustomImage(imageUrl: snapshot.data![index],
-                      ),
+                    child: CustomImage(
+                      imageUrl: snapshot.data![index],
                     ),
                   );
                 },
               );
 
-              // TODO : FONCTIONNE BIEN :)
-              //   PageView.builder(
-              //   itemCount: snapshot.data!.length,
-              //   itemBuilder: (context, index) {
-              //     return CustomImage(
-              //       imageUrl: snapshot.data![index],
-              //     );
-              //   },
-              // );
 
               // TODO : REMPLACER PAGE.VIEW PAR CAROUSEL SLIDER
               //   CarouselSlider.builder(
@@ -146,6 +134,28 @@ class CustomImage extends StatelessWidget {
         width: width,
         height: height, // Définissez également la hauteur ici
         fit: BoxFit.contain, // Ajuste l'image à la taille du conteneur
+      ),
+    );
+  }
+}
+
+class ImageDialog extends StatelessWidget {
+  final String imageUrl;
+
+  ImageDialog({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop(); // Fermer le Dialog au tap
+        },
+        child: CustomImage(
+          imageUrl: imageUrl,
+          width: defaultImageWidthLarge,
+          height: defaultImageHeightLarge,
+        ),
       ),
     );
   }
