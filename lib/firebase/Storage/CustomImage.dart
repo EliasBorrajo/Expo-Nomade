@@ -52,13 +52,30 @@ class ImageGallery2 extends StatelessWidget {
           } else {
             // Affichez les images une fois qu'elles sont téléchargées
             return PageView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return CustomImage(
-                  imageUrl: snapshot.data![index],
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return CustomImage(
+                      imageUrl: snapshot.data![index],
+                    );
+                  },
                 );
-              },
-            );
+
+            // TODO : REMPLACER PAGE.VIEW PAR CAROUSEL SLIDER
+            //   CarouselSlider.builder(
+            //   itemCount: snapshot.data!.length,
+            //   itemBuilder: (context, index) {
+            //     return CustomImage(
+            //       imageUrl: snapshot.data![index],
+            //     );
+            //   },
+            //   options: CarouselOptions(
+            //     height: defaultImageHeight, // Hauteur de chaque élément du carrousel
+            //     // Vous pouvez configurer d'autres options du carrousel ici
+            //   ),
+            // );
+
+
+            //
           }
         },
       )
@@ -67,12 +84,24 @@ class ImageGallery2 extends StatelessWidget {
 }
 
 
+class CustomCarousel extends StatelessWidget {
+  // A T T R I B U T E S
+  final String imageUrl;
+
+  // C O N S T R U C T O R
+  CustomCarousel({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+}
 
 
 class CustomImage extends StatelessWidget {
   // A T T R I B U T E S
   final String imageUrl;
-  //final Future<Uint8List> imageBytes; // Stockez les octets de l'image ici
   final double width;
   final double height;
 
