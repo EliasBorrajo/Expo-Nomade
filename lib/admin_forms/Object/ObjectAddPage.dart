@@ -68,7 +68,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     });
   }
 
-  // TODO
+  // TODO renvoyer pas bool mais String options?
   Map<String, List<bool>> getSelectedFilters() {
     // Récupérer la liste de filtre de la db?
 

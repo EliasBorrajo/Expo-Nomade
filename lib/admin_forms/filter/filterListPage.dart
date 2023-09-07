@@ -71,6 +71,7 @@ class _FilterListPageState extends State<FilterListPage> {
     super.dispose();
   }
 
+  // TODO si je delete filter je dois delete aussi dans la liste des objets
   void _deleteFilter(String filterId) async {
     try {
       await widget.database.ref().child('filters').child(filterId).remove();
@@ -162,7 +163,8 @@ class _FilterListPageState extends State<FilterListPage> {
                     setState(() {
                       filteredFilters = filters.where((filter) {
                         final query = value.toLowerCase();
-                        return filter.typeName.toLowerCase().contains(query);
+                        return filter.options.any((option) =>
+                            option.toLowerCase().contains(query));
                       }).toList();
                     });
                   },

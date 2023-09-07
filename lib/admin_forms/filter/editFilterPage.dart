@@ -35,6 +35,7 @@ class _EditFilterPageState extends State<EditFilterPage> {
     }).toList();
   }
 
+  // TODO si j'update une option je dois aussi update dans les objets des musées
   void _updateFilterInDatabase() async {
     try {
       DatabaseReference optionsRef = widget.database.ref().child('filters').child(widget.filter.id);
