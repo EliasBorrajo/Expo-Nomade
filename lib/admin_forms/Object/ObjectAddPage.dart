@@ -29,6 +29,11 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
   late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
   late DatabaseReference _objectsRef;
+  late List<Museum> museumsList = [];
+  //late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
+  late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
+  late StreamSubscription<DatabaseEvent> _museumsSubscription;
+
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -84,6 +89,50 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     }
   }
 
+  Future<List<MuseumObject>> _loadAllObjectsFromAMuseum(Museum museum) async
+  {
+    final DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
+    final List<MuseumObject> fetchedObjects = [];
+
+    // Utilisez une requête pour obtenir les objets du musée ayant le même nom que museum.name
+    final Query query = objectsRef.orderByChild('museumId').equalTo(museum.id);
+    final DataSnapshot snapshot = await query.get();
+
+    print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
+
+    // Parcourez les résultats et supprimez les objets correspondants
+    if (snapshot.exists) {
+      final Map<dynamic, dynamic> objectsData = snapshot.value as Map<dynamic, dynamic>;
+
+      objectsData.forEach((key, value)
+      {
+        final MuseumObject object = MuseumObject(
+          // Remplacez ces champs par les champs réels de votre objet
+          id: key,
+          museumId: value['museumId'] as String,
+          name: value['name'] as String,
+          description: value['description'] as String,
+          point: LatLng(
+            // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
+            (value['point']['latitude'] as num).toDouble(),
+            (value['point']['longitude'] as num).toDouble(),
+          ),
+        );
+
+        fetchedObjects.add(object);
+      });
+    }
+
+    if (mounted)
+    {
+      setState(() {
+        museumObjectsFromSelectedMuseum = fetchedObjects;
+      });
+    }
+
+    return fetchedObjects;
+  }
+
 
 
   // V A L I D A T I O N S
@@ -101,6 +150,26 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     return null;
   }
 
+  String? _validateObjectName(String? name) {
+    if (name == null || name.isEmpty) {
+      return 'Veuillez entrer un nom';
+    }
+
+    _loadAllObjectsFromAMuseum(widget.sourceMuseum!) ;
+    print('Museum Objects from selected museum : ${museumObjectsFromSelectedMuseum.toString()} ');
+
+    // Parcourir la liste des objets du musée sélectionné
+    for (var object in museumObjectsFromSelectedMuseum) {
+      if (object.name.toLowerCase() == name.toLowerCase()) {
+        print('Object name already exists in this museum');
+        return 'Ce nom d\'objet existe déjà dans ce musée';
+      }
+    }
+
+
+    return null;
+  }
+
 
   // R E N D E R I N G
   @override
@@ -115,14 +184,13 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 const Text('Nom de l\'objet'),
                 TextFormField(
                     controller: _nameController,
                     decoration: const InputDecoration(
                       hintText: 'Epée de Charlemagne',
                     ),
-                    validator: _validateName),
+                    validator: _validateObjectName),
                 const SizedBox(height: 16),
 
                 const Text('Description'),
