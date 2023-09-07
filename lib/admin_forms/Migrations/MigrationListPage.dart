@@ -22,14 +22,10 @@ class _MigrationListPageState extends State<MigrationListPage>{
 
   late List<Migration> migrations = [];
 
-
-
   @override
   void initState() {
     super.initState();
     final firebaseUtils = FirebaseUtils(widget.database);
-
-
     firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
       if(mounted){
         setState(() {
