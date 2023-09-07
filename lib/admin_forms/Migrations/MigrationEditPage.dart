@@ -1,10 +1,9 @@
+import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneAddPage.dart';
 import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneEditPage.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../firebase/firebase_crud.dart';
 import '../map_point_picker.dart';
 
 class MigrationEditpage extends StatefulWidget {
@@ -25,7 +24,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
   late TextEditingController _arrivalController;
   late DatabaseReference _migrationsRef;
 
-  late MigrationSource removedMigrationSource;
+  late MigrationSource addedSource;
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -47,6 +46,14 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
     super.dispose();
   }
 
+  void updateDisplayedSources(){
+    if(mounted){
+      setState(() {
+        widget.migration.polygons = widget.migration.polygons;
+      });
+    }
+  }
+
   Future<void> _saveChanges() async {
     // Local update
     if (_formKey.currentState!.validate()) {
@@ -54,12 +61,38 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
       widget.migration.description = _descriptionController.text;
       widget.migration.arrival = _arrivalController.text;
     }
-    // Firebase update
-    await _migrationsRef.child(widget.migration.id).update({
-      'name': widget.migration.name,
-      'description': widget.migration.description,
-      'arrival': widget.migration.arrival,
-    });
+
+    try{
+      Map<String, dynamic> migrationToUpdate = {
+        'name': widget.migration.name,
+        'description': widget.migration.description,
+        'arrival': widget.migration.arrival,
+      };
+      if(addedSource != null){
+        migrationToUpdate['polygons'] = [];
+        for (var polygon in widget.migration.polygons!){
+          Map<String, dynamic> polygonData = {
+            'name': polygon.name,
+          };
+          if (polygon.points != null) {
+            polygonData['points'] = [];
+            for (var point in polygon.points!) {
+              Map<String, double> pointData = {
+                'latitude': point.latitude.toDouble(),
+                'longitude': point.longitude.toDouble(),
+              };
+              polygonData['points'].add(pointData);
+            }
+          }
+          migrationToUpdate['polygons'].add(polygonData);
+        }
+      }
+      await _migrationsRef.child(widget.migration.id).update(migrationToUpdate);
+
+    }catch (error) {
+      print('Error editing migration: $error');
+    }
+
     Navigator.pop(context);
   }
 
@@ -102,6 +135,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                 onPressed: () {
                   _migrationsRef.child(widget.migration.id).child('polygons').child(migrationIndex.toString()).remove();
                   widget.migration.polygons?.remove(widget.migration.polygons?[migrationIndex]);
+                  updateDisplayedSources();
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
                 child: Text('Supprimer'),
@@ -142,7 +176,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: widget.migration.polygons?.length ?? 0,   // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
-                  physics: NeverScrollableScrollPhysics(), // Disable scrolling within the ListView
+                  physics: const NeverScrollableScrollPhysics(), // Disable scrolling within the ListView
                   itemBuilder: (context, index) {
                     final flowMigration = widget.migration.polygons?[index];
                     return ListTile(
@@ -169,7 +203,6 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                           IconButton(
                             // DELETE MUSEUM
                             onPressed: () {
-
                               if(widget.migration.polygons?.length == 1){
                                 const snackBar = SnackBar(
                                   content: Text('Impossible de supprimer la zone.'),
@@ -184,14 +217,10 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                           ),
                         ],
                       ),
-                      /*onLongPress: () {
-                    _showDeleteConfirmationDialog(context, flowMigration!);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-                  },*/
                     );
                   },
                 )
                     : const Text('Aucune zone'),
-
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _saveChanges,
@@ -202,6 +231,25 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
           ),
         ),
       ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: () async {
+              addedSource = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ZoneAddPage()),
+              );
+              widget.migration.polygons?.add(addedSource);
+              updateDisplayedSources();
+            },
+            label: Text('Add migration'),
+            icon: Icon(Icons.add_rounded),
+            heroTag: 'add_migration',
+          ),
+        ],
+      ),
+
 
     );
   }
