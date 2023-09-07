@@ -269,7 +269,6 @@ final dummyMigrations = [
     arrival: 'Arrival 1',
     polygons: [
       MigrationSource(
-        id: '1',
         name: 'source 1',
         points:
         [const LatLng(46.23, 7.30), const LatLng(46.25, 7.30), const LatLng(46.25, 7.32), const LatLng(46.25, 7.6)],
@@ -284,7 +283,6 @@ final dummyMigrations = [
     arrival: 'Arrival 2',
     polygons: [
       MigrationSource(
-        id: '2',
         name: 'source 2',
         points:
         [const LatLng(46.23, 7.60), const LatLng(46.25, 7.60), const LatLng(46.25, 7.62), const LatLng(46.25, 7.90)],

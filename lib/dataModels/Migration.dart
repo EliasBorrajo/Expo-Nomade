@@ -26,13 +26,11 @@ class Migration {
 
 // Represents a migration source with a color and a zone on the map
 class MigrationSource {
-  final String id;
   late List<LatLng>? points;
   late String? name;
   late VoidCallback? onTap;
 
   MigrationSource({
-    required this.id,
     this.points,
     this.name,
     this.onTap,

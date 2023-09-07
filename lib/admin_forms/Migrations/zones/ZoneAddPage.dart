@@ -75,7 +75,6 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }else{
                       MigrationSource source = MigrationSource(
-                        id: Random().nextInt(100).toString(),
                         points: polygon,
                         name:  zoneNameTextController.text,
                       );

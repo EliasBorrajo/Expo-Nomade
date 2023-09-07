@@ -81,7 +81,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
     return null;
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, String id) {
+  void _showDeleteConfirmationDialog(BuildContext context, int migrationIndex) {
     //source.points = null;
     showDialog(
         context: context,
@@ -98,7 +98,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
               ),
               TextButton(
                 onPressed: () {
-                 //widget.database.ref().child('migrations').child('polygons').child(source.id).remove();
+                 widget.database.ref().child('polygons').child(migrationIndex.toString()).remove();
 
                   //source.points = null;
                   Navigator.pop(context); // Ferme la boîte de dialogue
@@ -169,7 +169,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                             // DELETE MUSEUM
                             onPressed: () {
                               //_showDeleteConfirmationDialog(context);
-                              _showDeleteConfirmationDialog(context, widget.migration.polygons![index]!.id);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
+                              _showDeleteConfirmationDialog(context, index);    // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
                             },
                             icon: const Icon(Icons.delete_rounded),
                           ),

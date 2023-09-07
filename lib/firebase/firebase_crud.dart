@@ -31,7 +31,6 @@ class FirebaseUtils {
                 );
               }
               MigrationSource source = MigrationSource(
-                id: key.toString(),
                 points: points,
                 name: polyValue['name']! as String,
               );
@@ -40,9 +39,9 @@ class FirebaseUtils {
           }
           Migration migration = Migration(
             id: key,
-            name: value['name'] as String,
-            description: value['description'] as String,
-            arrival: value['arrival'] as String,
+            name: value['name']! as String,
+            description: value['description']! as String,
+            arrival: value['arrival']! as String,
             polygons: polygons,
           );
           updatedMigrations.add(migration);

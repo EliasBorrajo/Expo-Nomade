@@ -139,7 +139,6 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
             Map<String, dynamic> polygonData = {
               //'color': source.color.toString(),
               'name': source.name,
-              'id': source.id
             };
             if (source.points != null) {
               polygonData['points'] = [];
