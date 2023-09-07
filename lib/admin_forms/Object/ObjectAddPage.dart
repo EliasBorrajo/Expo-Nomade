@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../dataModels/Museum.dart';
+import '../../dataModels/filters_tags.dart';
 import '../../map/map_filters.dart';
 import '../map_point_picker.dart';
 
@@ -19,7 +20,7 @@ class ObjectAddPage extends StatefulWidget{
   final FirebaseDatabase database;
   final Museum? sourceMuseum;
 
-  const ObjectAddPage({Key? key, required this.database, this.sourceMuseum}) : super(key: key);
+  const ObjectAddPage({super.key, required this.database, this.sourceMuseum});
 
   @override
   _ObjectAddPageState createState() => _ObjectAddPageState();
@@ -113,16 +114,12 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
       // 2) Ajouter le musée à la liste des musées
       updatedMuseums.add(museum);
-
-
     });
-
     museumsList.sort((a, b) => a.name.compareTo(b.name));
-
   }
 
   void setStateAndDropDownList(List<Museum> updatedMuseums) {
-     if (mounted)
+    if (mounted)
     {
       setState(()
       {
@@ -154,17 +151,17 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
             _selectedMuseum = museumsList[0]; // first museum from list by default
           }
 
-        print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
+          print('Museums list updated and selected museum is: ${_selectedMuseum.name}');
 
-      }
-      else
-      {
+        }
+        else
+        {
           print('Museum source is null');
           _selectedMuseum = museumsList[0]; // first museum from list by default
-      }
+        }
 
-      // 3) Charger la liste des objets du musée sélectionné
-      _loadAllObjectsFromAMuseum(_selectedMuseum);
+        // 3) Charger la liste des objets du musée sélectionné
+        _loadAllObjectsFromAMuseum(_selectedMuseum);
 
       });
     }
@@ -177,11 +174,18 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     });
   }
 
+  Map<dynamic, dynamic> getSelectedFilters() {
+    final Map<dynamic, dynamic> selectedFilters = {};
+    // TODO
+
+    return selectedFilters;
+  }
+
   Future<void> _saveChanges() async {
     // Validation
     if (_formKey.currentState!.validate()) {
 
-      // Créez un objet Museum à partir des données du formulaire
+      // Créez un objetMuseum à partir des données du formulaire
       Map<String, dynamic> objectData =
       {
         'name': _nameController.text,
@@ -191,10 +195,10 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
           'latitude': selectedAddressPoint.latitude.toDouble(),
           'longitude': selectedAddressPoint.longitude.toDouble(),
         },
-
+        'filters': getSelectedFilters(),
       };
 
-      // Générez une nouvelle clé unique pour le musée
+      // Générez une nouvelle clé unique pour l'objet
       await _objectsRef.push().set(objectData);
 
       print('Object added successfully: ${objectData['name']}');
