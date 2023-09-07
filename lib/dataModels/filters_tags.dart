@@ -1,7 +1,7 @@
 class FilterTag {
   final id;
   String typeName;
-  List<String> options;
+  List<String> options; // Liste d'options
   bool isSelected;
 
   FilterTag({
@@ -11,6 +11,3 @@ class FilterTag {
     this.isSelected = false,
   });
 }
-
-
-
