@@ -30,6 +30,19 @@ class _MapScreenState extends State<MapScreen> {
   bool isFiltersWindowOpen = false;
   late List<Museum> museums = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadMuseumObjectsFromFirebaseAndListen();
+    _loadMuseumsFromFirebaseAndListen();
+    final firebaseUtils = FirebaseUtils(widget.database);
+    firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
+      setState(() {
+        migrations = updatedMigrations;
+      });
+    });
+  }
+
 
   void _loadMuseumsFromFirebaseAndListen() {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
@@ -106,19 +119,6 @@ class _MapScreenState extends State<MapScreen> {
           });
         }
       }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadMuseumObjectsFromFirebaseAndListen();
-    _loadMuseumsFromFirebaseAndListen();
-    final firebaseUtils = FirebaseUtils(widget.database);
-    firebaseUtils.loadMigrationsAndListen((updatedMigrations) {
-      setState(() {
-        migrations = updatedMigrations;
-      });
     });
   }
 
