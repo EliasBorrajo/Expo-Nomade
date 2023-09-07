@@ -29,18 +29,15 @@ class Storage extends StatefulWidget {
   _StorageState createState() => _StorageState();
 }
 
-class _StorageState extends State<Storage>
-{
+class _StorageState extends State<Storage> {
   // A T T R I B U T E S
   final storage = FirebaseStorage.instance;
 
 
   // M E T H O D S
-  void createReferences()
-  {
+  void createReferences() {
     // 1) Create a reference to storage
     final storageRef = FirebaseStorage.instance.ref();
-
 
 
     // 2) Create a reference to a folder or a file
@@ -52,7 +49,6 @@ class _StorageState extends State<Storage>
     // spaceRef now points to "images/space.jpg
     // imagesRef still points to "images"
     final spaceRef = storageRef.child("images/space.jpg");
-
 
 
     // 3) Navigate throug reference
@@ -72,7 +68,6 @@ class _StorageState extends State<Storage>
     final nullRef = spaceRef.root.parent;
 
 
-
     // 4) Different Properties
     // Reference's path is: "images/space.jpg"
     // This is analogous to a file path on disk
@@ -84,11 +79,9 @@ class _StorageState extends State<Storage>
 
     // Reference's bucket is the name of the storage bucket that the files are stored in
     spaceRef.bucket;
-
   }
 
-  void createReferencesFullExample()
-  {
+  void createReferencesFullExample() {
     // Points to the root reference
     final storageRef = FirebaseStorage.instance.ref();
 
@@ -127,7 +120,6 @@ class _StorageState extends State<Storage>
     assert(mountainsRef.fullPath != mountainImagesRef.fullPath);
 
 
-
     // 2) UPLOAD FROM A FILE
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String filePath = '${appDocDir.absolute}/file-to-upload.png';
@@ -140,7 +132,6 @@ class _StorageState extends State<Storage>
     }
 
 
-
     // 3) UPLOAD FROM A STRING
     String dataUrl = 'data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==';
 
@@ -151,10 +142,9 @@ class _StorageState extends State<Storage>
     }
 
 
-
     // 4) Get a Download URL
-    final String downloadURL = await mountainsRef.getDownloadURL();     // CECI SERA STOCKE DANS LA DB
-
+    final String downloadURL = await mountainsRef
+        .getDownloadURL(); // CECI SERA STOCKE DANS LA DB
 
 
     // 5) MANAGEMENT UPLOAD STATE
@@ -178,9 +168,11 @@ class _StorageState extends State<Storage>
     print('canceled, $canceled');
 
 
-
     // 6) MONITOR UPLOAD PROGRESS
-    mountainsRef.putFile(file).snapshotEvents.listen((taskSnapshot) {
+    mountainsRef
+        .putFile(file)
+        .snapshotEvents
+        .listen((taskSnapshot) {
       switch (taskSnapshot.state) {
         case TaskState.running:
         // ...
@@ -199,7 +191,6 @@ class _StorageState extends State<Storage>
           break;
       }
     });
-
   }
 
   Future<void> uploadFilesFullExample() async
@@ -222,7 +213,6 @@ class _StorageState extends State<Storage>
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) async {
       switch (taskSnapshot.state) {
-
         case TaskState.running:
           final progress =
               100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
@@ -245,7 +235,8 @@ class _StorageState extends State<Storage>
         // Handle successful uploads on complete
         // ...
 
-          final String downloadURL = await storageRef.getDownloadURL();     // CECI SERA STOCKE DANS LA DB ??
+          final String downloadURL = await storageRef
+              .getDownloadURL(); // CECI SERA STOCKE DANS LA DB ??
           // TODO : Stocker l'URL de l'image dans la DB
 
           break;
@@ -253,11 +244,10 @@ class _StorageState extends State<Storage>
     });
   }
 
-  getApplicationDocumentsDirectory()
-  {}
+  getApplicationDocumentsDirectory() {}
 
   //  By default, requires Firebase Authentication to perform any action on the bucket's data or files
-  Future<void> downloadFiles () async
+  Future<void> downloadFiles() async
   {
     // 1) Create a REF to the file to download
     // Create a storage reference from our app
@@ -265,19 +255,20 @@ class _StorageState extends State<Storage>
 
     // Create a reference with an initial file path and name
     final pathReference = storageRef
-                          .child("images/stars.jpg");
+        .child("images/stars.jpg");
 
     // Create a reference to a file from a Google Cloud Storage URI
     final gsReference = FirebaseStorage.instance
-                          .refFromURL("gs://YOUR_BUCKET/images/stars.jpg");
+        .refFromURL("gs://YOUR_BUCKET/images/stars.jpg");
 
     // Create a reference from an HTTPS URL
     // Note that in the URL, characters are URL escaped!
     final httpsReference = FirebaseStorage.instance
-                          .refFromURL("https://firebasestorage.googleapis.com/b/YOUR_BUCKET/o/images%20stars.jpg");
+        .refFromURL(
+        "https://firebasestorage.googleapis.com/b/YOUR_BUCKET/o/images%20stars.jpg");
 
     // 2) DOWNLOAD THE FILE
-    var imageGetData     = await pathReference.getData();
+    var imageGetData = await pathReference.getData();
 
     // 3) Get a Download URL for a file
     var imageGetDownload = await pathReference.getDownloadURL();
@@ -328,16 +319,17 @@ class _StorageState extends State<Storage>
 
 
     // 6) Downlaod Data via URL
-    final imageUrl = await storageRef.child("users/me/profile.png").getDownloadURL();
-
+    final imageUrl = await storageRef.child("users/me/profile.png")
+        .getDownloadURL();
   }
 
   Future<void> downloadFilesFullExample() async
   {
     final storageRef = FirebaseStorage.instance.ref();
-    final islandRef = storageRef.child("images/island.jpg");      // Source to download
+    final islandRef = storageRef.child(
+        "images/island.jpg"); // Source to download
 
-    final appDocDir = await getApplicationDocumentsDirectory();   // Destination to download
+    final appDocDir = await getApplicationDocumentsDirectory(); // Destination to download
     final filePath = "${appDocDir.absolute}/images/island.jpg";
     final file = File(filePath);
 
@@ -361,7 +353,6 @@ class _StorageState extends State<Storage>
           break;
       }
     });
-
   }
 
   Future<void> listFiles() async
@@ -410,7 +401,6 @@ class _StorageState extends State<Storage>
         pageToken = listResult.nextPageToken;
       } while (pageToken != null);
     }
-
   }
 
 
@@ -422,4 +412,4 @@ class _StorageState extends State<Storage>
   }
 
 
-
+}

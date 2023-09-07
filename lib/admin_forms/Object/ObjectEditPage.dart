@@ -35,6 +35,8 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
   }
+
+
   @override
   void dispose() {
     _nameController.dispose();
