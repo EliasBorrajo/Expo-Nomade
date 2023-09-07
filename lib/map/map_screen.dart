@@ -91,7 +91,7 @@ class _MapScreenState extends State<MapScreen> {
             id: key,
             name: value['name'] as String,
             description: value['description'] as String,
-            museumName: value['museumName'] as String,
+            museumId: value['museumId'] as String,
             point: LatLng(
               (value['point']['latitude'] as num).toDouble(),
               (value['point']['longitude'] as num).toDouble(),
@@ -150,7 +150,7 @@ class _MapScreenState extends State<MapScreen> {
                       markerPopupData: [
                         MapEntry('Name', museumObject.name),
                         MapEntry('Description', museumObject.description),
-                        MapEntry('Museum Name', museumObject.museumName),
+                        MapEntry('Museum Name', museumObject.museumId),
                       ],
                     ).createMarker(context),
                 ]

@@ -183,7 +183,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
       Map<String, dynamic> objectData =
       {
         'name': _nameController.text,
-        'museumName': _museumNameController.text,
+        'museumId': widget.sourceMuseum?.id.toString(),
         'description': _descriptionController.text,
         'point': {
           'latitude': selectedAddressPoint.latitude.toDouble(),
@@ -224,7 +224,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
         final MuseumObject object = MuseumObject(
           // Remplacez ces champs par les champs réels de votre objet
           id: key,
-          museumName: value['museumName'] as String,
+          museumId: value['museumId'] as String,
           name: value['name'] as String,
           description: value['description'] as String,
           point: LatLng(
@@ -321,7 +321,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                 const SizedBox(height: 16),
 
 
-                // DropdownButtonFormField pour sélectionner un musée
+                //DropdownButtonFormField pour sélectionner un musée
                 DropdownButtonFormField<Museum>(
                   value: _selectedMuseum ?? null,
                   onChanged: (Museum? newValue)
