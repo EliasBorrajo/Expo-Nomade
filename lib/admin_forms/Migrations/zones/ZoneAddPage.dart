@@ -17,6 +17,13 @@ class ZoneAddPage extends StatefulWidget {
 class _ZoneAddPageState extends State<ZoneAddPage>{
   final TextEditingController zoneNameTextController = TextEditingController();
   late List<LatLng> polygon = [];
+  late int nbPolyPoints = 0;
+
+  void updatePolyPoints(){
+    setState(() {
+      nbPolyPoints = polygon.length;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +42,31 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
                   context,
                   MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 1)),
                 );
-                print(polygon);
+
+                updatePolyPoints();
               },
               child: const Text('Choisir les points de la zone'),
             ),
           ),
+          nbPolyPoints < 1 ? const Text('Aucune zone selectionnée.') : Text('Zone avec $nbPolyPoints points selectionnée.'),
           const SizedBox(height: 16),
           Center(
             child: ElevatedButton(
               onPressed: () {
-                MigrationSource source = MigrationSource(
-                  id: Random().nextInt(100).toString(),
-                  points: polygon,
-                  name:  zoneNameTextController.text,
-                );
-                Navigator.pop(context, source);
+                if(polygon.isEmpty || zoneNameTextController.text.isEmpty){
+                  const snackBar = SnackBar(
+                    content: Text('Veuillez sasir les données (nom & zone)'),
+                    backgroundColor: Colors.red,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }else{
+                  MigrationSource source = MigrationSource(
+                    id: Random().nextInt(100).toString(),
+                    points: polygon,
+                    name:  zoneNameTextController.text,
+                  );
+                  Navigator.pop(context, source);
+                }
               },
               child: const Text('Ajouter la zone'),
             ),
