@@ -4,7 +4,6 @@ import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../map_point_picker.dart';
 
 class MigrationEditpage extends StatefulWidget {
   final Migration migration;
@@ -237,8 +236,8 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
               widget.migration.polygons?.add(addedSource);
               updateDisplayedSources();
             },
-            label: Text('Add migration'),
-            icon: Icon(Icons.add_rounded),
+            label: const Text('Ajouter une zone'),
+            icon: const Icon(Icons.add_rounded),
             heroTag: 'add_migration',
           ),
         ],
