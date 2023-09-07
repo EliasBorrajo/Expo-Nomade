@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../dataModels/Museum.dart';
+import '../../map/map_filters.dart';
 import '../map_point_picker.dart';
 
 // TODO : Ajouter images
@@ -36,6 +37,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
   late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
   late StreamSubscription<DatabaseEvent> _museumsSubscription;
+  Map<String, List<bool>> selectedFilterState = {};
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -282,7 +284,6 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     return null;
   }
 
-
   // R E N D E R I N G
   @override
   Widget build(BuildContext context) {
@@ -297,83 +298,82 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
         key: _formKey,  // Permet de valider le formulaire et de sauvegarder les données dans les champs du formulaire
         child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Nom de l\'objet'),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          hintText: 'Epée de Charlemagne',
+                        ),
+                        validator: _validateObjectName,
+                      ),
+                      const SizedBox(height: 16),
 
-                const Text('Nom de l\'objet'),
-                TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Epée de Charlemagne',
-                    ),
-                    validator: _validateObjectName),
-                const SizedBox(height: 16),
+                      const Text('Description'),
+                      TextFormField(
+                        controller: _descriptionController,
+                        maxLines: null,
+                        decoration: const InputDecoration(
+                          hintText: 'Cette épée a été utilisée par Charlemagne lors de la bataille de Poitiers',
+                        ),
+                        validator: _validateDescription,
+                      ),
+                      const SizedBox(height: 16),
 
-                const Text('Description'),
-                TextFormField(
-                    controller: _descriptionController,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: 'Cette épée a été utilisée par Charlemagne lors de la bataille de Poitiers',
-                    ),
-                    validator: _validateDescription),
-                const SizedBox(height: 16),
+                      // DropdownButtonFormField pour sélectionner un musée
+                      DropdownButtonFormField<Museum>(
+                        value: _selectedMuseum ?? null,
+                        onChanged: (Museum? newValue) {
+                          setState(() {
+                            _selectedMuseum = newValue!;
+                            _museumNameController.text = newValue?.name ?? 'No museum selected';
+                            _loadAllObjectsFromAMuseum(newValue); // Chaque fois que l'on change de musée, on recharge la liste des objets du musée
+                          });
+                        },
+                        items: museumsList.map((Museum museum) {
+                          return DropdownMenuItem<Museum>(
+                            value: museum,
+                            child: Text(museum.name),
+                          );
+                        }).toList(),
+                        decoration: const InputDecoration(
+                          labelText: 'Sélectionner un musée auquel attribuer l\'objet',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
 
+                      ElevatedButton(
+                        child: const Text('Selectionner l\'adresse'),
+                        onPressed: () async {
+                          selectedAddressPoint = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
+                          );
+                          updatePoint();
+                        },
+                      ),
+                      Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+                      const SizedBox(height: 32),
 
-                // DropdownButtonFormField pour sélectionner un musée
-                DropdownButtonFormField<Museum>(
-                  value: _selectedMuseum ?? null,
-                  onChanged: (Museum? newValue)
-                  {
-                    setState(() {
-                      _selectedMuseum = newValue!;
-                      _museumNameController.text = newValue?.name ?? 'No museum selected';
-                      _loadAllObjectsFromAMuseum(newValue); // Chaque fois que on change de musée, on recharge la liste des objets du musée
-                    });
-                  },
-                  items: museumsList.map((Museum museum)
-                  {
-                    return DropdownMenuItem<Museum>(
-                      value: museum,
-                      child: Text(museum.name),
-                    );
-                  }).toList(),
-                  decoration: const InputDecoration(
-                    labelText: 'Sélectionner un musée auquel attribuer l\'objet',
+                      ElevatedButton(
+                        onPressed: _saveChanges,
+                        child: const Text('Enregistrer'),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
-
-
-                ElevatedButton(
-                    child: const Text('Selectionner l\'adresse'),
-                    onPressed: () async {
-                      selectedAddressPoint = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
-                      );
-                      updatePoint();
-                    },
-
-                ),
-                Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
-                const SizedBox(height: 32),
-
-                ElevatedButton(
-                  onPressed: _saveChanges,
-                  child: const Text('Enregistrer'),
-                ),
+                const SizedBox(width: 16), // Espace entre les deux colonnes
+                FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
               ],
             )
         ),
-
-
       ),
-
-
     );
   }
-
-
 }
