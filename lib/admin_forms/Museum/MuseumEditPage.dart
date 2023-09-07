@@ -117,30 +117,32 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Nom du musée'),
-              TextFormField(controller: _nameController, validator: _validateName),
-              SizedBox(height: 16),
-              Text('Latitude'),
-              TextFormField(controller: _latitudeController, validator: _validateLatitude),
-              SizedBox(height: 16),
-              Text('Longitude'),
-              TextFormField(controller: _longitudeController, validator: _validateLongitude),
-              SizedBox(height: 16),
-              Text('Site web'),
-              TextFormField(controller: _websiteController),
-              SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _saveChanges,
-                child: Text('Enregistrer'),
-              ),
-            ],
-          ),
-        ),
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Nom du musée'),
+                TextFormField(controller: _nameController, validator: _validateName),
+                SizedBox(height: 16),
+                Text('Latitude'),
+                TextFormField(controller: _latitudeController, validator: _validateLatitude),
+                SizedBox(height: 16),
+                Text('Longitude'),
+                TextFormField(controller: _longitudeController, validator: _validateLongitude),
+                SizedBox(height: 16),
+                Text('Site web'),
+                TextFormField(controller: _websiteController),
+                SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _saveChanges,
+                  child: Text('Enregistrer'),
+                ),
+              ],
+            ),
+          ],
+        )
       ),
     );
   }

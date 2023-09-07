@@ -91,9 +91,10 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
       ),
       body: Form(
         key: _formKey,  // Permet de valider le formulaire et de sauvegarder les données dans les champs du formulaire
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Nom du musée'),
@@ -130,9 +131,8 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
                 ),
               ],
             )
-        ),
-
-
+          ],
+        )
       ),
     );
   }
