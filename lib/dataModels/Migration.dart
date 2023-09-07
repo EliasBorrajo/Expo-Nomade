@@ -28,14 +28,12 @@ class Migration {
 class MigrationSource {
   final String id;
   late List<LatLng>? points;
-  //late Color? color;
   late String? name;
   late VoidCallback? onTap;
 
   MigrationSource({
     required this.id,
     this.points,
-    //this.color,
     this.name,
     this.onTap,
   });

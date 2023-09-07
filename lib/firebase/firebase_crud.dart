@@ -46,7 +46,6 @@ class FirebaseUtils {
             polygons: polygons,
           );
           updatedMigrations.add(migration);
-          print('add called');
         });
         onDataReceived(updatedMigrations);
       }

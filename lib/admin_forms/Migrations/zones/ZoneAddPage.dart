@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:latlong2/latlong.dart';
 import '../../map_point_picker.dart';
 
@@ -17,8 +16,6 @@ class ZoneAddPage extends StatefulWidget {
 
 class _ZoneAddPageState extends State<ZoneAddPage>{
   final TextEditingController zoneNameTextController = TextEditingController();
-  //final TextEditingController zoneColorTextController = TextEditingController();
-  late Color selectedColor = Colors.blue;
   late List<LatLng> polygon = [];
 
   @override
@@ -30,15 +27,6 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
         children: [
           const Text('Nom de la zone:'),
           TextField(controller: zoneNameTextController),
-          const SizedBox(height: 16),
-          const Text('Couleur de la zone:'),
-          /*ColorPicker(
-              pickerColor: Colors.red,
-              onColorChanged: (Color color) {
-                selectedColor = color;
-              },
-          ),*/
-          //TextField(controller: zoneColorTextController),
           const SizedBox(height: 16),
           Center(
             child: ElevatedButton(
@@ -59,7 +47,6 @@ class _ZoneAddPageState extends State<ZoneAddPage>{
                 MigrationSource source = MigrationSource(
                   id: Random().nextInt(100).toString(),
                   points: polygon,
-                  //color: selectedColor,
                   name:  zoneNameTextController.text,
                 );
                 Navigator.pop(context, source);
