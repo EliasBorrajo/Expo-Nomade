@@ -189,59 +189,72 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
       body: Form(
         key: _formKey,  // Permet de valider le formulaire et de sauvegarder les données dans les champs du formulaire
         child: ListView(
-          padding: const EdgeInsets.all(16.0),
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Nom de l\'objet'),
-                TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Epée de Charlemagne',
-                    ),
-                    validator: _validateObjectName),
-                const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Nom de l\'objet'),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(
+                            hintText: 'Epée de Charlemagne',
+                          ),
+                          validator: _validateObjectName,
+                        ),
+                        const SizedBox(height: 16),
 
-                const Text('Description'),
-                TextFormField(
-                    controller: _descriptionController,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: 'Cette épée a été utilisée par Charlemagne lors de la bataille de Poitiers',
-                    ),
-                    validator: _validateDescription),
+                        const Text('Description'),
+                        TextFormField(
+                          controller: _descriptionController,
+                          maxLines: null,
+                          decoration: const InputDecoration(
+                            hintText: 'Cette épée a été utilisée par Charlemagne lors de la bataille de Poitiers',
+                          ),
+                          validator: _validateDescription,
+                        ),
+                        const SizedBox(height: 16),
 
-                const SizedBox(height: 16),
-                const Text('Musée'),
-                TextFormField(
-                  readOnly: true,
-                  enabled: false, // Prevents programmatic changes
-                  decoration: InputDecoration(
-                    labelText: widget.sourceMuseum?.name,
+                        const Text('Musée'),
+                        TextFormField(
+                          readOnly: true,
+                          enabled: false, // Prevents programmatic changes
+                          decoration: InputDecoration(
+                            labelText: widget.sourceMuseum?.name,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          child: const Text('Sélectionner l\'adresse'),
+                          onPressed: () async {
+                            selectedAddressPoint = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
+                            );
+                            updatePoint();
+                          },
+                        ),
+                        Text('Point sélectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+                        const SizedBox(height: 32),
+                        ElevatedButton(
+                          onPressed: _saveChanges,
+                          child: const Text('Enregistrer'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  child: const Text('Selectionner l\'adresse'),
-                  onPressed: () async {
-                    selectedAddressPoint = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
-                    );
-                    updatePoint();
-                  },
-                ),
-                Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _saveChanges,
-                  child: const Text('Enregistrer'),
-                ),
-              ],
-            )
+                  const SizedBox(width: 16), // Espace entre les deux colonnes
+                  FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
+                ],
+              ),
+            ),
           ],
-        )
+        ),
       ),
     );
   }
