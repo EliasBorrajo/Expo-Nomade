@@ -39,7 +39,7 @@ class CustomPolygonLayer extends StatelessWidget {
                   },
                   behavior: HitTestBehavior.translucent,
                   child: const Icon(
-                    Icons.ads_click,
+                    Icons.touch_app_outlined,
                     color: Colors.black,
                     size: 35.0,
                   ),
