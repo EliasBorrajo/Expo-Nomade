@@ -24,7 +24,6 @@ class ImageGallery2 extends StatelessWidget {
   // C O N S T R U C T O R
   ImageGallery2({super.key, required this.imageUrls});
 
-
   /// Displays a gallery of images.
   /// FutureBuilder wraps the PageView to display a loading indicator while the images are being downloaded.
   /// Once the images are downloaded, they are displayed in a PageView.
@@ -32,72 +31,78 @@ class ImageGallery2 extends StatelessWidget {
   /// If no image is available, a message is displayed.
   @override
   Widget build(BuildContext context) {
-
     return Container(
-      height: defaultImageHeight,
-      child: FutureBuilder<List<String>>(
-        // Utilisez Future.wait pour télécharger toutes les images en parallèle
-        future: Future.value(imageUrls),
+        height: defaultImageHeight,
+        child: FutureBuilder<List<String>>(
+          // Utilisez Future.wait pour télécharger toutes les images en parallèle
+          future: Future.value(imageUrls),
 
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Affichez un indicateur de chargement pendant le téléchargement
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            // Gérez les erreurs ici
-            return Text('Erreur de chargement des images');
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            // Aucune image disponible
-            return Text('Aucune image à afficher');
-          } else {
-            // Affichez les images une fois qu'elles sont téléchargées
-            return PageView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return CustomImage(
-                      imageUrl: snapshot.data![index],
-                    );
-                  },
-                );
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Affichez un indicateur de chargement pendant le téléchargement
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              // Gérez les erreurs ici
+              return Text('Erreur de chargement des images');
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              // Aucune image disponible
+              return Text('Aucune image à afficher');
+            } else {
+              // Affichez les images une fois qu'elles sont téléchargées
+              return PageView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ImageDetailPage(imageUrl: snapshot.data![index],
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Hero(
+                      tag: 'image$index',
+                      // Utilisez une balise unique pour chaque image
+                      child: CustomImage(imageUrl: snapshot.data![index],
+                      ),
+                    ),
+                  );
+                },
+              );
 
-            // TODO : REMPLACER PAGE.VIEW PAR CAROUSEL SLIDER
-            //   CarouselSlider.builder(
-            //   itemCount: snapshot.data!.length,
-            //   itemBuilder: (context, index) {
-            //     return CustomImage(
-            //       imageUrl: snapshot.data![index],
-            //     );
-            //   },
-            //   options: CarouselOptions(
-            //     height: defaultImageHeight, // Hauteur de chaque élément du carrousel
-            //     // Vous pouvez configurer d'autres options du carrousel ici
-            //   ),
-            // );
+              // TODO : FONCTIONNE BIEN :)
+              //   PageView.builder(
+              //   itemCount: snapshot.data!.length,
+              //   itemBuilder: (context, index) {
+              //     return CustomImage(
+              //       imageUrl: snapshot.data![index],
+              //     );
+              //   },
+              // );
 
+              // TODO : REMPLACER PAGE.VIEW PAR CAROUSEL SLIDER
+              //   CarouselSlider.builder(
+              //   itemCount: snapshot.data!.length,
+              //   itemBuilder: (context, index) {
+              //     return CustomImage(
+              //       imageUrl: snapshot.data![index],
+              //     );
+              //   },
+              //   options: CarouselOptions(
+              //     height: defaultImageHeight, // Hauteur de chaque élément du carrousel
+              //     // Vous pouvez configurer d'autres options du carrousel ici
+              //   ),
+              // );
 
-            //
-          }
-        },
-      )
-    );
+              //
+            }
+          },
+        ));
   }
 }
-
-
-class CustomCarousel extends StatelessWidget {
-  // A T T R I B U T E S
-  final String imageUrl;
-
-  // C O N S T R U C T O R
-  CustomCarousel({super.key, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
-
 
 class CustomImage extends StatelessWidget {
   // A T T R I B U T E S
@@ -107,7 +112,7 @@ class CustomImage extends StatelessWidget {
 
   // C O N S T R U C T O R
   const CustomImage({
-    Key? key,                         // Clé pour identifier le widget dans l'arbre des widgets
+    Key? key, // Clé pour identifier le widget dans l'arbre des widgets
     required this.imageUrl,
     //required this.imageBytes,
     this.width = defaultImageWidth,
@@ -122,22 +127,20 @@ class CustomImage extends StatelessWidget {
       builder: (context) {
         return Dialog(
           child: CustomImage(
-              imageUrl: imageUrl,
-              width: defaultImageWidthLarge,
-              height: defaultImageHeightLarge,
+            imageUrl: imageUrl,
+            width: defaultImageWidthLarge,
+            height: defaultImageHeightLarge,
           ),
         );
       },
     );
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: width / height, // Ajustez le ratio largeur/hauteur selon vos besoins
+      aspectRatio: width / height,
+      // Ajustez le ratio largeur/hauteur selon vos besoins
       child: Image.network(
         imageUrl,
         width: width,
@@ -146,41 +149,52 @@ class CustomImage extends StatelessWidget {
       ),
     );
   }
-
-
-// @override
-// Widget build(BuildContext context) {
-//   return GestureDetector(
-//     onTap: () {
-//       _showImageDialog(context); // Ouvre le dialogue avec l'image en grand
-//     },
-//     child: Image.network(
-//       imageUrl,
-//       width: width,
-//       height: height,
-//       fit: BoxFit.cover,
-//       errorBuilder: (context, error, stackTrace) {
-//         return const Icon(Icons.error, color: Colors.red);
-//       },
-//     ),
-//   );
-// }
-
 }
 
+class ImageDetailPage extends StatelessWidget {
+  final String imageUrl;
 
+  ImageDetailPage({required this.imageUrl});
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        // Ajoutez un bouton de retour pour fermer l'image agrandie
+        leading: IconButton(
+          icon: Icon(Icons.close),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Center(
+        child: Hero(
+          tag: 'image', // Utilisez la même balise que dans ImageGallery2
+          child: CustomImage(
+            imageUrl: imageUrl,
+            width: defaultImageWidthLarge,
+            height: defaultImageHeightLarge,
+          ),
+        ),
+      ),
+    );
+  }
+}
 
+class CustomCarousel extends StatelessWidget {
+  // A T T R I B U T E S
+  final String imageUrl;
 
+  // C O N S T R U C T O R
+  CustomCarousel({super.key, required this.imageUrl});
 
-
-
-
-
-
-
-
-
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+}
 
 //
 // // EXAMPLE ON HOW TO IMPLEMENT THE WIDGET "CustomImage" WITH "FirebaseStorageUtil"
@@ -209,11 +223,6 @@ class CustomImage extends StatelessWidget {
 //   }
 // }
 
-
-
-
-
-
 // // OTHER EXAMPLE HOW TO IMPLEMENT GALERY
 // class MyScreen extends StatelessWidget {
 //   final List<String> imageUrls = [
@@ -231,12 +240,6 @@ class CustomImage extends StatelessWidget {
 //     );
 //   }
 // }
-
-
-
-
-
-
 
 //
 // // MERGIN ABOVE EXAMPLES TOGETHER
@@ -284,10 +287,6 @@ class CustomImage extends StatelessWidget {
 //   }
 // }
 
-
-
-
-
 // // Final Look on the example
 // class MyScreen3 extends StatelessWidget {
 //   // A T T R I B U T E S
@@ -326,4 +325,3 @@ class CustomImage extends StatelessWidget {
 //     );
 //   }
 // }
-
