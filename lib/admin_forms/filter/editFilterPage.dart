@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/filters_tags.dart';
@@ -37,7 +35,6 @@ class _EditFilterPageState extends State<EditFilterPage> {
     }).toList();
   }
 
-  // TODO si j'update une option je dois aussi update dans les objets des musées
   void _updateFilterInDatabase() async {
     try {
       DatabaseReference optionsRef = widget.database.ref().child('filters').child(widget.filter.id);
@@ -46,50 +43,49 @@ class _EditFilterPageState extends State<EditFilterPage> {
       // Supprimer les options vides
       optionControllers.removeWhere((option) => option.controller.text.trim().isEmpty);
 
-      List<String> updatedOptions = optionControllers.map((controller) => controller.controller.text.trim()).toList();
+      final updatedOptions = Map.fromEntries(optionControllers.map((option) => MapEntry(option.key, option.controller.text.trim())));
 
-      Map<String, dynamic> updatedFilter = {
+      final updatedFilter = {
         'typeName': typeNameTextController.text.trim(),
-        'options': Map.fromIterable(updatedOptions, key: (item) => updatedOptions.indexOf(item).toString(), value: (item) => item),
+        'options': updatedOptions,
       };
 
       await optionsRef.update(updatedFilter);
 
       DatabaseEvent event = await objectsRef.once();
-      DataSnapshot objectsSnapshot =  event.snapshot;
+      DataSnapshot objectsSnapshot = event.snapshot;
 
-      // Obtenez tous les objets de musée
       if (objectsSnapshot.value != null) {
-        Map<dynamic, dynamic> museumObjects = objectsSnapshot.value as Map<dynamic, dynamic>;
+        final museumObjects = objectsSnapshot.value as Map;
 
-        // Parcourez tous les objets de musée
         museumObjects.forEach((key, value) {
-          Map<String, dynamic> museumObject = Map<String, dynamic>.from(value);
+          final museumObject = Map<String, dynamic>.from(value);
 
-          // Parcourir les filtres de l'objet de musée
           if (museumObject.containsKey('filters')) {
-            List<dynamic> filters = museumObject['filters'];
-            for (int i = 0; i < filters.length; i++) {
-              Map<String, dynamic> filter = Map<String, dynamic>.from(filters[i]);
-              String typeName = filter['typeName'];
+            final filters = museumObject['filters'];
 
-              // Si le filtre utilise le type que vous avez modifié, mettez à jour les options du filtre dans cet objet de musée
+            filters.forEach((filter) {
+              final typeName = filter['typeName'];
+
               if (typeName == widget.filter.typeName) {
-                filter['options'] = updatedOptions.where((option) =>
-                filter['options'].contains(option) || optionControllers.any((controller) =>
-                controller.controller.text.trim() == option)).toList();
+                final museumObjectOptions = Map<String, dynamic>.from(filter['options']);
 
-                filters[i] = filter;
+                for (var option in optionControllers) {
+                  final updatedOption = option.controller.text.trim();
+
+                  if (museumObjectOptions.containsKey(option.key)) {
+                    museumObjectOptions[option.key] = updatedOption;
+                  }
+                }
+                filter['options'] = museumObjectOptions;
               }
-            }
+            });
 
-            // Mettre à jour l'objet de musée dans la base de données
-            //museumObject['filters'] = filters;
-            objectsRef.child(key).update({'filters': filters});
+            museumObject['filters'] = filters;
+            objectsRef.child(key).update(museumObject);
           }
         });
       }
-
       if (!context.mounted) return;
       Navigator.pop(context);
 
