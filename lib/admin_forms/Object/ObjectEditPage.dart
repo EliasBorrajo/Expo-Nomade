@@ -25,6 +25,8 @@ class ObjectEditPage extends StatefulWidget{
 
 class _ObjectEditPageState extends State<ObjectEditPage> {
   // A T T R I B U T E S
+  late String _initialName;
+  late Museum _initialSelectedMuseum;
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _museumNameController;
@@ -47,6 +49,9 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
     _descriptionController = TextEditingController(text: widget.object.description);
     _museumNameController  = TextEditingController(text: widget.sourceMuseum?.name ?? ""); // Si le musée source est null, mettre une chaine vide
 
+    // Stocker valeurs initiales avant changement, pour pouvoir les comparer avec les nouvelles valeurs lors de la validation
+    _initialName = widget.object.name;
+    _initialSelectedMuseum = widget.sourceMuseum;
 
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
@@ -291,17 +296,22 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       return 'Veuillez entrer un nom';
     }
 
-    // Vérifier si le musée sélectionné (dans _selectedMuseum) existe
-    if (_selectedMuseum != null) {
+    // Vérifier si le nom de de l'objet a changé dans le formulaire par rapport à la valeur initiale
+    if(name != _initialName || _selectedMuseum != _initialSelectedMuseum)
+    {
+      // Vérifier si le nom de l'objet existe déjà dans la liste des objets du musée sélectionné
+      // Vérifier si le musée sélectionné (dans _selectedMuseum) existe afin d'éviter un doublon dans le même musée
+      if (_selectedMuseum != null) {
 
-      _loadAllObjectsFromAMuseum(_selectedMuseum) ;
-      print('Museum Objects from selected museum : ${museumObjectsFromSelectedMuseum.toString()} ');
+        _loadAllObjectsFromAMuseum(_selectedMuseum) ;
+        print('Museum Objects from selected museum : ${museumObjectsFromSelectedMuseum.toString()} ');
 
-      // Parcourir la liste des objets du musée sélectionné
-      for (var object in museumObjectsFromSelectedMuseum) {
-        if (object.name.toLowerCase() == name.toLowerCase()) {
-          print('Object name already exists in this museum');
-          return 'Ce nom d\'objet existe déjà dans ce musée';
+        // Parcourir la liste des objets du musée sélectionné
+        for (var object in museumObjectsFromSelectedMuseum) {
+          if (object.name.toLowerCase() == name.toLowerCase()) {
+            print('Object name already exists in this museum');
+            return 'Ce nom d\'objet existe déjà dans ce musée';
+          }
         }
       }
     }
