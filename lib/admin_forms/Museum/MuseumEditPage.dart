@@ -139,6 +139,8 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
                 Text('Site web'),
                 TextFormField(controller: _websiteController),
                 SizedBox(height: 16),
+
+
                 ElevatedButton(
                     onPressed: () async {
                       selectedAddressPoint = await Navigator.push(
@@ -157,7 +159,7 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
                 SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _saveChanges,
-                  child: Text('Enregistrer'),
+                  child: const Text('Enregistrer'),
                 ),
               ],
             ),

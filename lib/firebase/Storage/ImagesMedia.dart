@@ -18,9 +18,14 @@ const double defaultImageHeightLarge = 1440;
 class ImageGallery extends StatelessWidget {
   // A T T R I B U T E S
   final List<String> imageUrls;
+  final bool isEditMode;
 
   // C O N S T R U C T O R
-  ImageGallery({super.key, required this.imageUrls});
+  ImageGallery({
+    super.key,
+    required this.imageUrls,
+    this.isEditMode = false,
+  });
 
   /// Displays a gallery of images.
   /// FutureBuilder wraps the PageView to display a loading indicator while the images are being downloaded.
@@ -47,8 +52,10 @@ class ImageGallery extends StatelessWidget {
               return Text('Aucune image à afficher');
             } else {
               // Affichez les images une fois qu'elles sont téléchargées
+
+              int itemCount = snapshot.data!.length;
               return PageView.builder(
-                itemCount: snapshot.data!.length,
+                itemCount: itemCount,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
@@ -64,6 +71,8 @@ class ImageGallery extends StatelessWidget {
                     child: CustomImageStateful(
                       imageUrl: snapshot.data![index],
                       imageList: snapshot.data!,
+                      itemCount: itemCount,
+                      isEditMode: isEditMode,
                     ),
                   );
                 },
@@ -116,13 +125,18 @@ class CustomImageStateful extends StatefulWidget {
   final List<String>? imageList;
   final double width;
   final double height;
+  late  int itemCount;
+  final bool isEditMode;
 
-  const CustomImageStateful({
+
+  CustomImageStateful({
     Key? key,
     required this.imageUrl,
     this.imageList,
     this.width = defaultImageWidth,
     this.height = defaultImageHeight,
+    required this.itemCount,
+    required this.isEditMode,
   }) : super(key: key);
 
   @override
@@ -130,36 +144,36 @@ class CustomImageStateful extends StatefulWidget {
 }
 class _CustomImageState extends State<CustomImageStateful> {
   // A T T R I B U T E S
-  bool isUserAuthenticated = true; // TODO : PUT BACK TO FALSE AFTER TESTING
+  // bool isUserAuthenticated = true; // TODO : PUT BACK TO FALSE AFTER TESTING
 
   @override
   void initState() {
     super.initState();
 
-    checkUserAuthentication();
+    // checkUserAuthentication();
   }
 
-  Future<void> checkUserAuthentication() async {
-    // Votre logique pour vérifier l'authentification ici
-    await AuthService().checkUserAuthentication()
-            .then((value)
-            {
-              // Verify if the widget is mounted before calling setState
-              // If the user is authenticated, the value is not null
-              if(mounted && value != null)
-              {
-                setState(() {
-                  isUserAuthenticated = true;
-                });
-              }
-            });
-  }
+  // Future<void> checkUserAuthentication() async {
+  //   // Votre logique pour vérifier l'authentification ici
+  //   await AuthService().checkUserAuthentication()
+  //           .then((value)
+  //           {
+  //             // Verify if the widget is mounted before calling setState
+  //             // If the user is authenticated, the value is not null
+  //             if(mounted && value != null)
+  //             {
+  //               setState(() {
+  //                 isUserAuthenticated = true;
+  //               });
+  //             }
+  //           });
+  // }
 
   @override
   void dispose() {
     // Effectuez le nettoyage nécessaire ici avant de détruire le widget.
     // Par exemple, si vous avez des abonnements Firebase, fermez-les ici.
-    isUserAuthenticated = false;
+    // isUserAuthenticated = false;
     super.dispose();
   }
 
@@ -184,7 +198,7 @@ class _CustomImageState extends State<CustomImageStateful> {
           ),
 
           // DELETE ICON ON IMAGE
-          if (isUserAuthenticated)    // TODO : COMMENTER POUR TESTER
+          if (widget.isEditMode)
             Positioned(
             top: 200,
             right: 100,
@@ -215,6 +229,8 @@ class _CustomImageState extends State<CustomImageStateful> {
                               {
                                 setState(() {
                                   widget.imageList?.remove(widget.imageUrl);
+                                  widget.itemCount = widget.imageList!.length;
+                                  // TODO : RE-LOAD DATA FROM DB & dans appel DB SET STATE AUSSI
                                 });
                               }
                             } else {

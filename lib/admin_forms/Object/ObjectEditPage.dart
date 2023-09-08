@@ -1,17 +1,18 @@
 import 'dart:async';
 
 import 'package:expo_nomade/dataModels/MuseumObject.dart';
+import 'package:expo_nomade/firebase/Storage/ImagesMedia.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../dataModels/Museum.dart';
+import '../../firebase/Storage/FirebaseStorageUtil.dart';
 import '../map_point_picker.dart';
 
-// TODO : Verification que le nom n'est pas vide & qu'il n'existe pas déjà pour ce musée
 // TODO : Editer images
 // TODO : Editer tags
-// TODO : PICKER LOCATION
+// TODO : Verifier le nom, que SI il a changé, alors la on doit faire la verification si il existe déja dans la DB ou non
 
 class ObjectEditPage extends StatefulWidget{
   final MuseumObject object;
@@ -34,7 +35,7 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   late DatabaseReference _objectsRef;
   late List<Museum> museumsList = [];
   late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
-  late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
+  late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];   // Serves for the validation of the object name, avoid having two objects with the same name in the same museum
   late StreamSubscription<DatabaseEvent> _museumsSubscription;
 
 
@@ -100,12 +101,30 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
 
       objectsData.forEach((key, value)
       {
+        print('CHARGER IMAGES DE FIREBASE : ${value['images']}');
+        List<String> images = [];
+        if (value['images'] != null) {
+          List<dynamic> imagesData = value['images'] as List<dynamic>;
+          for (var image in imagesData) {
+            if( image != null &&
+                image is String){
+              images.add(image);
+
+              print('IMAGE IN OBJECT ADDING : $image');
+
+            }
+          }
+        }
+
+
+
         final MuseumObject object = MuseumObject(
           // Remplacez ces champs par les champs réels de votre objet
           id: key,
           museumId: value['museumId'] as String,
           name: value['name'] as String,
           description: value['description'] as String,
+          images: images,
           point: LatLng(
             // Vériier que les valeurs sont bien des doubles, firebase peut les convertir en int parfois
             (value['point']['latitude'] as num).toDouble(),
@@ -122,6 +141,16 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       setState(() {
         museumObjectsFromSelectedMuseum = fetchedObjects;
       });
+    }
+
+    // Well formated Print of the object
+    for(var object in fetchedObjects)
+    {
+      print('OBJECT : \n-${object.name}\n-${object.description}\n-${object.point.latitude}\n-${object.point.longitude}');
+      for(var image in object.images ?? [])
+      {
+        print('IMAGE : $image');
+      }
     }
 
     return fetchedObjects;
@@ -227,6 +256,7 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
         'name': widget.object.name,
         'museumId': _selectedMuseum.id,
         'description': widget.object.description,
+        'images': widget.object.images,
         'point':{
           'latitude': widget.object.point.latitude.toDouble(),
           'longitude': widget.object.point.longitude.toDouble(),
@@ -252,8 +282,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   }
 
   // V A L I D A T I O N S
-
-
   // Verification que la description n'est pas vide
   String? _validateDescription(String? description) {
     if (description == null || description.isEmpty) {
@@ -288,6 +316,9 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   // R E N D E R I N G
   @override
   Widget build(BuildContext context) {
+
+    final firebaseStorageUtil = FirebaseStorageUtil();
+
     return Scaffold(
       appBar: AppBar(title: Text('Editer l\'objet ${widget.object.name}')),
       body: Form(
@@ -301,9 +332,13 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
                 const Text('Nom du de l\'objet'),
                 TextFormField(controller: _nameController, validator: _validateObjectName),
                 const SizedBox(height: 16),
+
+
                 const Text('Description'),
                 TextFormField(controller: _descriptionController, validator: _validateDescription),
                 const SizedBox(height: 16),
+
+
                 DropdownButtonFormField<Museum>(
                   value: _selectedMuseum ?? null,
                   onChanged: (Museum? newValue)
@@ -326,6 +361,8 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+
                 ElevatedButton(
                     onPressed: () async {
                       selectedAddressPoint = await Navigator.push(
@@ -337,9 +374,48 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
                     },
                     child: const Text('Modifier l\'adresse')
                 ),
+
+
                 selectedAddressPoint == const LatLng(0.0, 0.0) ?
                 Text('Point selectionné: ${widget.object.point.latitude.toStringAsFixed(2)}, ${widget.object.point.longitude.toStringAsFixed(2)}') :
                 Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+                const SizedBox(height: 16),
+
+
+                ElevatedButton(
+                    onPressed: () async {
+
+                      var urlNewImage = await firebaseStorageUtil
+                                          .uploadImageFromGallery(FirebaseStorageFolder.objects);
+                      if(urlNewImage != null) {
+
+                        // 1) MAJ locale
+                        if(mounted)
+                          {
+                            setState(() {
+                              widget.object.images?.add(urlNewImage);
+                            });
+                          }
+
+                        // 2) MAJ firebase
+                        await _objectsRef.child(widget.object.id).update({
+                          'images': widget.object.images,
+                        }
+                        ).whenComplete(() => print('Object updated : ${widget.object.name}'));
+
+
+                      }
+                    },
+                    child: const Text('Ajouter une image')),
+                const SizedBox(height: 16),
+
+                ImageGallery(
+                    imageUrls: widget.object.images ?? [],
+                    isEditMode: true),
+                const SizedBox(height: 16),
+
+
+
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _saveChanges,
