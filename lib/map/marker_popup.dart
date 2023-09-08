@@ -62,7 +62,7 @@ class MarkerPopup extends StatelessWidget {
             if (images != null && images!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: ImageGallery(imageUrls: images!),
+                child: ImageGallery(imageUrls: images as List<String>),
               ),
             SizedBox(height: 20.0),
             Expanded(

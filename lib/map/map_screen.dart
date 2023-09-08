@@ -121,11 +121,28 @@ class _MapScreenState extends State<MapScreen> {
         List<MuseumObject> updatedMuseumObjects = [];
         Map<dynamic, dynamic> objectsData = event.snapshot.value as Map<dynamic, dynamic>;
         objectsData.forEach((key, value) {
+
+          print('CHARGER IMAGES DE FIREBASE : ${value['images']}');
+          List<String> images = [];
+          if (value['images'] != null) {
+            List<dynamic> imagesData = value['images'] as List<dynamic>;
+            for (var image in imagesData) {
+              if( image != null &&
+                  image is String){
+                images.add(image);
+
+                print('IMAGE IN OBJECT ADDING : $image');
+
+              }
+            }
+          }
+
           MuseumObject museumObject = MuseumObject(
             id: key,
             name: value['name'] as String,
             description: value['description'] as String,
             museumId: value['museumId'] as String,
+            images: images,
             point: LatLng(
               (value['point']['latitude'] as num).toDouble(),
               (value['point']['longitude'] as num).toDouble(),
@@ -187,7 +204,7 @@ class _MapScreenState extends State<MapScreen> {
                         MapEntry('Description', museumObject.description),
                       ],
                       isMuseum: false
-                    ).createMarker(context, URLS),
+                    ).createMarker(context, museumObject.images),
                 ]
                     : [],
               ),
