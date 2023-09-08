@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../dataModels/MuseumObject.dart';
+import '../firebase_auth.dart';
 import 'FirebaseStorageUtil.dart';
-
-// Utiliser JPEG par défaut, PNG si on a besoin de transparence
-const String defaultImageFormat = 'jpg';
 
 // Taille par défaut des images en petit de 800x600
 const double defaultImageWidth = 800;
@@ -17,12 +15,12 @@ const double defaultImageHeight = 400;
 const double defaultImageWidthLarge = 2560;
 const double defaultImageHeightLarge = 1440;
 
-class ImageGallery2 extends StatelessWidget {
+class ImageGallery extends StatelessWidget {
   // A T T R I B U T E S
   final List<String> imageUrls;
 
   // C O N S T R U C T O R
-  ImageGallery2({super.key, required this.imageUrls});
+  ImageGallery({super.key, required this.imageUrls});
 
   /// Displays a gallery of images.
   /// FutureBuilder wraps the PageView to display a loading indicator while the images are being downloaded.
@@ -63,35 +61,20 @@ class ImageGallery2 extends StatelessWidget {
                         },
                       );
                     },
-                    child: CustomImage(
+                    child: CustomImageStateful(
                       imageUrl: snapshot.data![index],
+                      imageList: snapshot.data!,
                     ),
                   );
                 },
               );
-
-
-              // TODO : REMPLACER PAGE.VIEW PAR CAROUSEL SLIDER
-              //   CarouselSlider.builder(
-              //   itemCount: snapshot.data!.length,
-              //   itemBuilder: (context, index) {
-              //     return CustomImage(
-              //       imageUrl: snapshot.data![index],
-              //     );
-              //   },
-              //   options: CarouselOptions(
-              //     height: defaultImageHeight, // Hauteur de chaque élément du carrousel
-              //     // Vous pouvez configurer d'autres options du carrousel ici
-              //   ),
-              // );
-
-              //
             }
           },
         ));
   }
 }
 
+/// Displays an image.
 class CustomImage extends StatelessWidget {
   // A T T R I B U T E S
   final String imageUrl;
@@ -102,43 +85,167 @@ class CustomImage extends StatelessWidget {
   const CustomImage({
     Key? key, // Clé pour identifier le widget dans l'arbre des widgets
     required this.imageUrl,
-    //required this.imageBytes,
+    this.width = defaultImageWidth,
+    this.height = defaultImageHeight,
+
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AspectRatio(
+          aspectRatio: width / height,
+          child: Image.network(
+            imageUrl,
+            width: width,
+            height: height,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+/// Displays an image.
+/// This widget is stateful because it displays a delete icon on the image.
+class CustomImageStateful extends StatefulWidget {
+  final String imageUrl;
+  final List<String>? imageList;
+  final double width;
+  final double height;
+
+  const CustomImageStateful({
+    Key? key,
+    required this.imageUrl,
+    this.imageList,
     this.width = defaultImageWidth,
     this.height = defaultImageHeight,
   }) : super(key: key);
 
-  // M E T H O D S
-  // Méthode pour afficher l'image en grand dans un dialogue
-  void _showImageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: CustomImage(
-            imageUrl: imageUrl,
-            width: defaultImageWidthLarge,
-            height: defaultImageHeightLarge,
-          ),
-        );
-      },
-    );
+  @override
+  _CustomImageState createState() => _CustomImageState();
+}
+class _CustomImageState extends State<CustomImageStateful> {
+  // A T T R I B U T E S
+  bool isUserAuthenticated = true; // TODO : PUT BACK TO FALSE AFTER TESTING
+
+  @override
+  void initState() {
+    super.initState();
+
+    checkUserAuthentication();
+  }
+
+  Future<void> checkUserAuthentication() async {
+    // Votre logique pour vérifier l'authentification ici
+    await AuthService().checkUserAuthentication()
+            .then((value)
+            {
+              // Verify if the widget is mounted before calling setState
+              // If the user is authenticated, the value is not null
+              if(mounted && value != null)
+              {
+                setState(() {
+                  isUserAuthenticated = true;
+                });
+              }
+            });
   }
 
   @override
+  void dispose() {
+    // Effectuez le nettoyage nécessaire ici avant de détruire le widget.
+    // Par exemple, si vous avez des abonnements Firebase, fermez-les ici.
+    isUserAuthenticated = false;
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: width / height,
-      // Ajustez le ratio largeur/hauteur selon vos besoins
-      child: Image.network(
-        imageUrl,
-        width: width,
-        height: height, // Définissez également la hauteur ici
-        fit: BoxFit.contain, // Ajuste l'image à la taille du conteneur
+    return Container( // Enveloppez l'ensemble dans un Container
+      child: Stack(
+        children: [
+          // IMAGE DISPLAY
+          Align(
+            alignment: Alignment.center,
+            child: AspectRatio(
+              aspectRatio: widget.width / widget.height,
+              child: Image.network(
+                widget.imageUrl,
+                width: widget.width,
+                height: widget.height,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+
+          // DELETE ICON ON IMAGE
+          if (isUserAuthenticated)    // TODO : COMMENTER POUR TESTER
+            Positioned(
+            top: 200,
+            right: 100,
+            child: GestureDetector(
+              onTap: () {
+                // Afficher un dialogue de confirmation
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Confirmez la suppression'),
+                      content: Text('Êtes-vous sûr de vouloir supprimer cette image ?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Fermer le dialogue
+                          },
+                          child: Text('Annuler'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            // Supprimer l'image ici
+                            final deletionIsSuccess = await FirebaseStorageUtil().deleteImageByUrl(widget.imageUrl);
+
+                            if (deletionIsSuccess) {
+                              // Appeler la fonction onDelete avec l'index actuel pour mettre à jour la liste d'URLs
+                              if(mounted)
+                              {
+                                setState(() {
+                                  widget.imageList?.remove(widget.imageUrl);
+                                });
+                              }
+                            } else {
+                              // Afficher un message d'erreur en cas d'échec de la suppression
+                            }
+
+                            Navigator.of(context).pop(); // Fermer le dialogue de confirmation
+                          },
+                          child: Text('Supprimer'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Icon(
+                Icons.delete,
+                color: Colors.red,
+                size: 24.0,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
+
+
+/// Widget that displays an image in a dialog when tapped, to show it in full screen.
 class ImageDialog extends StatelessWidget {
   final String imageUrl;
 
@@ -162,20 +269,6 @@ class ImageDialog extends StatelessWidget {
 }
 
 
-
-class CustomCarousel extends StatelessWidget {
-  // A T T R I B U T E S
-  final String imageUrl;
-
-  // C O N S T R U C T O R
-  CustomCarousel({super.key, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
 
 //
 // // EXAMPLE ON HOW TO IMPLEMENT THE WIDGET "CustomImage" WITH "FirebaseStorageUtil"

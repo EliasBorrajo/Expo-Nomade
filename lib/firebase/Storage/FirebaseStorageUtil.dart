@@ -1,5 +1,4 @@
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -231,6 +230,21 @@ class FirebaseStorageUtil {
 
   }
 
+
+  /// Deletes an image from Firebase Storage using its URL.
+  /// Parameters:
+  /// - imageUrl: the URL of the image to delete (e.g. https://firebasestorage.googleapis.com/v0/b/.../o/images%2Fimage1.jpg?alt=media&token=...)
+  /// - Returns: true if the image was successfully deleted, false otherwise
+  Future<bool> deleteImageByUrl(String imageUrl) async {
+    try {
+      final Reference ref = await _storage.refFromURL(imageUrl);
+      await ref.delete();
+      return true; // L'image a été supprimée avec succès
+    } catch (e) {
+      print('Erreur lors de la suppression de l\'image : $e');
+      return false; // Une erreur s'est produite lors de la suppression de l'image
+    }
+  }
 
 
 }

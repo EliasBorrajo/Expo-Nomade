@@ -30,14 +30,9 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
   @override
   void initState() {
     super.initState();
-    // Chargez l'URL de l'image depuis Firebase Storage
-    // imageUrl = _loadImage()
-    //     .whenComplete(() => print('Image chargée'));
 
     // F I R E B A S E
     _loadImages();
-
-
   }
 
   Future<void> _loadImages() async
@@ -103,7 +98,7 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
             Text('Description: ${widget.object.description}'),
             // Expanded( // Utilisez Expanded pour que le PageView occupe tout l'espace disponible en hauteur
             //   child: ImageGallery2(imageUrls: URLS)),
-            ImageGallery2(imageUrls: URLS),
+            ImageGallery(imageUrls: URLS),
 
             FloatingActionButton.extended(
               onPressed: () async {
