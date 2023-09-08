@@ -2,6 +2,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:latlong2/latlong.dart';
 import '../dataModels/Migration.dart';
 
+
+enum FirebaseRefType {
+  migrations,
+  museums,
+  museumsObjects
+}
+
 class FirebaseUtils {
   final FirebaseDatabase database;
 
@@ -77,7 +84,28 @@ class FirebaseUtils {
     return museumId;
   }*/
 
+  /// Returns a reference to a Firebase database node.
+  /// Parameters:
+  /// - refType: the type of the reference to return (e.g. FirebaseRefType.museums)
+  /// - id: the id of the node to return
+  /// - Returns: a reference to a Firebase database node
+  ///           (e.g. database.ref().child('museums').child(id))
+  ///           or null if the refType is not supported or if the id is null or empty
+  DatabaseReference? getDatabaseRef(FirebaseRefType refType, String? id)
+  {
+    if (id == null || id.isEmpty) {
+      return null;
+    }
 
-
-
+    switch (refType) {
+      case FirebaseRefType.migrations:
+        return database.ref().child('migrations').child(id);
+      case FirebaseRefType.museums:
+        return database.ref().child('museums').child(id);
+      case FirebaseRefType.museumsObjects:
+        return database.ref().child('museumsObjects').child(id);
+      default:
+        return null;
+    }
+  }
 }

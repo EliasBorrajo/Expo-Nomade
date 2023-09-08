@@ -407,7 +407,25 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
 
                 ImageGallery(
                     imageUrls: widget.object.images ?? [],
-                    isEditMode: true),
+                    isEditMode: true,
+                    onDeleteOfImage: (int indexImage) async{
+
+                      // 2) MAJ firebase
+                      try {
+                        await widget.database.ref()
+                            .child('museumObjects')
+                            .child(widget.object.id)
+                            .child('images/$indexImage')
+                            // .child(widget.object.images![indexImage])
+                            .remove()
+                            .whenComplete(() => print("DELETE OBJECT SUCCESS"))
+                            .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
+                      } catch(e) {
+                        print("DELETE IMAGE ERROR: $e");
+                      }
+
+                    }
+                ),
                 const SizedBox(height: 16),
 
 

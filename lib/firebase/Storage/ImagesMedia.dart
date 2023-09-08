@@ -17,24 +17,57 @@ const double defaultImageWidthLarge = 2560;
 const double defaultImageHeightLarge = 1440;
 
 /// Widget that displays a gallery of images, used for the whole app.
-class ImageGallery extends StatelessWidget {
+class ImageGallery extends StatefulWidget {
   final List<String> imageUrls;
   final bool isEditMode;
+  final Function(int indexImage)? onDeleteOfImage;
+
 
   ImageGallery({
-    super.key,
+    Key? key,
     required this.imageUrls,
     this.isEditMode = false,
-  });
+    this.onDeleteOfImage,
+  }) : super(key: key);
+
+  @override
+  _ImageGalleryState createState() => _ImageGalleryState();
+}
+
+class _ImageGalleryState extends State<ImageGallery> {
+  int itemCount = 0; // Nombre d'éléments dans la galerie d'images
+
+  @override
+  void initState() {
+    super.initState();
+    itemCount = widget.imageUrls.length;
+  }
+
+  void handleItemDelete(int indexImage) {
+    if(mounted)
+      {
+        setState(() {
+          itemCount--; // Diminue le nombre d'éléments lorsqu'un élément est supprimé.
+        });
+      }
+
+    // Call the callback to notify the parent widget that the image should be deleted in the DB
+    if(widget.onDeleteOfImage != null) {
+      widget.onDeleteOfImage!(indexImage);
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+
+        // Variables for the gallery
         double galleryHeight = defaultImageHeight;
         Widget galleryContent;
 
-        if (imageUrls.isEmpty)
+        if (widget.imageUrls.isEmpty)
         {
           galleryHeight = 16.0;
           galleryContent = Text('Aucune image à afficher');
@@ -42,7 +75,7 @@ class ImageGallery extends StatelessWidget {
         else
         {
           galleryContent = FutureBuilder<List<String>>(
-            future: Future.value(imageUrls),
+            future: Future.value(widget.imageUrls),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
               {
@@ -54,10 +87,10 @@ class ImageGallery extends StatelessWidget {
                 );
               }
               else if (snapshot.hasError) {
-                return Text('Erreur de chargement des images');
+                return const Text('Erreur de chargement des images');
               }
               else {
-                int itemCount = snapshot.data!.length;
+                // int itemCount = snapshot.data!.length;  // TODO : MODIFIER ICI ??
                 return PageView.builder(
                   itemCount: itemCount,
                   itemBuilder: (context, index) {
@@ -74,7 +107,14 @@ class ImageGallery extends StatelessWidget {
                         imageUrl: snapshot.data![index],
                         imageList: snapshot.data!,
                         itemCount: itemCount,
-                        isEditMode: isEditMode,
+                        isEditMode: widget.isEditMode,
+                        indexImage: index,
+                        onDelete: (int indexImage) {
+                          // Mettez ici la logique de suppression, si nécessaire
+                          // Par exemple, vous pouvez appeler un gestionnaire de suppression
+                          // qui effectue la suppression côté serveur ou met à jour la liste d'URLs.
+                          handleItemDelete(indexImage);
+                        },
                       ),
                     );
                   },
@@ -84,6 +124,7 @@ class ImageGallery extends StatelessWidget {
           );
         }
 
+        // Return the gallery content in a container
         return Container(
           height: galleryHeight,
           child: galleryContent,
@@ -92,6 +133,82 @@ class ImageGallery extends StatelessWidget {
     );
   }
 }
+
+// class ImageGallery extends StatelessWidget {
+//   final List<String> imageUrls;
+//   final bool isEditMode;
+//
+//   ImageGallery({
+//     super.key,
+//     required this.imageUrls,
+//     this.isEditMode = false,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return LayoutBuilder(
+//       builder: (context, constraints) {
+//         double galleryHeight = defaultImageHeight;
+//         Widget galleryContent;
+//
+//         if (imageUrls.isEmpty)
+//         {
+//           galleryHeight = 16.0;
+//           galleryContent = Text('Aucune image à afficher');
+//         }
+//         else
+//         {
+//           galleryContent = FutureBuilder<List<String>>(
+//             future: Future.value(imageUrls),
+//             builder: (context, snapshot) {
+//               if (snapshot.connectionState == ConnectionState.waiting)
+//               {
+//                 return const Center(
+//                   child: SpinKitCircle(
+//                     color: Colors.blue,
+//                     size: 50.0,
+//                   ),
+//                 );
+//               }
+//               else if (snapshot.hasError) {
+//                 return Text('Erreur de chargement des images');
+//               }
+//               else {
+//                 int itemCount = snapshot.data!.length;
+//                 return PageView.builder(
+//                   itemCount: itemCount,
+//                   itemBuilder: (context, index) {
+//                     return GestureDetector(
+//                       onTap: () {
+//                         showDialog(
+//                           context: context,
+//                           builder: (context) {
+//                             return ImageDialog(imageUrl: snapshot.data![index]);
+//                           },
+//                         );
+//                       },
+//                       child: CustomImageStateful(
+//                         imageUrl: snapshot.data![index],
+//                         imageList: snapshot.data!,
+//                         itemCount: itemCount,
+//                         isEditMode: isEditMode,
+//                       ),
+//                     );
+//                   },
+//                 );
+//               }
+//             },
+//           );
+//         }
+//
+//         return Container(
+//           height: galleryHeight,
+//           child: galleryContent,
+//         );
+//       },
+//     );
+//   }
+// }
 
 
 
@@ -139,7 +256,8 @@ class CustomImageStateful extends StatefulWidget {
   final double height;
   late  int itemCount;
   final bool isEditMode;
-
+  final Function(int indexImage) onDelete;
+  late int indexImage;
 
   CustomImageStateful({
     Key? key,
@@ -149,7 +267,13 @@ class CustomImageStateful extends StatefulWidget {
     this.height = defaultImageHeight,
     required this.itemCount,
     required this.isEditMode,
-  }) : super(key: key);
+    required this.onDelete,
+    required int indexImage,
+  }) : super(key: key) {
+    this.indexImage = indexImage;
+  }
+
+
 
   @override
   _CustomImageState createState() => _CustomImageState();
@@ -163,9 +287,6 @@ class _CustomImageState extends State<CustomImageStateful> {
 
   @override
   void dispose() {
-    // Effectuez le nettoyage nécessaire ici avant de détruire le widget.
-    // Par exemple, si vous avez des abonnements Firebase, fermez-les ici.
-    // isUserAuthenticated = false;
     super.dispose();
   }
 
@@ -212,19 +333,26 @@ class _CustomImageState extends State<CustomImageStateful> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            // Supprimer l'image ici
+                            // 1) Supprimer l'image de Firebase Storage
                             final deletionIsSuccess = await FirebaseStorageUtil().deleteImageByUrl(widget.imageUrl);
 
+                            // 2) Supprimer l'image de la liste d'URLs
                             if (deletionIsSuccess) {
-                              // Appeler la fonction onDelete avec l'index actuel pour mettre à jour la liste d'URLs
-                              if(mounted)
-                              {
-                                setState(() {
-                                  widget.imageList?.remove(widget.imageUrl);
-                                  widget.itemCount = widget.imageList!.length;
-                                  // TODO : RE-LOAD DATA FROM DB & dans appel DB SET STATE AUSSI
-                                });
-                              }
+                              print('Image supprimée avec succès');
+
+                              // 2.1) En local dans le widget
+                              widget.imageList?.remove(widget.imageUrl);
+
+                              // 2.2) Dans le realtime database de Firebase
+                              // SE FERA DANS LE CALLBACK ?
+
+                              // 2.2) Dans le realtime database de Firebase
+                              // Vous pouvez gérer cela dans le callback onDeleteOfImage
+                              // 3) Mettre à jour le nombre d'éléments dans la galerie d'images dans le parent widget
+
+                                widget.onDelete(widget.indexImage); // Passer l'index de l'image au callback
+                                // Call the callback to notify the parent widget that the image should be deleted
+
                             } else {
                               // Afficher un message d'erreur en cas d'échec de la suppression
                             }

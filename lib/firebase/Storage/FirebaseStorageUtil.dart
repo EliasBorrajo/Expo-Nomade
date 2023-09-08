@@ -168,16 +168,6 @@ class FirebaseStorageUtil {
 
     return null;
 
-
-
-    // if (pickedFile != null) {
-    //   // Le fichier a été sélectionné avec succès depuis la galerie.
-    //   // Vous pouvez utiliser pickedFile.path pour obtenir le chemin du fichier sélectionné.
-    //   return File(pickedFile.path);
-    // } else {
-    //   // L'utilisateur a annulé la sélection de l'image depuis la galerie.
-    //   return null;
-    // }
   }
 
   /// Opens the image picker to select an image from the camera.
@@ -245,6 +235,7 @@ class FirebaseStorageUtil {
       return false; // Une erreur s'est produite lors de la suppression de l'image
     }
   }
+
 
 
 }
