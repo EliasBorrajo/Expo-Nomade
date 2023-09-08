@@ -10,9 +10,7 @@ import '../../dataModels/Museum.dart';
 import '../../firebase/Storage/FirebaseStorageUtil.dart';
 import '../map_point_picker.dart';
 
-// TODO : Editer images
 // TODO : Editer tags
-// TODO : Verifier le nom, que SI il a changé, alors la on doit faire la verification si il existe déja dans la DB ou non
 
 class ObjectEditPage extends StatefulWidget{
   final MuseumObject object;
@@ -245,7 +243,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
     if (_formKey.currentState!.validate()) {
 
 
-
       // MAJ LOCAL - Mettre à jour les propriétés du musée avec les nouvelles valeurs en local
       widget.object.name        = _nameController.text;
       widget.object.description = _descriptionController.text;
@@ -256,7 +253,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
         'name': widget.object.name,
         'museumId': _selectedMuseum.id,
         'description': widget.object.description,
-        'images': widget.object.images,
         'point':{
           'latitude': widget.object.point.latitude.toDouble(),
           'longitude': widget.object.point.longitude.toDouble(),
@@ -267,12 +263,12 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       setState(() {
         widget.object.name        = _nameController.text;
         widget.object.description = _descriptionController.text;
+        widget.object.point = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
       });
 
       // Retourner à la page de détails du musée
-
+      Navigator.pop(context);
     }
-    Navigator.pop(context);
   }
 
   void updatePoint(){
