@@ -261,20 +261,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
               );
             },
           ),
-          // Add a FAB to the bottom right
-          // FAB : Floating Action Button
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton.extended(
-                onPressed: _seedDatabase,
-                label: const Text('Seed Database'),
-                icon: const Icon(Icons.cloud_upload_rounded),
-                heroTag: 'seed_database',
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
         )
     );
   }

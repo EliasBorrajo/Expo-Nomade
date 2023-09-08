@@ -170,17 +170,6 @@ class _MigrationListPageState extends State<MigrationListPage>{
             );
           },
         ),
-        floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton.extended(
-              onPressed: _seedDatabase,
-              label: Text('Seed Database'),
-              icon: Icon(Icons.cloud_upload_rounded),
-              heroTag: 'seed_database_migration',
-            ),
-          ],
-        ),
       ),
     );
   }
