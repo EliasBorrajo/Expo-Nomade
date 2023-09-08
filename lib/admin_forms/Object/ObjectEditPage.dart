@@ -270,9 +270,9 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       });
 
       // Retourner à la page de détails du musée
-      Navigator.pop(context);
-    }
 
+    }
+    Navigator.pop(context);
   }
 
   void updatePoint(){
