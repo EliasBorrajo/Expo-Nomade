@@ -44,9 +44,9 @@ class CustomPolygonLayer extends StatelessWidget {
                             widthFactor: 0.5,
                             child: MarkerPopup(
                               data: [
-                                MapEntry("Name", migration.name),
+                                MapEntry("Nom", migration.name),
                                 MapEntry("Description", migration.description),
-                                MapEntry("Arrival", migration.arrival),
+                                MapEntry("Arrivée", migration.arrival),
                               ],
                             ),
                           ),

@@ -147,11 +147,11 @@ class _MapScreenState extends State<MapScreen> {
                     MapMarker(
                       position: museumObject.point,
                       markerPopupData: [
-                        MapEntry('Name', museumObject.name),
+                        MapEntry('Nom', museumObject.name),
                         MapEntry('Description', museumObject.description),
-                        MapEntry('Museum Name', museumObject.museumId),
                       ],
-                    ).createMarker(context),
+                      isMuseum: false
+                    ).createMarker(context, museumObject.images),
                 ]
                     : [],
               ),
@@ -165,10 +165,11 @@ class _MapScreenState extends State<MapScreen> {
                     MapMarker(
                       position: museum.address,
                       markerPopupData: [
-                        MapEntry('Name', museum.name),
-                        MapEntry('Website', museum.website),
+                        MapEntry('Nom', museum.name),
+                        MapEntry('Site web', museum.website),
                       ],
-                    ).createMarker(context),
+                      isMuseum : true,
+                    ).createMarker(context, null),
                 ]
                     : [],
               ),
