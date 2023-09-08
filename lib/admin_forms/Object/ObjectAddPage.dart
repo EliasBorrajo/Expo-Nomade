@@ -75,8 +75,19 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   Future<void> _saveChanges() async {
     // Validation
     if (_formKey.currentState!.validate()) {
+      // Create a list of filter data
+      List<Map<String, dynamic>> filtersData = [];
 
-      Map<String, dynamic> objectToUpload = {
+      for (var filter in filters) {
+        Map<String, dynamic> filterData = {
+          "options": filter.options,
+          "typeName": filter.typeName,
+        };
+        filtersData.add(filterData);
+      }
+
+      // Create an object with the desired structure
+      Map<String, dynamic> objectData = {
         'name': _nameController.text,
         'museumId': widget.sourceMuseum?.id.toString(),
         'description': _descriptionController.text,
@@ -84,26 +95,13 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
           'latitude': selectedAddressPoint.latitude.toDouble(),
           'longitude': selectedAddressPoint.longitude.toDouble(),
         },
+        'filters': filtersData,
       };
 
-      if (filters != null) {
-        objectToUpload['tags'] = {};
+      // Generate a new unique key for the museum
+      await _objectsRef.push().set(objectData);
 
-        for (var filter in filters) {
-          if (filter.options != null) {
-            objectToUpload['tags'][filter.typeName] = {};
-
-            for (var option in filter.options) {
-              objectToUpload['tags'][filter.typeName][option] = true;
-            }
-          }
-        }
-      }
-
-      // Générez une nouvelle clé unique pour le musée
-      await _objectsRef.push().set(objectToUpload);
-
-      // Retourner à la page de détails du musée
+      // Return to the museum details page
       Navigator.pop(context);
     }
   }
