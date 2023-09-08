@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../dataModels/MuseumObject.dart';
@@ -15,73 +16,84 @@ const double defaultImageHeight = 400;
 const double defaultImageWidthLarge = 2560;
 const double defaultImageHeightLarge = 1440;
 
+/// Widget that displays a gallery of images, used for the whole app.
 class ImageGallery extends StatelessWidget {
-  // A T T R I B U T E S
   final List<String> imageUrls;
   final bool isEditMode;
 
-  // C O N S T R U C T O R
   ImageGallery({
     super.key,
     required this.imageUrls,
     this.isEditMode = false,
   });
 
-  /// Displays a gallery of images.
-  /// FutureBuilder wraps the PageView to display a loading indicator while the images are being downloaded.
-  /// Once the images are downloaded, they are displayed in a PageView.
-  /// If an error occurs, an error message is displayed.
-  /// If no image is available, a message is displayed.
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: defaultImageHeight,
-        child: FutureBuilder<List<String>>(
-          // Utilisez Future.wait pour télécharger toutes les images en parallèle
-          future: Future.value(imageUrls),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double galleryHeight = defaultImageHeight;
+        Widget galleryContent;
 
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Affichez un indicateur de chargement pendant le téléchargement
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              // Gérez les erreurs ici
-              return Text('Erreur de chargement des images');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              // Aucune image disponible
-              return Text('Aucune image à afficher');
-            } else {
-              // Affichez les images une fois qu'elles sont téléchargées
+        if (imageUrls.isEmpty)
+        {
+          galleryHeight = 16.0;
+          galleryContent = Text('Aucune image à afficher');
+        }
+        else
+        {
+          galleryContent = FutureBuilder<List<String>>(
+            future: Future.value(imageUrls),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+              {
+                return const Center(
+                  child: SpinKitCircle(
+                    color: Colors.blue,
+                    size: 50.0,
+                  ),
+                );
+              }
+              else if (snapshot.hasError) {
+                return Text('Erreur de chargement des images');
+              }
+              else {
+                int itemCount = snapshot.data!.length;
+                return PageView.builder(
+                  itemCount: itemCount,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ImageDialog(imageUrl: snapshot.data![index]);
+                          },
+                        );
+                      },
+                      child: CustomImageStateful(
+                        imageUrl: snapshot.data![index],
+                        imageList: snapshot.data!,
+                        itemCount: itemCount,
+                        isEditMode: isEditMode,
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+          );
+        }
 
-              int itemCount = snapshot.data!.length;
-              return PageView.builder(
-                itemCount: itemCount,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ImageDialog(
-                            imageUrl: snapshot.data![index],
-                          );
-                        },
-                      );
-                    },
-                    child: CustomImageStateful(
-                      imageUrl: snapshot.data![index],
-                      imageList: snapshot.data!,
-                      itemCount: itemCount,
-                      isEditMode: isEditMode,
-                    ),
-                  );
-                },
-              );
-            }
-          },
-        ));
+        return Container(
+          height: galleryHeight,
+          child: galleryContent,
+        );
+      },
+    );
   }
 }
+
+
 
 /// Displays an image.
 class CustomImage extends StatelessWidget {
@@ -144,30 +156,10 @@ class CustomImageStateful extends StatefulWidget {
 }
 class _CustomImageState extends State<CustomImageStateful> {
   // A T T R I B U T E S
-  // bool isUserAuthenticated = true; // TODO : PUT BACK TO FALSE AFTER TESTING
-
   @override
   void initState() {
     super.initState();
-
-    // checkUserAuthentication();
   }
-
-  // Future<void> checkUserAuthentication() async {
-  //   // Votre logique pour vérifier l'authentification ici
-  //   await AuthService().checkUserAuthentication()
-  //           .then((value)
-  //           {
-  //             // Verify if the widget is mounted before calling setState
-  //             // If the user is authenticated, the value is not null
-  //             if(mounted && value != null)
-  //             {
-  //               setState(() {
-  //                 isUserAuthenticated = true;
-  //               });
-  //             }
-  //           });
-  // }
 
   @override
   void dispose() {
