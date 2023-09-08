@@ -182,7 +182,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
   // R E N D E R I N G
   @override
   Widget build(BuildContext context) {
-
     // Filtrer les objets en fonction du nom du musée
     final filteredObjects = objects.where((object) => object.museumId == museum.id).toList();
 
@@ -192,88 +191,110 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.museum.name),
-        actions: [
-          IconButton(
+      ),
+      body: museum != null
+          ? ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Adresse',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'latitude ${museum.address.latitude} & longitude ${museum.address.longitude}',
+                style: const TextStyle(fontSize: 22),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Site web',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '${museum.website}',
+                style: const TextStyle(fontSize: 22),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Objets',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              filteredObjects.isNotEmpty
+                  ? ListView.builder(
+                shrinkWrap: true,
+                itemCount: filteredObjects.length,
+                itemBuilder: (context, index) {
+                  final object = filteredObjects[index];
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(object?.name ?? ''),
+                        subtitle: Text(object?.description ?? ''),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ObjectDetailPage(
+                                  object: object!,
+                                  database: widget.database),
+                            ),
+                          );
+                        },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ObjectEditPage(
+                                          sourceMuseum: museum,
+                                          object: object!,
+                                          database: widget.database)),
+                                );
+                              },
+                              icon: const Icon(Icons.edit_rounded),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(context, object!);
+                              },
+                              icon: const Icon(Icons.delete_rounded),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(height: 2),
+                    ],
+                  );
+                },
+              )
+                  : const Text('Aucun objet disponible pour ce musée'),
+            ],
+          ),
+        ],
+      )
+          : Center(
+        child: CircularProgressIndicator(), // Show a loading indicator while data is loading
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          ObjectAddPage(database: widget.database, sourceMuseum: museum))
-              );
+                          ObjectAddPage(database: widget.database, sourceMuseum: museum)));
             },
-            icon: const Icon(Icons.add_rounded),
+            label: Text('Ajouter objet'),
+            icon: Icon(Icons.add_rounded),
+            heroTag: 'add_obect',
           ),
         ],
-      ),
-      body: museum != null
-          ? Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Adresse: latitude ${museum.address.latitude} & longitude ${museum.address.longitude} '),
-          Text('Site web: ${museum.website}'),
-          const Text('Objets:'),
-          // Display the list of objects
-          filteredObjects.isNotEmpty
-              ? ListView.builder(
-            shrinkWrap: true,
-            itemCount: filteredObjects.length,
-            // Coalecing operator : si museum.objects est null, alors on retourne 0, sinon on retourne la longueur de la liste
-            itemBuilder: (context, index) {
-              final object = filteredObjects?[index];
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(object?.name ?? ''),
-                    subtitle: Text(object?.description ?? ''),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ObjectDetailPage(
-                                object: object!,
-                                database: widget.database)), // Utilisation de ! car nous savons que l'objet ne sera pas nul ici
-                      );
-                    },
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          // NAV MUSEUM EDIT PAGE
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => ObjectEditPage(
-                                      sourceMuseum: museum,
-                                      object: object!,
-                                      database: widget.database)),
-                            );
-                          },
-                          icon: const Icon(Icons.edit_rounded),
-                        ),
-                        IconButton(
-                          // DELETE MUSEUM
-                          onPressed: () {
-                            _showDeleteConfirmationDialog(
-                                context,
-                                object!);
-                          },
-                          icon: const Icon(Icons.delete_rounded),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 2),
-                  // Add a divider between each ListTile
-                ],
-              );
-            },
-          )
-              : const Text('Aucun objet disponible pour ce musée'),
-        ],
-      )
-          : const Center(
-        child: CircularProgressIndicator(), // Show a loading indicator while data is loading
       ),
     );
   }
