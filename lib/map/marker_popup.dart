@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 
 class MarkerPopup extends StatelessWidget {
-  const MarkerPopup({super.key, required this.data, required this.URLS});
+  const MarkerPopup({super.key, required this.data, this.images});
 
   final List<MapEntry<String, String>> data;
-  late List<String> URLS = [];
+  final List<String>? images;
 
   double calculateFontSize(BuildContext context, double baseFontSize) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -57,10 +57,10 @@ class MarkerPopup extends StatelessWidget {
               ],
             ),
             SizedBox(height: 15.0),
-            if (URLS != null && URLS!.isNotEmpty)
+            if (images != null && images!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: ImageSlider(imageUrls: URLS),
+                child: ImageSlider(imageUrls: images!),
               ),
             SizedBox(height: 20.0),
             Expanded(
