@@ -86,44 +86,48 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Éditer la Question')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Texte de la question:'),
-            TextField(controller: questionTextController),
-            const SizedBox(height: 16),
-            const Text('Réponses:'),
-            TextField(controller: answer1Controller),
-            TextField(controller: answer2Controller),
-            TextField(controller: answer3Controller),
-            const SizedBox(height: 8),
-            const Text('Réponse correcte:'),
-            DropdownButton<int>(
-              value: correctAnswer,
-              onChanged: (value) {
-                setState(() {
-                  correctAnswer = value!;
-                });
-              },
-              items: const [
-                DropdownMenuItem(value: 0, child: Text('Réponse 1')),
-                DropdownMenuItem(value: 1, child: Text('Réponse 2')),
-                DropdownMenuItem(value: 2, child: Text('Réponse 3')),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                _updateQuestionInDatabase();
-              },
-              child: const Text('Mettre à jour la question'),
-            ),
-          ],
-        ),
-      ),
+        appBar: AppBar(title: Text('Éditer la Question')),
+        body: Form(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Texte de la question:'),
+                    TextField(controller: questionTextController),
+                    const SizedBox(height: 16),
+                    const Text('Réponses:'),
+                    TextField(controller: answer1Controller),
+                    TextField(controller: answer2Controller),
+                    TextField(controller: answer3Controller),
+                    const SizedBox(height: 8),
+                    const Text('Réponse correcte:'),
+                    DropdownButton<int>(
+                      value: correctAnswer,
+                      onChanged: (value) {
+                        setState(() {
+                          correctAnswer = value!;
+                        });
+                      },
+                      items: const [
+                        DropdownMenuItem(value: 0, child: Text('Réponse 1')),
+                        DropdownMenuItem(value: 1, child: Text('Réponse 2')),
+                        DropdownMenuItem(value: 2, child: Text('Réponse 3')),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _updateQuestionInDatabase();
+                      },
+                      child: const Text('Mettre à jour la question'),
+                    ),
+                  ],
+                ),
+              ),
+            )
+        )
     );
   }
 }
