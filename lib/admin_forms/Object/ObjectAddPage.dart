@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:expo_nomade/ElementFilterPage.dart';
 import 'package:expo_nomade/dataModels/MuseumObject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +6,10 @@ import 'package:latlong2/latlong.dart';
 
 import '../../dataModels/Museum.dart';
 import '../../dataModels/filters_tags.dart';
+import '../../map/map_filters.dart';
 import '../map_point_picker.dart';
 
 // TODO : Ajouter images
-// TODO : Ajouter tags
 
 class ObjectAddPage extends StatefulWidget{
 
@@ -39,7 +38,10 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   Map<String, List<bool>> selectedFilterState = {};
 
   late List<FilterTag> filters = [];
+  late List<FilterTag> selectedFilters = [];
 
+
+  final DatabaseReference _database = FirebaseDatabase.instance.ref().child('filters');
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -55,6 +57,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
     _filtersRef = widget.database.ref().child('filters');
+    fetchFilters();
   }
 
   @override
@@ -73,12 +76,13 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   }
 
   Future<void> _saveChanges() async {
+    selectedFilters = getSelectedFilters(filters, selectedFilterState);
     // Validation
     if (_formKey.currentState!.validate()) {
       // Create a list of filter data
       List<Map<String, dynamic>> filtersData = [];
 
-      for (var filter in filters) {
+      for (var filter in selectedFilters) {
         Map<String, dynamic> filterData = {
           "options": filter.options,
           "typeName": filter.typeName,
@@ -246,20 +250,6 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                           },
                         ),
                         Text('Point sélectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          child: const Text('Choisir des filtres'),
-                          onPressed: () async {
-                            filters = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ElementFilterPage(database: widget.database, selectedFilterState: selectedFilterState)),
-                            );
-                            print('from object add: $filters');
-                            updatePoint();
-                          },
-                        ),
-
-
                         const SizedBox(height: 32),
                         ElevatedButton(
                           onPressed: _saveChanges,
@@ -269,8 +259,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     ),
                   ),
                   const SizedBox(width: 16), // Espace entre les deux colonnes
-                  //FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
-
+                  FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
                 ],
               ),
             ),
@@ -278,5 +267,68 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
         ),
       ),
     );
+  }
+
+  void fetchFilters() async {
+    try {
+      DatabaseEvent event = await _database.once();
+      Map<dynamic, dynamic>? data = event.snapshot.value as Map<dynamic,dynamic>?;
+
+      if (data != null) {
+        List<FilterTag> fetchedFilters = data.entries
+            .map((entry) {
+          String filterId = entry.key;
+          Map<String, dynamic> filterData = Map<String, dynamic>.from(
+              entry.value);
+          return FilterTag(
+            id: filterId,
+            typeName: filterData['typeName'] ?? '',
+            options: List<String>.from(filterData['options'] ?? []),
+          );
+        })
+            .toList();
+
+
+        if(selectedFilterState.isEmpty) {
+          for (var filter in fetchedFilters) {
+            selectedFilterState[filter.typeName] = List.filled(filter.options.length, false);
+          }
+        }
+
+        setState(() {
+          filters = fetchedFilters;
+        });
+      }
+    } catch (error) {
+      print('Error fetching questions: $error');
+    }
+  }
+
+  List<FilterTag> getSelectedFilters(List<FilterTag> filterTags, Map<String, List<bool>> selectedFilterState) {
+    Map<String, FilterTag> groupedFilters = {};
+
+    for (var filter in filterTags) {
+      var typeName = filter.typeName;
+      var selections = selectedFilterState[typeName];
+
+      if (selections != null) {
+        for (var i = 0; i < selections.length; i++) {
+          if (selections[i]) {
+            var option = filter.options[i];
+
+            if (groupedFilters.containsKey(typeName)) {
+              groupedFilters[typeName]!.options.add(option);
+            } else {
+              var selectedFilter = FilterTag(
+                id: filter.id, // Assuming FilterTag has an id property
+                typeName: typeName,
+                options: [option],
+              );
+              groupedFilters[typeName] = selectedFilter;
+            }
+          }
+        }
+      }
+    }    return groupedFilters.values.toList();
   }
 }
