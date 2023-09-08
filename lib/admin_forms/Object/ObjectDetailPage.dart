@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../../../dataModels/MuseumObject.dart';
 import '../../firebase/Storage/FirebaseStorageUtil.dart';
+import '../Migrations/MigrationListPage.dart';
 
 // TODO : Ajouter des Tags à l'objet
 
@@ -41,7 +42,7 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
     String? imageUrl1 = await FirebaseStorageUtil().downloadImage(
       FirebaseStorageFolder.root,
       "wallhaven-zmo9wg.png",
-      );
+    );
     print("Image 1 chargée");
 
     String? imageUrl2 = await FirebaseStorageUtil().downloadImage(
@@ -52,12 +53,12 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
 
 
     if(mounted)
-      {
-        setState(() {
-          URLS.add(imageUrl1 ?? ''); // Au cas ou le download echoue et renvoie null
-          URLS.add(imageUrl2 ?? '');
-        });
-      }
+    {
+      setState(() {
+        URLS.add(imageUrl1 ?? ''); // Au cas ou le download echoue et renvoie null
+        URLS.add(imageUrl2 ?? '');
+      });
+    }
 
     print("Toutes Images chargées");
     print("URLS : ${URLS.toString()}");
@@ -87,35 +88,65 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
   @override
   Widget build(BuildContext context) {
 
-    final firebaseStorageUtil = FirebaseStorageUtil(); // Créez une instance de la classe FirebaseStorageUtil
-
+    final firebaseStorageUtil = FirebaseStorageUtil();
 
     return Scaffold(
-        appBar: AppBar(title: Text(widget.object.name)),
-        body: Column(
+      appBar: AppBar(
+        title: Text("Détails de l'objet : " + widget.object.name),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Description: ${widget.object.description}'),
-            // Expanded( // Utilisez Expanded pour que le PageView occupe tout l'espace disponible en hauteur
-            //   child: ImageGallery2(imageUrls: URLS)),
-            ImageGallery(imageUrls: URLS),
-
+            const Text(
+              'Nom',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 4), // Added a little space after the "Nom" label
+            Text(
+              widget.object.name,
+              style: const TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 12), // Space between the object name and its description label
+            Text(
+              'Description:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              widget.object.description,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 16),
+            Expanded(child: ImageGallery(imageUrls: URLS)),
+            SizedBox(height: 16),
             FloatingActionButton.extended(
               onPressed: () async {
                 var urlNewImage = await firebaseStorageUtil.uploadImageFromGallery(FirebaseStorageFolder.museums);
-
-                if(urlNewImage != null)
-                {
+                if(urlNewImage != null) {
                   setState(() {
                     URLS.add(urlNewImage);
                   });
-                }},
-              label: Text('Add Image'),
+                }
+              },
+              label: Text('Ajouter une image'),
               icon: Icon(Icons.add_rounded),
               heroTag: 'add_museum',
+              backgroundColor: Colors.blue,
             )
           ],
-        )
+        ),
+      ),
     );
   }
+
+
 }
