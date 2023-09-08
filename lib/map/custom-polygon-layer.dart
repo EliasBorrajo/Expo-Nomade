@@ -31,31 +31,36 @@ class CustomPolygonLayer extends StatelessWidget {
           markers: [
             for (var migration in migrations)
               for(var polygon in migration.polygons!)
-              Marker(
-                point: _calculateCentroid(polygon.points!),
-                builder: (ctx) => GestureDetector(
-                  onTap: (){
-                    // Call the popup
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => MarkerPopup(
-                          data: [
-                            MapEntry("Name", migration.name),
-                            MapEntry("Description", migration.description),
-                            MapEntry("Arrival", migration.arrival),
-                          ],
+                Marker(
+                  point: _calculateCentroid(polygon.points!),
+                  builder: (ctx) => GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.transparent,
+                        builder: (context) => Align(
+                          alignment: Alignment.centerRight,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.5,
+                            child: MarkerPopup(
+                              data: [
+                                MapEntry("Name", migration.name),
+                                MapEntry("Description", migration.description),
+                                MapEntry("Arrival", migration.arrival),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  behavior: HitTestBehavior.translucent,
-                  child: const Icon(
-                    Icons.touch_app_outlined,
-                    color: Colors.black,
-                    size: 35.0,
+                      );
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: const Icon(
+                      Icons.touch_app_outlined,
+                      color: Colors.black,
+                      size: 35.0,
+                    ),
                   ),
                 ),
-              ),
           ],
         ),
       ],

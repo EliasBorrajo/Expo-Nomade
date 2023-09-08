@@ -107,15 +107,6 @@ class _QuizListPageState extends State<QuizListPage> {
     );
   }
 
-  void _navigateToAddQuestionPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddQuestionPage(database: widget.database),
-      ),
-    );
-  }
-
   void _clearSearch() {
     _searchController.clear();
     setState(() {
@@ -127,7 +118,20 @@ class _QuizListPageState extends State<QuizListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Liste des questions')
+        title: const Text('Liste des questions'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>
+                    AddQuestionPage(database: widget.database),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add_rounded),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -183,11 +187,6 @@ class _QuizListPageState extends State<QuizListPage> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _navigateToAddQuestionPage,
-        label: const Text('Ajouter une question'),
-        icon: const Icon(Icons.add_rounded),
       ),
     );
   }

@@ -96,6 +96,7 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
     return null;
   }
 
+  // TODO CLEAN ?
   String? _validateLatitude(String? value) {
     if (value == null || value.isEmpty) {
       return 'La latitude ne peut pas être vide';

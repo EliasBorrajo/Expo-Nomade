@@ -115,6 +115,21 @@ class _MigrationListPageState extends State<MigrationListPage>{
     return MaterialApp(
       title: 'Liste des flux',
       home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Liste des migrations'),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MigrationAddPage(database: widget.database),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add_rounded),
+            ),
+          ],
+        ),
         body: ListView.builder(
           itemCount: migrations.length,
           itemBuilder: (context, index) {
@@ -158,20 +173,6 @@ class _MigrationListPageState extends State<MigrationListPage>{
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            FloatingActionButton.extended(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MigrationAddPage(database: widget.database),
-                  ),
-                );
-              },
-              label: Text('Add migration'),
-              icon: Icon(Icons.add_rounded),
-              heroTag: 'add_migration',
-            ),
-            const SizedBox(height: 10),
             FloatingActionButton.extended(
               onPressed: _seedDatabase,
               label: Text('Seed Database'),
