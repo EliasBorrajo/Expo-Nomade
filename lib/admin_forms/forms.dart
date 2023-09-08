@@ -3,11 +3,12 @@
 
 import 'package:expo_nomade/admin_forms/Migrations/MigrationListPage.dart';
 import 'package:expo_nomade/admin_forms/Museum/MuseumListPage.dart';
-import 'package:expo_nomade/admin_forms/Object/ObjectAddPage.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_page.dart';
 import 'package:expo_nomade/admin_forms/quiz/quiz_list_players.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+
+import 'filter/filterListPage.dart';
 
 class AdminForms extends StatelessWidget
 {
@@ -34,12 +35,11 @@ class AdminForms extends StatelessWidget
             ),
             bottom: const TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.museum), text: 'Musées'),
-                Tab(icon: Icon(Icons.tag), text: 'Tags'),
-                Tab(icon: Icon(Icons.share_location), text: 'Migrations'),
+                Tab(icon: Icon(Icons.museum_rounded), text: 'Musées'),
+                Tab(icon: Icon(Icons.tag_rounded), text: 'Tags'),
+                Tab(icon: Icon(Icons.share_location_rounded), text: 'Migrations'),
                 Tab(icon: Icon(Icons.question_answer_rounded), text: 'Quizz'),
                 Tab(icon: Icon(Icons.accessibility_rounded), text: 'Joueurs'),
-                //Tab(icon: Icon(Icons.account_balance_rounded)),
               ],
             ),
             title: const Text('Console d\'administration'),
@@ -47,13 +47,10 @@ class AdminForms extends StatelessWidget
           body: TabBarView(
             children: [
               MuseumListPage(database: database),
-              const Icon(Icons.accessible_forward_rounded), // TODO : TAGS PAGE
-              MigrationListPage(
-                  //migrations: dummyMigrations,
-                  database: database),
+              FilterListPage(database: database),
+              MigrationListPage(database: database),
               QuizListPage(database: database),
               QuizListPlayers(database: database),
-              //ObjectAddPage(database: database),
             ],
           ),
         ),
@@ -61,6 +58,3 @@ class AdminForms extends StatelessWidget
     );
   }
 }
-
-
-

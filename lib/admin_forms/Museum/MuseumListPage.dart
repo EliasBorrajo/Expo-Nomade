@@ -1,19 +1,12 @@
-
 import 'dart:async';
 import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:latlong2/latlong.dart';
 import '../../dataModels/Museum.dart';
-import '../../dataModels/MuseumObject.dart';
 import 'MuseumAddPage.dart';
 import 'MuseumDetailPage.dart';
 import 'MuseumEditPage.dart';
-
-// TODO : Changer DATA MODEL de MuseumObject pour ajouter un champ "museumId" et faire le lien avec le musée, au lieu de "museumName"
-// TODO : Dans la methode _deleteMuseum, le equalsTo utilise le "NAME" du musée, pas son ID. Donc modifier avec ID, car si on renomme musée, on perd la réference des objets / musée
-// TODO : Si je change le equalsTo, changer la "RULE" dans firebase
-
 
 /// Displays a list of museums.
 /// When a museum is tapped, the [MuseumDetailPage] is displayed.
@@ -54,21 +47,16 @@ class _MuseumListPageState extends State<MuseumListPage> {
     }
   }
 
-
-  void _loadMuseumsFromFirebaseAndListen() async
-  {
+  void _loadMuseumsFromFirebaseAndListen() async {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
 
     // Configurer un écouteur en temps réel pour les mises à jour dans la Firebase
-    _museumsSubscription = museumsRef.onValue.listen((DatabaseEvent event)
-    {
-      if (event.snapshot.value != null)
-      {
+    _museumsSubscription = museumsRef.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
         List<Museum> updatedMuseums = [];
         Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic,dynamic>;
 
-        museumsData.forEach((key, value)
-        {
+        museumsData.forEach((key, value) {
           // M U S E U M S
           // 1) Récupérer les musées et y ajouter les objets de l'étape 1
           Museum museum = Museum(
@@ -85,10 +73,8 @@ class _MuseumListPageState extends State<MuseumListPage> {
           // 2) Ajouter le musée à la liste des musées
           updatedMuseums.add(museum);
 
-
           // 3) Vérifier le widget tree est toujours monté avant de mettre à jour l'état
-          if (mounted)
-          {
+          if (mounted) {
             setState(() {
               museums = updatedMuseums;
             });
@@ -96,9 +82,7 @@ class _MuseumListPageState extends State<MuseumListPage> {
         });
       }
     });
-
   }
-
 
   void _seedDatabase() async {
     print("Seed database");
@@ -113,19 +97,15 @@ class _MuseumListPageState extends State<MuseumListPage> {
       await seedMuseumObjects(databaseReference);
 
       print('Database seeding completed.');
-    }
-    catch (error) {
+    } catch (error) {
       print('Error seeding database: $error');
     }
   }
 
   Future<void> seedMuseumObjects(DatabaseReference databaseReference) async {
-
-    for(var object in dummyObjects)
-    {
+    for(var object in dummyObjects) {
       // Convert the object to a Map<String, dynamic> object that can be stored in the database
-      Map<String, dynamic> objectData =
-      {
+      Map<String, dynamic> objectData = {
         'name': object.name,
         'museumId': object.museumId,
         'description': object.description,
@@ -141,11 +121,9 @@ class _MuseumListPageState extends State<MuseumListPage> {
   }
 
   Future<void> seedMuseums(DatabaseReference databaseReference) async {
-    for (var museum in dummyMuseums)
-    {
+    for (var museum in dummyMuseums) {
       // Convert the museum object to a Map<String, dynamic> object that can be stored in the database
-      Map<String, dynamic> museumData =
-      {
+      Map<String, dynamic> museumData = {
         'name': museum.name,
         'address': {
           'latitude': museum.address.latitude.toDouble(),
@@ -153,7 +131,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
         },
         'website': museum.website,
       };
-
 
       await databaseReference.child('museums').push().set(museumData);
       print('Museum seeded successfully: ${museum.name}');
@@ -165,29 +142,26 @@ class _MuseumListPageState extends State<MuseumListPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirmation'),
-            content: Text('Êtes-vous sûr de vouloir supprimer ce musée ? Cette action est irreversible'),
+            title: const Text('Confirmation'),
+            content: const Text('Êtes-vous sûr de vouloir supprimer ce musée ? Cette action est irreversible'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
-                child: Text('Annuler'),
+                child: const Text('Annuler'),
               ),
               TextButton(
                 onPressed: () async {
-
                   await _deleteMuseum(museum)
-                            .whenComplete(() => print('Museum deleted successfully'));
-
+                      .whenComplete(() => print('Museum deleted successfully'));
                   //mettre à jour l'interface utilisateur après la suppression du musée
                   setState(() {
                     museums?.remove(museum);
                   });
-
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
-                child: Text('Supprimer'),
+                child: const Text('Supprimer'),
               ),
             ],
           );
@@ -207,17 +181,14 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // Parcourez les résultats et supprimez les objets correspondants
     if (snapshot.exists) {
       final Map<dynamic, dynamic> objectsData = snapshot.value as Map<dynamic, dynamic>;
-      for (final entry in objectsData.entries)
-      {
+      for (final entry in objectsData.entries) {
         final String objectId = entry.key;
         await objectsRef.child(objectId).remove();
       }
     }
-
     // Enfin, supprimez le musée lui-même
     await widget.database.ref().child('museums').child(museum.id).remove();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -226,35 +197,52 @@ class _MuseumListPageState extends State<MuseumListPage> {
     museums.sort((a, b) => a.name.compareTo(b.name));
 
     return MaterialApp(
-      title: 'Liste des musées',
-      home: Scaffold(
-        appBar: AppBar(title: Text('Liste des musées')),
-        body: ListView.builder(
-          itemCount: museums.length,
-          itemBuilder: (context, index) {
-            final museum = museums[index];
-            return Column(
+        title: 'Liste des musées',
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Liste des musées'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                            MuseumAddPage(database: widget.database)),
+                  );
+                },
+                icon: const Icon(Icons.add_rounded),
+              ),
+            ],
+          ),
+          body: ListView.builder(
+            itemCount: museums.length,
+            itemBuilder: (context, index) {
+              final museum = museums[index];
+              return Column(
                 children: [
                   ListTile(
                     title: Text(museum.name),
                     subtitle: Text(museum.website),
-                    onTap: ()
-                    {
+                    onTap: () {
                       // NAV MUSEUM DETAIL PAGE
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MuseumDetailPage(museum: museum, database: widget.database,)),
-                        );},
-
+                          context,
+                          MaterialPageRoute(builder: (context) =>
+                              MuseumDetailPage(museum: museum, database: widget.database))
+                      );
+                    },
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
                           // NAV MUSEUM EDIT PAGE
                           onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => MuseumEditPage(museum: museum, database: widget.database)),
-                            );                          },
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  MuseumEditPage(museum: museum, database: widget.database)),
+                            );
+                          },
                           icon: const Icon(Icons.edit_rounded),
                         ),
                         IconButton(
@@ -267,46 +255,27 @@ class _MuseumListPageState extends State<MuseumListPage> {
                         ),
                       ],
                     ),
-
-
                   ),
                   const Divider(height: 2), // Add a divider between each ListTile
                 ],
-            );
-          },
-        ),
-
-        // Add a FAB to the bottom right
-        // FAB : Floating Action Button
-        floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) =>
-                      MuseumAddPage(database: widget.database)),
-                );
-              },
-              label: Text('Add museum'),
-              icon: Icon(Icons.add_rounded),
-              heroTag: 'add_museum',
-            ),
-            SizedBox(height: 10), // Add some spacing between the FABs
-            FloatingActionButton.extended(
-              onPressed: _seedDatabase,
-              label: Text('Seed Database'),
-              icon: Icon(Icons.cloud_upload_rounded),
-              heroTag: 'seed_database',
-            ),
-            SizedBox(height: 10),
-
-          ],
-        ),
-      ),
+              );
+            },
+          ),
+          // Add a FAB to the bottom right
+          // FAB : Floating Action Button
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton.extended(
+                onPressed: _seedDatabase,
+                label: const Text('Seed Database'),
+                icon: const Icon(Icons.cloud_upload_rounded),
+                heroTag: 'seed_database',
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        )
     );
   }
 }
-
-

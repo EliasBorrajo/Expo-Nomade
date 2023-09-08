@@ -9,6 +9,8 @@ import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
 import '../firebase/firebase_crud.dart';
 import 'map_filters.dart';
+import 'package:expo_nomade/firebase/Storage/FirebaseStorageUtil.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class MapScreen extends StatefulWidget {
 
@@ -16,6 +18,7 @@ class MapScreen extends StatefulWidget {
   const MapScreen({super.key, required this.points, required this.database});
 
   final List<LatLng> points;
+
 
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -28,7 +31,27 @@ class _MapScreenState extends State<MapScreen> {
   bool isFiltersWindowOpen = false;
   Map<String, List<bool>> selectedFilterState = {};
   late List<Museum> museums = [];
+  late List<String> URLS = [];
 
+  Future<void> _loadImages() async {
+    print("Chargement des images");
+
+    // You can load as many images as you want by copying the code below and modifying the filename
+    String? imageUrl1 = await FirebaseStorageUtil().downloadImage(
+      FirebaseStorageFolder.root,
+      "wallhaven-zmo9wg.png",
+    );
+    print("Image 1 chargée");
+
+    if(mounted) {
+      setState(() {
+        URLS.add(imageUrl1 ?? ''); // In case the download fails and returns null
+      });
+    }
+
+    print("Toutes Images chargées");
+    print("URLS : ${URLS.toString()}");
+  }
 
   void _loadMuseumsFromFirebaseAndListen() {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
@@ -111,6 +134,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    _loadImages();
     _loadMuseumObjectsFromFirebaseAndListen();
     _loadMuseumsFromFirebaseAndListen();
     final firebaseUtils = FirebaseUtils(widget.database);
@@ -147,11 +171,11 @@ class _MapScreenState extends State<MapScreen> {
                     MapMarker(
                       position: museumObject.point,
                       markerPopupData: [
-                        MapEntry('Name', museumObject.name),
+                        MapEntry('Nom', museumObject.name),
                         MapEntry('Description', museumObject.description),
-                        MapEntry('Museum Name', museumObject.museumId),
                       ],
-                    ).createMarker(context),
+                      isMuseum: false
+                    ).createMarker(context, URLS),
                 ]
                     : [],
               ),
@@ -165,10 +189,11 @@ class _MapScreenState extends State<MapScreen> {
                     MapMarker(
                       position: museum.address,
                       markerPopupData: [
-                        MapEntry('Name', museum.name),
-                        MapEntry('Website', museum.website),
+                        MapEntry('Nom', museum.name),
+                        MapEntry('Site web', museum.website),
                       ],
-                    ).createMarker(context),
+                      isMuseum : true,
+                    ).createMarker(context, null),
                 ]
                     : [],
               ),
