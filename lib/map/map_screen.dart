@@ -32,20 +32,33 @@ class _MapScreenState extends State<MapScreen> {
   Map<String, List<bool>> selectedFilterState = {};
   late List<Museum> museums = [];
   late List<String> URLS = [];
+  late List<MuseumObject> museumObjects = [];
 
-  Future<void> _loadImages() async {
+
+
+  // TODO : SUPPRIMER - car images chargées depuis la DB et leurs objets
+  Future<void> _loadImages() async
+  {
+
     print("Chargement des images");
-
-    // You can load as many images as you want by copying the code below and modifying the filename
     String? imageUrl1 = await FirebaseStorageUtil().downloadImage(
       FirebaseStorageFolder.root,
       "wallhaven-zmo9wg.png",
     );
     print("Image 1 chargée");
 
-    if(mounted) {
+    String? imageUrl2 = await FirebaseStorageUtil().downloadImage(
+      FirebaseStorageFolder.root,
+      "wallhaven-pkgkkp.png",
+    );
+    print("Image 2 chargée");
+
+
+    if(mounted)
+    {
       setState(() {
-        URLS.add(imageUrl1 ?? ''); // In case the download fails and returns null
+        URLS.add(imageUrl1 ?? ''); // Au cas ou le download echoue et renvoie null
+        URLS.add(imageUrl2 ?? '');
       });
     }
 
@@ -100,7 +113,6 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  late List<MuseumObject> museumObjects = [];
 
   void _loadMuseumObjectsFromFirebaseAndListen() {
     DatabaseReference museumObjectsRef = widget.database.ref().child('museumObjects');
