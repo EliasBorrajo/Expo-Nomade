@@ -29,8 +29,8 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _museumNameController;
-  late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
-  late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
+  late LatLng selectedAddressPoint = widget.object.point;
+  late LatLng displayAddressPoint  = widget.object.point;
   late DatabaseReference _objectsRef;
   late List<Museum> museumsList = [];
   late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
@@ -250,7 +250,7 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       // MAJ LOCAL - Mettre à jour les propriétés du musée avec les nouvelles valeurs en local
       widget.object.name        = _nameController.text;
       widget.object.description = _descriptionController.text;
-      widget.object.point = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
+      // widget.object.point = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
 
       // MAJ FIREBASE
       await _objectsRef.child(widget.object.id).update({
@@ -258,8 +258,8 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
         'museumId': _selectedMuseum.id,
         'description': widget.object.description,
         'point':{
-          'latitude': widget.object.point.latitude.toDouble(),
-          'longitude': widget.object.point.longitude.toDouble(),
+          'latitude':  selectedAddressPoint.latitude .toDouble() == 0.0 ? widget.object.point.latitude.toDouble()  : selectedAddressPoint.latitude.toDouble(),
+          'longitude': selectedAddressPoint.longitude.toDouble() == 0.0 ? widget.object.point.longitude.toDouble() : selectedAddressPoint.longitude.toDouble(),
         }
       }
       ).whenComplete(() => print('Object updated : ${widget.object.name}'));
@@ -267,7 +267,7 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
       setState(() {
         widget.object.name        = _nameController.text;
         widget.object.description = _descriptionController.text;
-        widget.object.point = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
+        // widget.object.point = LatLng(selectedAddressPoint.latitude.toDouble(), selectedAddressPoint.longitude.toDouble());
       });
 
       // Retourner à la page de détails du musée
@@ -293,26 +293,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   String? _validateObjectName(String? name) {
     if (name == null || name.isEmpty) {
       return 'Veuillez entrer un nom';
-    }
-
-    // Vérifier si le nom de de l'objet a changé dans le formulaire par rapport à la valeur initiale
-    if(name != _initialName && _selectedMuseum != _initialSelectedMuseum)
-    {
-      // Vérifier si le nom de l'objet existe déjà dans la liste des objets du musée sélectionné
-      // Vérifier si le musée sélectionné (dans _selectedMuseum) existe afin d'éviter un doublon dans le même musée
-      if (_selectedMuseum != null) {
-
-        _loadAllObjectsFromAMuseum(_selectedMuseum) ;
-        print('Museum Objects from selected museum : ${museumObjectsFromSelectedMuseum.toString()} ');
-
-        // Parcourir la liste des objets du musée sélectionné
-        for (var object in museumObjectsFromSelectedMuseum) {
-          if (object.name.toLowerCase() == name.toLowerCase()) {
-            print('Object name already exists in this museum');
-            return 'Ce nom d\'objet existe déjà dans ce musée';
-          }
-        }
-      }
     }
 
     return null;
