@@ -204,7 +204,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
-                'latitude ${museum.address.latitude} & longitude ${museum.address.longitude}',
+                'latitude ${museum.address.latitude.toStringAsFixed(2)} & longitude ${museum.address.longitude.toStringAsFixed(2)}',
                 style: const TextStyle(fontSize: 22),
               ),
               const SizedBox(height: 16),

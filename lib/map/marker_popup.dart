@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 
+import '../firebase/Storage/ImagesMedia.dart';
+
 class MarkerPopup extends StatelessWidget {
   const MarkerPopup({super.key, required this.data, this.images});
 
@@ -60,7 +62,7 @@ class MarkerPopup extends StatelessWidget {
             if (images != null && images!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: ImageSlider(imageUrls: images!),
+                child: ImageGallery(imageUrls: images!),
               ),
             SizedBox(height: 20.0),
             Expanded(
