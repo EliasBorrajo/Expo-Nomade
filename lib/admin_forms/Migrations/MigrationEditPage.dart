@@ -5,6 +5,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../firebase/Storage/FirebaseStorageUtil.dart';
+import '../../firebase/Storage/ImagesMedia.dart';
+
 class MigrationEditpage extends StatefulWidget {
   final Migration migration;
   final FirebaseDatabase database;
@@ -147,6 +150,10 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
 
   @override
   Widget build(BuildContext context) {
+
+    final firebaseStorageUtil = FirebaseStorageUtil();
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Éditer ${widget.migration.name}'),
@@ -168,6 +175,57 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                 const Text('Arrivée'),
                 TextFormField(controller: _arrivalController, validator: _validateArrival),
                 const SizedBox(height: 16),
+
+
+                ElevatedButton(
+                    onPressed: () async {
+
+                      var urlNewImage = await firebaseStorageUtil
+                          .uploadImageFromGallery(FirebaseStorageFolder.migrations);
+                      if(urlNewImage != null) {
+
+                        // 1) MAJ locale
+                        if(mounted)
+                        {
+                          setState(() {
+                            widget.migration.images?.add(urlNewImage);
+                          });
+                        }
+
+                        // 2) MAJ firebase
+                        await _migrationsRef.child(widget.migration.id).update({
+                          'images': widget.migration.images,
+                        }
+                        ).whenComplete(() => print('Object updated : ${widget.migration.name}'));
+
+
+                      }
+                    },
+                    child: const Text('Ajouter une image')),
+                const SizedBox(height: 16),
+                ImageGallery(
+                    imageUrls: widget.migration.images ?? [],
+                    isEditMode: true,
+                    onDeleteOfImage: (int indexImage) async{
+
+                      // 2) MAJ firebase
+                      try {
+                        await widget.database.ref()
+                            .child('migrations')
+                            .child(widget.migration.id)
+                            .child('images/$indexImage')
+                            .remove()
+                            .whenComplete(() => print("DELETE OBJECT SUCCESS"))
+                            .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));
+                      } catch(e) {
+                        print("DELETE IMAGE ERROR: $e");
+                      }
+
+                    }
+                ),
+                const SizedBox(height: 16),
+
+
                 const Text('Zones'),
                 // Display the list of zones
                 widget.migration.polygons != null
@@ -221,6 +279,9 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                 ),
               ],
             ),
+
+
+
           ),
         ),
       ),

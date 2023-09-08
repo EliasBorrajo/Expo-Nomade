@@ -15,7 +15,9 @@ class FirebaseUtils {
       if (event.snapshot.value != null) {
         Map<dynamic, dynamic> migrationsData =
         event.snapshot.value as Map<dynamic, dynamic>;
-        migrationsData.forEach((key, value) {
+        migrationsData.forEach((key, value)
+        {
+          // POLYGONES
           List<MigrationSource>? polygons = [];
           if (value['polygons'] != null) {
             List<dynamic> polygonsData = value['polygons'] as List<dynamic>;
@@ -40,11 +42,29 @@ class FirebaseUtils {
               }
             }
           }
+
+          // IMAGES
+          List<String> images = [];
+          if (value['images'] != null) {
+            List<dynamic> imagesData = value['images'] as List<dynamic>;
+            for (var image in imagesData) {
+              if( image != null &&
+                  image is String){
+                images.add(image);
+
+                print('IMAGE IN OBJECT ADDING : $image');
+
+              }
+            }
+          }
+
+          // MIGRATIONS
           Migration migration = Migration(
             id: key,
             name: value['name']! as String,
             description: value['description']! as String,
             arrival: value['arrival']! as String,
+            images: images,
             polygons: polygons,
           );
           updatedMigrations.add(migration);

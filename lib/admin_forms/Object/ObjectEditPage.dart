@@ -10,7 +10,6 @@ import '../../dataModels/Museum.dart';
 import '../../firebase/Storage/FirebaseStorageUtil.dart';
 import '../map_point_picker.dart';
 
-// TODO : Editer tags
 
 class ObjectEditPage extends StatefulWidget{
   final MuseumObject object;
@@ -426,7 +425,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
                             .child('museumObjects')
                             .child(widget.object.id)
                             .child('images/$indexImage')
-                            // .child(widget.object.images![indexImage])
                             .remove()
                             .whenComplete(() => print("DELETE OBJECT SUCCESS"))
                             .catchError((e) => print("DELETE OBJECT ERROR while deleting : $e"));

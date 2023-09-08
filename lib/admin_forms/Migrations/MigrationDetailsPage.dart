@@ -1,5 +1,6 @@
 import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneDetailsPage.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
+import 'package:expo_nomade/firebase/Storage/ImagesMedia.dart';
 import 'package:flutter/material.dart';
 
 class MigrationDetailsPage extends StatelessWidget {
@@ -77,6 +78,12 @@ class MigrationDetailsPage extends StatelessWidget {
                     },
                   ),
                 const SizedBox(height: 16),
+
+
+                ImageGallery(
+                    imageUrls: migration.images ?? [],
+                    isEditMode: false),
+
                 // Text(
                 //   'Tags:',
                 //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
