@@ -39,8 +39,9 @@ class _EditFilterPageState extends State<EditFilterPage> {
   void _updateFilterInDatabase() async {
     try {
       DatabaseReference optionsRef = widget.database.ref().child('filters').child(widget.filter.id);
+      DatabaseReference objectsRef = widget.database.ref().child('museumObjects');
 
-      // Supprimer les options vides (facultatif)
+      // Supprimer les options vides
       optionControllers.removeWhere((option) => option.controller.text.trim().isEmpty);
 
       List<String> updatedOptions = optionControllers.map((controller) => controller.controller.text.trim()).toList();
@@ -51,6 +52,30 @@ class _EditFilterPageState extends State<EditFilterPage> {
       };
 
       await optionsRef.update(updatedFilter);
+
+      DatabaseEvent event = await objectsRef.once();
+      DataSnapshot objectsSnapshot =  event.snapshot;
+
+      // Parcourir tous les objets de musée
+      Map<dynamic, dynamic> objectsData = objectsSnapshot.value as Map<dynamic, dynamic>;
+      objectsData.forEach((key, value) {
+        Map<dynamic, dynamic> museumObject = value as Map<dynamic, dynamic>;
+
+        // Parcourir les filtres de l'objet de musée
+        List<dynamic> filters = museumObject['filters'] as List<dynamic>;
+        for (int i = 0; i < filters.length; i++) {
+          Map<dynamic, dynamic> filter = filters[i] as Map<dynamic, dynamic>;
+          String typeName = filter['typeName'] as String;
+
+          // Si le filtre utilise le type que vous avez modifié, mettez à jour les options du filtre dans cet objet de musée
+          if (typeName == widget.filter.typeName) {
+            filter['options'] = updatedOptions;
+          }
+        }
+
+        // Mettre à jour l'objet de musée dans la base de données
+        objectsRef.child(key).update({'filters': filters});
+      });
 
       if (!context.mounted) return;
       Navigator.pop(context);
@@ -92,7 +117,7 @@ class _EditFilterPageState extends State<EditFilterPage> {
         appBar: AppBar(title: const Text('Éditer le filtre')
         ),
         body: Form(
-            child: SingleChildScrollView( // Wrap the entire content in a SingleChildScrollView
+            child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -113,11 +138,11 @@ class _EditFilterPageState extends State<EditFilterPage> {
                         Flexible(
                           child: TextField(
                             controller: newOptionController,
-                            decoration: InputDecoration(labelText: 'Nouvelle Option'),
+                            decoration: const InputDecoration(labelText: 'Nouvelle Option'),
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Icons.add),
+                          icon: const Icon(Icons.add_rounded),
                           onPressed: () {
                             _addNewOption();
                           },
@@ -129,27 +154,30 @@ class _EditFilterPageState extends State<EditFilterPage> {
                       'Options existantes:',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: optionControllers.length,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            Flexible(
-                              child: TextField(
-                                controller: optionControllers[index].controller,
-                                decoration: InputDecoration(labelText: 'Option ${index + 1}'),
+                    SizedBox(
+                      height: 400,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: optionControllers.length,
+                        itemBuilder: (context, index) {
+                          return Row(
+                            children: [
+                              Flexible(
+                                child: TextField(
+                                  controller: optionControllers[index].controller,
+                                  decoration: InputDecoration(labelText: 'Option ${index + 1}'),
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete, color: Colors.grey), // Icône en gris
-                              onPressed: () {
-                                _removeOption(index);
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                              IconButton(
+                                icon: const Icon(Icons.delete_rounded, color: Colors.grey), // Icône en gris
+                                onPressed: () {
+                                  _removeOption(index);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
