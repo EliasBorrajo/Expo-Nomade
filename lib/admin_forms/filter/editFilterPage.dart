@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import '../../dataModels/MuseumObject.dart';
 import '../../dataModels/filters_tags.dart';
 
 class EditFilterPage extends StatefulWidget {
@@ -43,9 +44,10 @@ class _EditFilterPageState extends State<EditFilterPage> {
       // Supprimer les options vides
       optionControllers.removeWhere((option) => option.controller.text.trim().isEmpty);
 
-      final updatedOptions = Map.fromEntries(optionControllers.map((option) => MapEntry(option.key, option.controller.text.trim())));
+      final updatedOptions = Map.fromEntries(optionControllers.map((option) =>
+          MapEntry(option.key, option.controller.text.trim())));
 
-      final updatedFilter = {
+      final Map<String, dynamic> updatedFilter = {
         'typeName': typeNameTextController.text.trim(),
         'options': updatedOptions,
       };
@@ -56,7 +58,7 @@ class _EditFilterPageState extends State<EditFilterPage> {
       DataSnapshot objectsSnapshot = event.snapshot;
 
       if (objectsSnapshot.value != null) {
-        final museumObjects = objectsSnapshot.value as Map;
+        Map<dynamic, dynamic> museumObjects = event.snapshot.value as Map<dynamic,dynamic>;
 
         museumObjects.forEach((key, value) {
           final museumObject = Map<String, dynamic>.from(value);
@@ -78,11 +80,11 @@ class _EditFilterPageState extends State<EditFilterPage> {
                   }
                 }
                 filter['options'] = museumObjectOptions;
+                // update dans la DB
+                museumObject['filters'] = filters;
+                objectsRef.child(key).update(museumObject);
               }
             });
-
-            museumObject['filters'] = filters;
-            objectsRef.child(key).update(museumObject);
           }
         });
       }
