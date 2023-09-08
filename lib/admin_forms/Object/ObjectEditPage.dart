@@ -297,7 +297,7 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
     }
 
     // Vérifier si le nom de de l'objet a changé dans le formulaire par rapport à la valeur initiale
-    if(name != _initialName || _selectedMuseum != _initialSelectedMuseum)
+    if(name != _initialName && _selectedMuseum != _initialSelectedMuseum)
     {
       // Vérifier si le nom de l'objet existe déjà dans la liste des objets du musée sélectionné
       // Vérifier si le musée sélectionné (dans _selectedMuseum) existe afin d'éviter un doublon dans le même musée
