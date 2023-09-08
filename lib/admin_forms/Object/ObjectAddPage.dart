@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:expo_nomade/ElementFilterPage.dart';
 import 'package:expo_nomade/dataModels/MuseumObject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:latlong2/latlong.dart';
 
 import '../../dataModels/Museum.dart';
 import '../../dataModels/filters_tags.dart';
-import '../../map/map_filters.dart';
 import '../map_point_picker.dart';
 
 // TODO : Ajouter images
@@ -31,11 +31,14 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
   late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
   late DatabaseReference _objectsRef;
+  late DatabaseReference _filtersRef;
   late List<Museum> museumsList = [];
   //late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
   late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
   late StreamSubscription<DatabaseEvent> _museumsSubscription;
   Map<String, List<bool>> selectedFilterState = {};
+
+  late List<FilterTag> filters = [];
 
 
   // form Key allows to validate the form and save the data in the form fields
@@ -51,6 +54,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
+    _filtersRef = widget.database.ref().child('filters');
   }
 
   @override
@@ -68,20 +72,11 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     });
   }
 
-  Map<dynamic, dynamic> getSelectedFilters() {
-    final Map<dynamic, dynamic> selectedFilters = {};
-    // TODO
-
-    return selectedFilters;
-  }
-
   Future<void> _saveChanges() async {
     // Validation
     if (_formKey.currentState!.validate()) {
 
-      // Créez un objet Museum à partir des données du formulaire
-      Map<String, dynamic> objectData =
-      {
+      Map<String, dynamic> objectToUpload = {
         'name': _nameController.text,
         'museumId': widget.sourceMuseum?.id.toString(),
         'description': _descriptionController.text,
@@ -89,11 +84,24 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
           'latitude': selectedAddressPoint.latitude.toDouble(),
           'longitude': selectedAddressPoint.longitude.toDouble(),
         },
-        'filters': getSelectedFilters(),
       };
 
+      if (filters != null) {
+        objectToUpload['tags'] = {};
+
+        for (var filter in filters) {
+          if (filter.options != null) {
+            objectToUpload['tags'][filter.typeName] = {};
+
+            for (var option in filter.options) {
+              objectToUpload['tags'][filter.typeName][option] = true;
+            }
+          }
+        }
+      }
+
       // Générez une nouvelle clé unique pour le musée
-      await _objectsRef.push().set(objectData);
+      await _objectsRef.push().set(objectToUpload);
 
       // Retourner à la page de détails du musée
       Navigator.pop(context);
@@ -240,6 +248,20 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                           },
                         ),
                         Text('Point sélectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          child: const Text('Choisir des filtres'),
+                          onPressed: () async {
+                            filters = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ElementFilterPage(database: widget.database, selectedFilterState: selectedFilterState)),
+                            );
+                            print('from object add: $filters');
+                            updatePoint();
+                          },
+                        ),
+
+
                         const SizedBox(height: 32),
                         ElevatedButton(
                           onPressed: _saveChanges,
@@ -249,7 +271,8 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                     ),
                   ),
                   const SizedBox(width: 16), // Espace entre les deux colonnes
-                  FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
+                  //FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
+
                 ],
               ),
             ),

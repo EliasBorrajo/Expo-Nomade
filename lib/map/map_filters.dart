@@ -1,4 +1,3 @@
-import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/dataModels/filters_tags.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -127,15 +126,3 @@ class _FiltersWindowState extends State<FiltersWindow> {
     );
   }
 }
-
-/*  void _seedDatabase() async {
-    DatabaseReference databaseReference = widget.database.ref();
-
-    // Loop through the dummyFilters and add them to the database
-    for (var filter in dummyFilters) {
-      await databaseReference.child('filters').push().set({
-        'typeName': filter.typeName,
-        'options': filter.options.map((option) => option).toList(),
-      });
-    }
-  }*/
