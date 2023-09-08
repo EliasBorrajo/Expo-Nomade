@@ -1,11 +1,6 @@
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import '../../dataModels/MuseumObject.dart';
-import '../firebase_auth.dart';
 import 'FirebaseStorageUtil.dart';
 
 // Taille par défaut des images en petit de 800x600
@@ -23,7 +18,7 @@ class ImageGallery extends StatefulWidget {
   final Function(int indexImage)? onDeleteOfImage;
 
 
-  ImageGallery({
+  const ImageGallery({
     Key? key,
     required this.imageUrls,
     this.isEditMode = false,
@@ -70,7 +65,7 @@ class _ImageGalleryState extends State<ImageGallery> {
         if (widget.imageUrls.isEmpty)
         {
           galleryHeight = 16.0;
-          galleryContent = Text('Aucune image à afficher');
+          galleryContent = const Text('Aucune image à afficher');
         }
         else
         {
@@ -133,83 +128,6 @@ class _ImageGalleryState extends State<ImageGallery> {
     );
   }
 }
-
-// class ImageGallery extends StatelessWidget {
-//   final List<String> imageUrls;
-//   final bool isEditMode;
-//
-//   ImageGallery({
-//     super.key,
-//     required this.imageUrls,
-//     this.isEditMode = false,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return LayoutBuilder(
-//       builder: (context, constraints) {
-//         double galleryHeight = defaultImageHeight;
-//         Widget galleryContent;
-//
-//         if (imageUrls.isEmpty)
-//         {
-//           galleryHeight = 16.0;
-//           galleryContent = Text('Aucune image à afficher');
-//         }
-//         else
-//         {
-//           galleryContent = FutureBuilder<List<String>>(
-//             future: Future.value(imageUrls),
-//             builder: (context, snapshot) {
-//               if (snapshot.connectionState == ConnectionState.waiting)
-//               {
-//                 return const Center(
-//                   child: SpinKitCircle(
-//                     color: Colors.blue,
-//                     size: 50.0,
-//                   ),
-//                 );
-//               }
-//               else if (snapshot.hasError) {
-//                 return Text('Erreur de chargement des images');
-//               }
-//               else {
-//                 int itemCount = snapshot.data!.length;
-//                 return PageView.builder(
-//                   itemCount: itemCount,
-//                   itemBuilder: (context, index) {
-//                     return GestureDetector(
-//                       onTap: () {
-//                         showDialog(
-//                           context: context,
-//                           builder: (context) {
-//                             return ImageDialog(imageUrl: snapshot.data![index]);
-//                           },
-//                         );
-//                       },
-//                       child: CustomImageStateful(
-//                         imageUrl: snapshot.data![index],
-//                         imageList: snapshot.data!,
-//                         itemCount: itemCount,
-//                         isEditMode: isEditMode,
-//                       ),
-//                     );
-//                   },
-//                 );
-//               }
-//             },
-//           );
-//         }
-//
-//         return Container(
-//           height: galleryHeight,
-//           child: galleryContent,
-//         );
-//       },
-//     );
-//   }
-// }
-
 
 
 /// Displays an image.
@@ -322,14 +240,14 @@ class _CustomImageState extends State<CustomImageStateful> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text('Confirmez la suppression'),
-                      content: Text('Êtes-vous sûr de vouloir supprimer cette image ?'),
+                      title: const Text('Confirmez la suppression'),
+                      content: const Text('Êtes-vous sûr de vouloir supprimer cette image ?'),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop(); // Fermer le dialogue
                           },
-                          child: Text('Annuler'),
+                          child: const Text('Annuler'),
                         ),
                         TextButton(
                           onPressed: () async {
@@ -343,13 +261,8 @@ class _CustomImageState extends State<CustomImageStateful> {
                               // 2.1) En local dans le widget
                               widget.imageList?.remove(widget.imageUrl);
 
-                              // 2.2) Dans le realtime database de Firebase
-                              // SE FERA DANS LE CALLBACK ?
-
-                              // 2.2) Dans le realtime database de Firebase
-                              // Vous pouvez gérer cela dans le callback onDeleteOfImage
-                              // 3) Mettre à jour le nombre d'éléments dans la galerie d'images dans le parent widget
-
+                              // 2.2) & (3) Dans le realtime database de Firebase
+                              // Mettre à jour le nombre d'éléments dans la galerie d'images dans le parent widget
                                 widget.onDelete(widget.indexImage); // Passer l'index de l'image au callback
                                 // Call the callback to notify the parent widget that the image should be deleted
 
@@ -366,7 +279,7 @@ class _CustomImageState extends State<CustomImageStateful> {
                   },
                 );
               },
-              child: Icon(
+              child: const Icon(
                 Icons.delete,
                 color: Colors.red,
                 size: 24.0,
@@ -385,7 +298,7 @@ class _CustomImageState extends State<CustomImageStateful> {
 class ImageDialog extends StatelessWidget {
   final String imageUrl;
 
-  ImageDialog({required this.imageUrl});
+  const ImageDialog({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -405,133 +318,3 @@ class ImageDialog extends StatelessWidget {
 }
 
 
-
-//
-// // EXAMPLE ON HOW TO IMPLEMENT THE WIDGET "CustomImage" WITH "FirebaseStorageUtil"
-// class example extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     final firebaseStorageUtil = FirebaseStorageUtil(); // Créez une instance de la classe FirebaseStorageUtil
-//
-//
-//     return FutureBuilder<String>(
-//       future: firebaseStorageUtil.downloadImage('votre_image.jpg'),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           // Affichez un indicateur de chargement pendant le téléchargement
-//           return CircularProgressIndicator();
-//         } else if (snapshot.hasError) {
-//           // Gérez les erreurs ici
-//           return Text('Erreur de chargement de l\'image');
-//         } else {
-//           // Une fois l'URL de l'image disponible, utilisez CustomImage pour l'afficher
-//           return CustomImage(imageUrl: snapshot.data ?? '');
-//         }
-//       },
-//     );
-//
-//   }
-// }
-
-// // OTHER EXAMPLE HOW TO IMPLEMENT GALERY
-// class MyScreen extends StatelessWidget {
-//   final List<String> imageUrls = [
-//     'url_image_1.jpg',
-//     'url_image_2.jpg',
-//     'url_image_3.jpg',
-//     // Ajoutez d'autres URL d'images ici
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Galerie d\'images')),
-//       body: ImageGallery(imageUrls: imageUrls),
-//     );
-//   }
-// }
-
-//
-// // MERGIN ABOVE EXAMPLES TOGETHER
-// class MyScreen2 extends StatelessWidget {
-//   final List<String> imageUrls = [
-//     'url_image_1.jpg',
-//     'url_image_2.jpg',
-//     'url_image_3.jpg',
-//     // Ajoutez d'autres URL d'images ici
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//
-//     final firebaseStorageUtil = FirebaseStorageUtil(); // Créez une instance de la classe FirebaseStorageUtil
-//
-//
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Galerie d\'images')),
-//       body: FutureBuilder<List<String>>(
-//         // Utilisez Future.wait pour télécharger toutes les images en parallèle
-//         future: Future.wait(imageUrls.map((url) => firebaseStorageUtil.downloadImage(url))),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             // Affichez un indicateur de chargement pendant le téléchargement
-//             return CircularProgressIndicator();
-//           } else if (snapshot.hasError) {
-//             // Gérez les erreurs ici
-//             return Text('Erreur de chargement des images');
-//           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-//             // Aucune image disponible
-//             return Text('Aucune image à afficher');
-//           } else {
-//             // Affichez les images une fois qu'elles sont téléchargées
-//             return ListView.builder( // TODO :Remplacer par ImageGalry ICI, OU PageView.builder
-//               itemCount: snapshot.data!.length,
-//               itemBuilder: (context, index) {
-//                 return CustomImage(imageUrl: snapshot.data![index]);
-//               },
-//             );
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
-
-// // Final Look on the example
-// class MyScreen3 extends StatelessWidget {
-//   // A T T R I B U T E S
-//   final MuseumObject museumObject = MuseumObject(
-//     id: '1',
-//     museumId: 'museum1',
-//     name: 'Objet 1',
-//     description: 'Description de l\'objet 1',
-//     point: LatLng(0.0, 0.0),
-//     images: ['url_image_1.jpg', 'url_image_2.jpg', 'url_image_3.jpg'],
-//   );
-//
-//   MyScreen3({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Galerie d\'images')),
-//       body: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text('Nom: ${museumObject.name}'),
-//           Text('Description: ${museumObject.description}'),
-//           // Afficher les images à partir de la liste d'URL
-//           if (museumObject.images != null)
-//             Column(
-//               children: museumObject.images!.map((imageUrl) {
-//                 // return CustomImage(imageUrl: imageUrl);
-//                 return ImageGallery(imageUrls: imageUrl);
-//               }).toList(),
-//             )
-//           else
-//             Text('Aucune image'),
-//         ],
-//       ),
-//     );
-//   }
-// }
