@@ -28,8 +28,3 @@ samples, guidance on mobile development, and a full API reference.
 7) Lancer le projet depuis Android Studio sur l'émulateur Android 
 
 
-
-colo xolo test
-
-
-fdasfas
