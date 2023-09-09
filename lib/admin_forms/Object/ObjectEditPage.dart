@@ -24,8 +24,6 @@ class ObjectEditPage extends StatefulWidget{
 
 class _ObjectEditPageState extends State<ObjectEditPage> {
   // A T T R I B U T E S
-  late String _initialName;
-  late Museum _initialSelectedMuseum;
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _museumNameController;
@@ -42,20 +40,16 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // M E T H O D S
+  @override
   void initState() {
     super.initState();
     _nameController        = TextEditingController(text: widget.object.name);
     _descriptionController = TextEditingController(text: widget.object.description);
     _museumNameController  = TextEditingController(text: widget.sourceMuseum?.name ?? ""); // Si le musée source est null, mettre une chaine vide
 
-    // Stocker valeurs initiales avant changement, pour pouvoir les comparer avec les nouvelles valeurs lors de la validation
-    _initialName = widget.object.name;
-    _initialSelectedMuseum = widget.sourceMuseum;
-
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
 
-    print('MUSEUM SOURCE IS : ${widget.sourceMuseum?.name}');
     _loadMuseumsFromFirebaseAndListen()
         .then((_) => { _loadAllObjectsFromAMuseum(_selectedMuseum) }) // Permet de précharger la liste,
         .whenComplete(() => print('Museums loaded'));
@@ -95,15 +89,12 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
     final Query query = objectsRef.orderByChild('museumId').equalTo(museum.id);
     final DataSnapshot snapshot = await query.get();
 
-    print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
-
     // Parcourez les résultats et supprimez les objets correspondants
     if (snapshot.exists) {
       final Map<dynamic, dynamic> objectsData = snapshot.value as Map<dynamic, dynamic>;
 
       objectsData.forEach((key, value)
       {
-        print('CHARGER IMAGES DE FIREBASE : ${value['images']}');
         List<String> images = [];
         if (value['images'] != null) {
           List<dynamic> imagesData = value['images'] as List<dynamic>;
@@ -111,9 +102,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
             if( image != null &&
                 image is String){
               images.add(image);
-
-              print('IMAGE IN OBJECT ADDING : $image');
-
             }
           }
         }
@@ -195,7 +183,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
         // 2) Si le musée source est non-null, mettre le musée source dans la dropdown list comme musée sélectionné
         if(widget.sourceMuseum != null)
         {
-          print('Museum source is not null');
           // Verifier si un des musées de la liste est le musée source
           // Si oui, mettre ce musée de la liste comme musée sélectionné
           // Sinon, mettre le premier musée de la liste comme musée sélectionné
@@ -213,7 +200,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
           }
 
           if (!museumFound) {
-            print('Museum source not found in list');
             _selectedMuseum = museumsList[0]; // first museum from list by default
           }
 
@@ -222,7 +208,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
         }
         else
         {
-          print('Museum source is null');
           _selectedMuseum = museumsList[0]; // first museum from list by default
         }
 
@@ -325,7 +310,7 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
 
 
                 DropdownButtonFormField<Museum>(
-                  value: _selectedMuseum ?? null,
+                  value: _selectedMuseum,
                   onChanged: (Museum? newValue)
                   {
                     setState(() {
@@ -355,7 +340,6 @@ class _ObjectEditPageState extends State<ObjectEditPage> {
                         MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
                       );
                       updatePoint();
-                      print(selectedAddressPoint);
                     },
                     child: const Text('Modifier l\'adresse')
                 ),

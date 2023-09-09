@@ -60,7 +60,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirmation'),
+            title: const Text('Confirmation'),
             content: const Text(
                 'Êtes-vous sûr de vouloir supprimer cet objet ? Cette action est irreversible'),
             actions: [
@@ -68,7 +68,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                 onPressed: () {
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
-                child: Text('Annuler'),
+                child: const Text('Annuler'),
               ),
               TextButton(
                 onPressed: () async {
@@ -82,7 +82,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
-                child: Text('Supprimer'),
+                child: const Text('Supprimer'),
               ),
             ],
           );
@@ -133,7 +133,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
         // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
         if (mounted) {
-          print("UPDATE MUSEUM ${updatedMuseum.toString()}");
           setState(() {
             museum = updatedMuseum;
           });
@@ -153,8 +152,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
         Map<dynamic, dynamic> objectsData = event.snapshot.value as Map<dynamic,dynamic>;
 
         objectsData.forEach((key, value) {
-
-          print('CHARGER IMAGES DE FIREBASE : ${value['images']}');
           List<String> images = [];
           if (value['images'] != null) {
             List<dynamic> imagesData = value['images'] as List<dynamic>;
@@ -162,9 +159,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
               if( image != null &&
                   image is String){
                 images.add(image);
-
-                print('IMAGE IN OBJECT ADDING : $image');
-
               }
             }
           }
@@ -186,7 +180,6 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
 
         // Vérifier le widget tree est toujours monté avant de mettre à jour l'état
         if (mounted) {
-          print("UPDATE OBJECTS ${updatedObjects.toString()}");
           setState(() {
             objects = updatedObjects;
           });
@@ -230,7 +223,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
-                '${museum.website}',
+                museum.website,
                 style: const TextStyle(fontSize: 22),
               ),
               const SizedBox(height: 16),
@@ -293,7 +286,7 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
           ),
         ],
       )
-          : Center(
+          : const Center(
         child: CircularProgressIndicator(), // Show a loading indicator while data is loading
       ),
       floatingActionButton: Column(
@@ -307,8 +300,8 @@ class _MuseumDetailPageState extends State<MuseumDetailPage> {
                       builder: (context) =>
                           ObjectAddPage(database: widget.database, sourceMuseum: museum)));
             },
-            label: Text('Ajouter objet'),
-            icon: Icon(Icons.add_rounded),
+            label: const Text('Ajouter objet'),
+            icon: const Icon(Icons.add_rounded),
             heroTag: 'add_obect',
           ),
         ],

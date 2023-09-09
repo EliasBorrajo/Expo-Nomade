@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/admin_forms/quiz/question_add_page.dart';
 import 'package:expo_nomade/admin_forms/quiz/question_edit_page.dart';
 import 'package:flutter/material.dart';
@@ -189,18 +187,5 @@ class _QuizListPageState extends State<QuizListPage> {
         ],
       ),
     );
-  }
-
-  void _seedDatabase() async {
-    DatabaseReference databaseReference = widget.database.ref();
-
-    // Loop through the dummyQuiz and add them to the database
-    for (var question in dummyQuiz) {
-      await databaseReference.child('quiz').push().set({
-        'questionText': question.questionText,
-        'answers': question.answers.map((answer) => answer).toList(),
-        'correctAnswer': question.correctAnswer,
-      });
-    }
   }
 }

@@ -1,8 +1,6 @@
-import 'package:expo_nomade/map/image_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
-
 import '../firebase/Storage/ImagesMedia.dart';
 
 class MarkerPopup extends StatelessWidget {
@@ -29,7 +27,7 @@ class MarkerPopup extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0), // Slightly larger radius for a modern look
       ),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0), // More symmetrical padding
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0), // More symmetrical padding
         width: MediaQuery.of(context).size.width * 0.4,
         height: MediaQuery.of(context).size.height * 0.9,
         child: Column(
@@ -58,13 +56,13 @@ class MarkerPopup extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             if (images != null && images!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: ImageGallery(imageUrls: images as List<String>),
               ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Expanded(
               child: ListView.builder(
                 itemCount: data.length - 1,
@@ -77,7 +75,7 @@ class MarkerPopup extends StatelessWidget {
                     ),
                     margin: const EdgeInsets.symmetric(vertical: 6.0),
                     child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
                       title: Text(
                         data[index + 1].key,
                         style: GoogleFonts.cabin(

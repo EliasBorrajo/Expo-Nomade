@@ -9,8 +9,6 @@ import '../../dataModels/filters_tags.dart';
 import '../../map/map_filters.dart';
 import '../map_point_picker.dart';
 
-// TODO : Ajouter images
-
 class ObjectAddPage extends StatefulWidget{
 
   final FirebaseDatabase database;
@@ -30,11 +28,8 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
   late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
   late DatabaseReference _objectsRef;
-  late DatabaseReference _filtersRef;
   late List<Museum> museumsList = [];
-  //late Museum _selectedMuseum = Museum(id: '0', name: 'No museum selected',website: 'No website', address: const LatLng(0.0, 0.0));
   late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
-  late StreamSubscription<DatabaseEvent> _museumsSubscription;
   Map<String, List<bool>> selectedFilterState = {};
 
   late List<FilterTag> filters = [];
@@ -56,7 +51,6 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
 
     // F I R E B A S E
     _objectsRef = widget.database.ref().child('museumObjects');
-    _filtersRef = widget.database.ref().child('filters');
     fetchFilters();
   }
 
@@ -119,8 +113,6 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     final Query query = objectsRef.orderByChild('museumId').equalTo(museum.id);
     final DataSnapshot snapshot = await query.get();
 
-    print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
-
     // Parcourez les résultats et supprimez les objets correspondants
     if (snapshot.exists) {
       final Map<dynamic, dynamic> objectsData = snapshot.value as Map<dynamic, dynamic>;
@@ -164,25 +156,16 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
     return null;
   }
 
-  String? _validateName(String? description) {
-    if (description == null || description.isEmpty) {
-      return 'Veuillez entrer un nom';
-    }
-    return null;
-  }
-
   String? _validateObjectName(String? name) {
     if (name == null || name.isEmpty) {
       return 'Veuillez entrer un nom';
     }
 
     _loadAllObjectsFromAMuseum(widget.sourceMuseum!) ;
-    print('Museum Objects from selected museum : ${museumObjectsFromSelectedMuseum.toString()} ');
 
     // Parcourir la liste des objets du musée sélectionné
     for (var object in museumObjectsFromSelectedMuseum) {
       if (object.name.toLowerCase() == name.toLowerCase()) {
-        print('Object name already exists in this museum');
         return 'Ce nom d\'objet existe déjà dans ce musée';
       }
     }

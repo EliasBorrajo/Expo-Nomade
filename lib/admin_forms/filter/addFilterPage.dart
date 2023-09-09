@@ -146,27 +146,6 @@ class _AddFilterPageState extends State<AddFilterPage> {
                         },
                       ),
                     ),
-
-                    /*TextField(controller: optionController),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        _addOptionToList();
-                      },
-                      child: const Text('Ajouter une option'),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Options ajoutées:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: optionsList.map((option) {
-                        return Text(option);
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 16),*/
                     ElevatedButton(
                       onPressed: () {
                         _addFilterToDatabase();

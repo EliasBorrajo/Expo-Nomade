@@ -83,28 +83,6 @@ class MigrationDetailsPage extends StatelessWidget {
                 ImageGallery(
                     imageUrls: migration.images ?? [],
                     isEditMode: false),
-
-                // Text(
-                //   'Tags:',
-                //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                // ),
-                // DropdownButtonFormField(
-                //   value: migration.tags?.isNotEmpty ?? false ? migration.tags![0] : null,
-                //   items: migration.tags?.map<DropdownMenuItem<FilterTag>>(
-                //         (tag) => DropdownMenuItem(
-                //       value: tag,
-                //       child: Text(tag.name, style: TextStyle(fontSize: 16)),
-                //     ),
-                //   ).toList() ??
-                //       [],
-                //   onChanged: (FilterTag? value) {
-                //     // Handle tag selection
-                //   },
-                //   decoration: InputDecoration(
-                //     border: OutlineInputBorder(),
-                //     contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                //   ),
-                // ),
               ],
             ),
           ],

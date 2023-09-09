@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:expo_nomade/dataModels/Migration.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../../map_point_picker.dart';

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:latlong2/latlong.dart';
@@ -84,59 +83,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
     });
   }
 
-  void _seedDatabase() async {
-    print("Seed database");
-
-    // Get a reference to your Firebase database
-    DatabaseReference databaseReference = widget.database.ref();
-
-    try {
-      await seedMuseums(databaseReference);
-
-      // SEED OBJECTS
-      await seedMuseumObjects(databaseReference);
-
-      print('Database seeding completed.');
-    } catch (error) {
-      print('Error seeding database: $error');
-    }
-  }
-
-  Future<void> seedMuseumObjects(DatabaseReference databaseReference) async {
-    for(var object in dummyObjects) {
-      // Convert the object to a Map<String, dynamic> object that can be stored in the database
-      Map<String, dynamic> objectData = {
-        'name': object.name,
-        'museumId': object.museumId,
-        'description': object.description,
-        'point': {
-          'latitude': object.point.latitude.toDouble(),
-          'longitude': object.point.longitude.toDouble(),
-        },
-      };
-
-      await databaseReference.child('museumObjects').push().set(objectData);
-      print('Object seeded successfully: ${object.name}');
-    }
-  }
-
-  Future<void> seedMuseums(DatabaseReference databaseReference) async {
-    for (var museum in dummyMuseums) {
-      // Convert the museum object to a Map<String, dynamic> object that can be stored in the database
-      Map<String, dynamic> museumData = {
-        'name': museum.name,
-        'address': {
-          'latitude': museum.address.latitude.toDouble(),
-          'longitude': museum.address.longitude.toDouble(),
-        },
-        'website': museum.website,
-      };
-
-      await databaseReference.child('museums').push().set(museumData);
-      print('Museum seeded successfully: ${museum.name}');
-    }
-  }
-
   void _showDeleteConfirmationDialog(BuildContext context, Museum museum) {
     showDialog(
         context: context,
@@ -175,8 +121,6 @@ class _MuseumListPageState extends State<MuseumListPage> {
     // Utilisez une requête pour obtenir les objets du musée ayant le même nom que museum.name
     final Query query = objectsRef.orderByChild('museumId').equalTo(museum.id);
     final DataSnapshot snapshot = await query.get();
-
-    print('SNAPOSHOT : $snapshot AND ${snapshot.value}');
 
     // Parcourez les résultats et supprimez les objets correspondants
     if (snapshot.exists) {

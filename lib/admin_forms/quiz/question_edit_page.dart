@@ -86,7 +86,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('Éditer la Question')),
+        appBar: AppBar(title: const Text('Éditer la Question')),
         body: Form(
             child: SingleChildScrollView(
               child: Padding(

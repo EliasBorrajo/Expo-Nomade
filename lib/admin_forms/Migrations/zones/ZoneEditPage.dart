@@ -1,10 +1,8 @@
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ZoneEditPage extends StatefulWidget{
-  //final MigrationSource migrationSource;
   final FirebaseDatabase database;
   final Migration migration;
   final int index;
@@ -17,7 +15,6 @@ class ZoneEditPage extends StatefulWidget{
 
 class _ZoneEditPageState extends State<ZoneEditPage>{
   late TextEditingController _nameController;
-  late TextEditingController _colorController;
   late DatabaseReference _migrationsRef;
 
   // form Key allows to validate the form and save the data in the form fields
@@ -27,24 +24,20 @@ class _ZoneEditPageState extends State<ZoneEditPage>{
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.migration.polygons?[widget.index].name);
-    //_colorController = TextEditingController(text: widget.migrationSource.color);
     _migrationsRef = widget.database.ref().child('migrations');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    //_colorController.dispose();
     super.dispose();
   }
 
   Future<void> _saveChanges() async {
-    //print(widget.migration.polygons?[widget.index].index);
 
     // Local update
     if (_formKey.currentState!.validate()) {
       widget.migration.polygons?[widget.index].name = _nameController.text;
-      //widget.migrationSource.color = _colorController.text;
     }
     // Firebase update
     await _migrationsRef.child(widget.migration.id).child('polygons').child(widget.index.toString()).update({
