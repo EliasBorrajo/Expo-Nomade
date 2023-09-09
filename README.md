@@ -2,6 +2,9 @@
 
 Module 642-2
 
+## Documentation
+All the documentation of the project is available in the [Documentation](Documentation) folder.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
