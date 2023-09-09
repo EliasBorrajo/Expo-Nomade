@@ -139,7 +139,8 @@ class _ObjectDetailPageState extends State<ObjectDetailPage> {
 
 
 
-            Expanded(child: ImageGallery(
+            Expanded(
+                child: ImageGallery(
                 imageUrls: widget.object.images ?? [],
                 isEditMode: false)),
             const SizedBox(height: 16),
