@@ -36,6 +36,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
   late List<MuseumObject>   museumObjectsFromSelectedMuseum = [];
   late StreamSubscription<DatabaseEvent> _museumsSubscription;
   Map<String, List<bool>> selectedFilterState = {};
+  bool isOnMap = false;
 
   late List<FilterTag> filters = [];
   late List<FilterTag> selectedFilters = [];
@@ -262,7 +263,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
+                      FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState, isOnMap: isOnMap),
                     ],
                   ),
                 ),
@@ -321,7 +322,7 @@ class _ObjectAddPageState extends State<ObjectAddPage> {
                         onPressed: _saveChanges,
                         child: const Text('Enregistrer'),
                       ),
-                      FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
+                      FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState, isOnMap: isOnMap),
                     ],
                   ),
                 ),

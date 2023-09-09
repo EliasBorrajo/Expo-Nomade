@@ -33,6 +33,7 @@ class _MapScreenState extends State<MapScreen> {
   late List<Museum> museums = [];
   late List<String> URLS = [];
   late List<MuseumObject> museumObjects = [];
+  bool isOnMap = true;
 
 
 
@@ -162,6 +163,9 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    selectedFilterState.forEach((filterName, isSelected) {
+      print('Filtre : $filterName - Sélectionné : $isSelected');
+    });
     return Scaffold(
       body: Stack(
         children: [
@@ -214,7 +218,7 @@ class _MapScreenState extends State<MapScreen> {
           if (isFiltersWindowOpen)
             Positioned(
               top: 50.0,
-              child: FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState),
+              child: FiltersWindow(database: widget.database, selectedFilterState: selectedFilterState, isOnMap: isOnMap),
             ),
         ],
       ),

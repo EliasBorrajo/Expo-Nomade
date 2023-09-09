@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class FiltersWindow extends StatefulWidget {
   final FirebaseDatabase database;
   final Map<String, List<bool>> selectedFilterState;
+  final bool isOnMap;
 
-  const FiltersWindow({super.key, required this.database, required this.selectedFilterState});
+  const FiltersWindow({super.key, required this.database, required this.selectedFilterState, required this.isOnMap});
 
   @override
   _FiltersWindowState createState() => _FiltersWindowState();
@@ -43,6 +44,9 @@ class _FiltersWindowState extends State<FiltersWindow> {
         })
             .toList();
 
+        if (widget.isOnMap == false) {
+          fetchedFilters.removeWhere((filter) => filter.typeName == 'Générale');
+        }
 
         if(widget.selectedFilterState.isEmpty) {
           for (var filter in fetchedFilters) {
