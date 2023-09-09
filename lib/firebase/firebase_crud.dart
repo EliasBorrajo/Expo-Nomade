@@ -51,9 +51,6 @@ class FirebaseUtils {
               if( image != null &&
                   image is String){
                 images.add(image);
-
-                print('IMAGE IN OBJECT ADDING : $image');
-
               }
             }
           }
@@ -79,24 +76,5 @@ class FirebaseUtils {
       }
     });
   }
-
-  /*String getMuseumIdByName(String museumName)  {
-    DatabaseReference museumsRef = database.ref().child('museums');
-    String museumId = '';
-    museumsRef.onValue.listen((DatabaseEvent event) {
-      if (event.snapshot.value != null) {
-        Map<dynamic, dynamic> museumsData = event.snapshot.value as Map<dynamic, dynamic>;
-
-        museumsData.forEach((key, value) {
-            if(value['name'] == museumName){
-              museumId = value['id'];
-              print(key);
-            }
-        });
-      }
-    });
-    return museumId;
-  }*/
-
 
 }

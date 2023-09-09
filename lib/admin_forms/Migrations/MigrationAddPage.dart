@@ -1,6 +1,5 @@
 import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneAddPage.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../dataModels/Migration.dart';
 
@@ -37,7 +36,6 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
     if(mounted){
       setState(() {
         displayedMigrationSources = migrationSources;
-        //nbMigrationSources = migrationSources.length;
       });
     }
 
@@ -68,7 +66,6 @@ class _MigrationAddPageState extends State<MigrationAddPage> {
                     context,
                     MaterialPageRoute(builder: (context) => const ZoneAddPage()),
                   );
-                  print(migrationSource.toString());
                   updateZones();
                   migrationSources.add(migrationSource);
                 },

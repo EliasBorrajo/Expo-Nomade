@@ -79,7 +79,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('Ajouter une Question')),
+        appBar: AppBar(title: const Text('Ajouter une Question')),
         body: Form(
             child: SingleChildScrollView(
               child: Padding(

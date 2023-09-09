@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:expo_nomade/admin_forms/Migrations/MigrationEditPage.dart';
-import 'package:expo_nomade/admin_forms/dummyData.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -33,50 +30,6 @@ class _MigrationListPageState extends State<MigrationListPage>{
         });
       }
     });
-  }
-
-
-  //TODO: Delete this method.
-  void _seedDatabase() async {
-    // Get a reference to your Firebase database
-    DatabaseReference databaseReference = widget.database.ref();
-
-    try{
-      for (var migration in dummyMigrations) {
-        Map<String, dynamic> migrationData = {
-          'name': migration.name,
-          'description': migration.description,
-          'arrival': migration.arrival,
-        };
-        if (migration.polygons != null) {
-          migrationData['polygons'] = [];
-          for (var polygon in migration.polygons!) {
-            Map<String, dynamic> polygonData = {
-              //'color': polygon.color.toString(),
-              'name': polygon.name,
-              //'id': polygon.id,
-            };
-            if (polygon.points != null) {
-              polygonData['points'] = [];
-              for (var point in polygon.points!) {
-                Map<String, double> pointData = {
-                  'latitude': point.latitude.toDouble(),
-                  'longitude': point.longitude.toDouble(),
-                };
-                polygonData['points'].add(pointData);
-              }
-            }
-            migrationData['polygons'].add(polygonData);
-          }
-        }
-        await databaseReference.child('migrations').push().set(migrationData);
-        print('Museum seeded successfully: ${migration.name}');
-      }
-      print('Database seeding completed.');
-    }
-    catch (error) {
-      print('Error seeding database: $error');
-    }
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, Migration migration) {

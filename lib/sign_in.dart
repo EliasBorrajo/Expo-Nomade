@@ -61,7 +61,7 @@ class SignInPage extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AdminForms(),
+                          builder: (context) => const AdminForms(),
                         ),
                       );
                     } else {

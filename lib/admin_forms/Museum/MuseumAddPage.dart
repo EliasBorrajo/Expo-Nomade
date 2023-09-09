@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../map_point_picker.dart';
@@ -67,9 +66,6 @@ class _MuseumAddPageState extends State<MuseumAddPage> {
 
       // Générez une nouvelle clé unique pour le musée
       await _museumsRef.push().set(museumData);
-
-      print('Museum added successfully: ${museumData['name']}');
-
 
       // Retourner à la page de détails du musée
       Navigator.pop(context);

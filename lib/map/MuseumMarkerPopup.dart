@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:math' as math;
-
 import 'package:google_fonts/google_fonts.dart';
-
-import 'image_slider.dart';
 
 class MuseumMarkerPopup extends StatelessWidget {
   const MuseumMarkerPopup({super.key, required this.data});
@@ -29,7 +25,7 @@ class MuseumMarkerPopup extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),  // A smoother border radius
       ),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
         width: MediaQuery.of(context).size.width * 0.3,
         height: MediaQuery.of(context).size.height * 0.2,
         child: Column(
@@ -59,7 +55,7 @@ class MuseumMarkerPopup extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Expanded(
               child: ListView.builder(
                 itemCount: data.length - 1,
@@ -72,7 +68,7 @@ class MuseumMarkerPopup extends StatelessWidget {
                     ),
                     margin: const EdgeInsets.symmetric(vertical: 5.0),  // Slightly reduced margin
                     child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                       title: Text(
                         data[index + 1].key,
                         style: GoogleFonts.cabin(

@@ -9,8 +9,6 @@ import '../dataModels/Museum.dart';
 import '../dataModels/MuseumObject.dart';
 import '../firebase/firebase_crud.dart';
 import 'map_filters.dart';
-import 'package:expo_nomade/firebase/Storage/FirebaseStorageUtil.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class MapScreen extends StatefulWidget {
 
@@ -31,40 +29,10 @@ class _MapScreenState extends State<MapScreen> {
   bool isFiltersWindowOpen = false;
   Map<String, List<bool>> selectedFilterState = {};
   late List<Museum> museums = [];
-  late List<String> URLS = [];
+  late List<String> urls = [];
   late List<MuseumObject> museumObjects = [];
 
 
-
-  // TODO : SUPPRIMER - car images chargées depuis la DB et leurs objets
-  Future<void> _loadImages() async
-  {
-
-    print("Chargement des images");
-    String? imageUrl1 = await FirebaseStorageUtil().downloadImage(
-      FirebaseStorageFolder.root,
-      "wallhaven-zmo9wg.png",
-    );
-    print("Image 1 chargée");
-
-    String? imageUrl2 = await FirebaseStorageUtil().downloadImage(
-      FirebaseStorageFolder.root,
-      "wallhaven-pkgkkp.png",
-    );
-    print("Image 2 chargée");
-
-
-    if(mounted)
-    {
-      setState(() {
-        URLS.add(imageUrl1 ?? ''); // Au cas ou le download echoue et renvoie null
-        URLS.add(imageUrl2 ?? '');
-      });
-    }
-
-    print("Toutes Images chargées");
-    print("URLS : ${URLS.toString()}");
-  }
 
   void _loadMuseumsFromFirebaseAndListen() {
     DatabaseReference museumsRef = widget.database.ref().child('museums');
@@ -163,7 +131,6 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _loadImages();
     _loadMuseumObjectsFromFirebaseAndListen();
     _loadMuseumsFromFirebaseAndListen();
     final firebaseUtils = FirebaseUtils(widget.database);
@@ -244,26 +211,6 @@ class _MapScreenState extends State<MapScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
-  }
-
-
-  LatLng _calculateCentroid(List<LatLng> points) {
-    // Calculate the centroid of the polygon
-    // Replace this logic with your own centroid calculation
-    double sumX = 0.0;
-    double sumY = 0.0;
-
-    for (var point in points) {
-      sumX += point.latitude;
-      sumY += point.longitude;
-    }
-
-    final centroid = LatLng(
-      sumX / points.length,
-      sumY / points.length,
-    );
-
-    return centroid;
   }
 
 }

@@ -96,28 +96,6 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
     return null;
   }
 
-  // TODO CLEAN ?
-  String? _validateLatitude(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'La latitude ne peut pas être vide';
-    }
-    final double latitude = double.tryParse(value) ?? double.nan;
-    if (latitude < -90 || latitude > 90) {
-      return 'La latitude doit être comprise entre -90 et 90';
-    }
-    return null;
-  }
-
-  String? _validateLongitude(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'La longitude ne peut pas être vide';
-    }
-    final double longitude = double.tryParse(value) ?? double.nan;
-    if (longitude < -180 || longitude > 180) {
-      return 'La longitude doit être comprise entre -180 et 180';
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,12 +111,12 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Nom du musée'),
+                const Text('Nom du musée'),
                 TextFormField(controller: _nameController, validator: _validateName),
-                SizedBox(height: 16),
-                Text('Site web'),
+                const SizedBox(height: 16),
+                const Text('Site web'),
                 TextFormField(controller: _websiteController),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
 
                 ElevatedButton(
@@ -148,7 +126,6 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
                         MaterialPageRoute(builder: (context) => const MapPointPicker(pickerType: 2)),
                       );
                       updatePoint();
-                      print(selectedAddressPoint);
                     },
                     child: const Text('Modifier l\'adresse')
                 ),
@@ -156,7 +133,7 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
                 Text('Point selectionné: ${widget.museum.address.latitude.toStringAsFixed(2)}, ${widget.museum.address.longitude.toStringAsFixed(2)}') :
                 Text('Point selectionné: ${displayAddressPoint.latitude.toStringAsFixed(2)}, ${displayAddressPoint.longitude.toStringAsFixed(2)}'),
 
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _saveChanges,
                   child: const Text('Enregistrer'),

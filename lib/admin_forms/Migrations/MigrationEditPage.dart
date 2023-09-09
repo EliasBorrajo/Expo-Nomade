@@ -2,7 +2,6 @@ import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneAddPage.dart';
 import 'package:expo_nomade/admin_forms/Migrations/zones/ZoneEditPage.dart';
 import 'package:expo_nomade/dataModels/Migration.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../firebase/Storage/FirebaseStorageUtil.dart';
@@ -124,14 +123,14 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirmation'),
-            content: Text('Êtes-vous sûr de vouloir supprimer cet objet ?'),
+            title: const Text('Confirmation'),
+            content: const Text('Êtes-vous sûr de vouloir supprimer cet objet ?'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
-                child: Text('Annuler'),
+                child: const Text('Annuler'),
               ),
               TextButton(
                 onPressed: () {
@@ -140,7 +139,7 @@ class _MigrationEditpageState extends State<MigrationEditpage>{
                   updateDisplayedSources();
                   Navigator.pop(context); // Ferme la boîte de dialogue
                 },
-                child: Text('Supprimer'),
+                child: const Text('Supprimer'),
               ),
             ],
           );

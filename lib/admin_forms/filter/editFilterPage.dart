@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../dataModels/filters_tags.dart';
@@ -84,7 +82,6 @@ class _EditFilterPageState extends State<EditFilterPage> {
             }
 
             // Mettre à jour l'objet de musée dans la base de données
-            //museumObject['filters'] = filters;
             objectsRef.child(key).update({'filters': filters});
           }
         });

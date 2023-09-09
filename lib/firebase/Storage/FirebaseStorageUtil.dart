@@ -2,9 +2,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-
-// TODO : Ajouter une fonction pour supprimer une image
-
 /// Énumération pour les dossiers possibles dans Firebase Storage
 enum FirebaseStorageFolder {
   migrations,
@@ -122,9 +119,6 @@ class FirebaseStorageUtil {
 
     // Combinez le nom de fichier original, le suffixe unique et l'extension
     final String uniqueFileName = '${nameParts.first}_$uniqueSuffix$fileExtension';
-
-    print('Nom de fichier unique : $uniqueFileName');
-
     return uniqueFileName;
 
   }
@@ -153,7 +147,7 @@ class FirebaseStorageUtil {
         }
         else {
           // Le fichier est trop volumineux, affichez un message d'erreur.
-          print('Le fichier sélectionné est trop volumineux. La taille maximale autorisée est de ${maxImageSizeInBytes} Go .');
+          print('Le fichier sélectionné est trop volumineux. La taille maximale autorisée est de $maxImageSizeInBytes Go .');
         }
       }
       else {

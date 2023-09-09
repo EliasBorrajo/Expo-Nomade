@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'FirebaseStorageUtil.dart';
@@ -85,7 +84,6 @@ class _ImageGalleryState extends State<ImageGallery> {
                 return const Text('Erreur de chargement des images');
               }
               else {
-                // int itemCount = snapshot.data!.length;  // TODO : MODIFIER ICI ??
                 return PageView.builder(
                   itemCount: itemCount,
                   itemBuilder: (context, index) {
@@ -256,7 +254,6 @@ class _CustomImageState extends State<CustomImageStateful> {
 
                             // 2) Supprimer l'image de la liste d'URLs
                             if (deletionIsSuccess) {
-                              print('Image supprimée avec succès');
 
                               // 2.1) En local dans le widget
                               widget.imageList?.remove(widget.imageUrl);
@@ -272,7 +269,7 @@ class _CustomImageState extends State<CustomImageStateful> {
 
                             Navigator.of(context).pop(); // Fermer le dialogue de confirmation
                           },
-                          child: Text('Supprimer'),
+                          child: const Text('Supprimer'),
                         ),
                       ],
                     );
