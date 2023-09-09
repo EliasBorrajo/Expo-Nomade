@@ -25,8 +25,8 @@ class _MuseumEditPageState extends State<MuseumEditPage> {
   late TextEditingController _longitudeController;
   late TextEditingController _websiteController;
   late DatabaseReference _museumsRef;
-  late LatLng selectedAddressPoint = const LatLng(0.0, 0.0);
-  late LatLng displayAddressPoint = const LatLng(0.0, 0.0);
+  late LatLng selectedAddressPoint = widget.museum.address;
+  late LatLng displayAddressPoint = widget.museum.address;
 
   // form Key allows to validate the form and save the data in the form fields
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
