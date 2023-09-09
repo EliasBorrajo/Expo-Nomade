@@ -2,6 +2,9 @@
 
 Module 642-2
 
+## Documentation
+All the documentation of the project is available in the [Documentation](Documentation) folder.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
@@ -28,8 +31,3 @@ samples, guidance on mobile development, and a full API reference.
 7) Lancer le projet depuis Android Studio sur l'émulateur Android 
 
 
-
-colo xolo test
-
-
-fdasfas

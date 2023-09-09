@@ -52,6 +52,8 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // TODO : Security rules. This is not secure at all. Those informations should be stored in a .env file or a local file.
+  /// Auto-generatted by FlutterFire CLI when connecting to Firebase.
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAJ4NGkuxHsymSiTrDS5cRV9eZBsvoBTSI',
     appId: '1:903007195639:android:fedd09a79c2532524c1ef2',
@@ -59,4 +61,13 @@ class DefaultFirebaseOptions {
     projectId: 'exponomade-6452',
     storageBucket: 'exponomade-6452.appspot.com',
   );
+
+  // TODO : Should replace the code above for a real project.
+  // return FirebaseOptions(
+  // apiKey:             config['apiKey'],
+  // appId:              config['appId'],
+  // messagingSenderId:  config['messagingSenderId'],
+  // projectId:          config['projectId'],
+  // storageBucket:      config['storageBucket'],
+  // );
 }
