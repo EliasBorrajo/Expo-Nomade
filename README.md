@@ -108,12 +108,13 @@ The app also includes an administrator interface for CRUD operations on migratio
 
 ---
 
+
 ## 📘 Documentation & Diagrams
 
-* Mockups: included in the `Documentation/` folder
-* Architecture diagram: in `TechGuideGroup1.docx`
-* Data structure overview: Firebase Realtime DB, 6 primary collections
-* User Guide: `UserGuideGroup1.docx`
+- Mockups: included in the [`Documentation/`](https://github.com/EliasBorrajo/Expo-Nomade/tree/master/Documentation) folder
+- Architecture diagram: available in [`TechGuideGroup1.docx`](https://github.com/EliasBorrajo/Expo-Nomade/tree/master/Documentation)
+- Data structure overview: Firebase Realtime DB, 6 primary collections (see [Tech Guide](https://github.com/EliasBorrajo/Expo-Nomade/tree/master/Documentation))
+- User Guide: [`UserGuideGroup1.docx`](https://github.com/EliasBorrajo/Expo-Nomade/tree/master/Documentation)
 
 ---
 
