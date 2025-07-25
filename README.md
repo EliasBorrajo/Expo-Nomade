@@ -48,10 +48,12 @@ lib/
 
 ---
 
-## 2 · README original (FR)
+
 
 <details>
-  <summary>Clique pour déplier la version française existante</summary>
+  <summary>
+   <h2>2 · Original README Archive (FR)</h2>
+  </summary>
 
 # expo_nomade
 
